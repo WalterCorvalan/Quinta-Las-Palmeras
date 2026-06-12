@@ -550,44 +550,28 @@ nav .container {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .porque-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .porque-item {
-    border-left: none;
-    padding: 0;
-    border-top: 1px solid var(--arena-oscura);
-    padding-top: 24px;
-  }
-  .porque-item:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-  .nav-ig {
-    display: none;
-  }
-  .espacios-grid {
-    grid-template-columns: 1fr;
-  }
-  .espacio-card.destacado {
-    grid-template-columns: 1fr;
-  }
-  .cotizador-layout {
-    grid-template-columns: 1fr;
-  }
-  .cot-resumen {
-    position: relative;
-    top: 0;
-  }
-  .promo-card {
-    padding: 40px 20px;
-  }
-  .promo-lista {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
+  /* Oculta los textos largos en celular para hacer espacio */
+  .hide-mobile { display: none !important; }
+  
+  /* Achica un poco el padding y la fuente del botón en celular */
+  .nav-cta { padding: 8px 12px; font-size: 0.9rem; }
+  
+  /* Achica el gap de los enlaces */
+  .nav-links-right { gap: 12px !important; }
+
+  /* Mantiene todo en una línea forzada */
+  nav .container { flex-wrap: nowrap; padding: 0 15px;}
+
+  /* Ajustes de las tarjetas que ya teníamos */
+  .porque-grid { grid-template-columns: 1fr; gap: 24px; }
+  .porque-item { border-left: none; padding: 0; border-top: 1px solid var(--arena-oscura); padding-top: 24px; }
+  .porque-item:first-child { border-top: none; padding-top: 0; }
+  .espacios-grid { grid-template-columns: 1fr; }
+  .espacio-card.destacado { grid-template-columns: 1fr; }
+  .cotizador-layout { grid-template-columns: 1fr; }
+  .cot-resumen { position: relative; top: 0; }
+  .promo-card { padding: 40px 20px; }
+  .promo-lista { flex-direction: column; align-items: center; gap: 8px;}
 }
 
 footer {

@@ -6,6 +6,7 @@
 
   <!-- ░░ SEO ░░ -->
   <title>Quinta Eventos — Espacio Premium para Fiestas</title>
+  <link rel="icon" href="img/logo.png" type="image/png"> <!-- ESTA ES LA LÍNEA NUEVA -->
   <meta name="description" content="Quinta Eventos: El espacio perfecto para tu evento de hasta 100 personas. Horario nocturno, entrada de lujo, salón de baile láser, quincho completo y barra iluminada. Consultá disponibilidad." />
   <meta name="keywords" content="quinta eventos, fiestas privadas, alquiler quinta nocturna, casamientos, cumpleaños, salón con pileta, pérgolas, eventos 100 personas" />
   <meta name="robots" content="index, follow" />
@@ -21,10 +22,14 @@
 <body>
 
   <!-- NAVEGACIÓN -->
-  <!-- NAVEGACIÓN -->
   <nav>
     <div class="container">
-      <div class="nav-logo">Quinta <span>Eventos</span></div>
+      <!-- Acá agregamos el logo alineado con el texto -->
+      <div class="nav-logo" style="display: flex; align-items: center; gap: 10px;">
+        <img src="img/logo.png" alt="Logo Quinta Eventos" style="height: 35px; width: auto; border-radius: 4px;">
+        <div>Quinta <span>Las Palmeras</span></div>
+      </div>
+      
       <div class="nav-links-right">
         <a href="https://www.instagram.com/quinta_eventos_?igsh=MWEybnp2eHhjOTVodw==" target="_blank" class="nav-ig" style="display: flex; align-items: center; gap: 6px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -143,8 +148,8 @@
           <!-- Carrusel -->
           <div class="carousel-container">
             <div class="carousel-track" id="track-pileta">
-              <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&q=80" alt="Pileta iluminada">
-              <img src="https://images.unsplash.com/photo-1583316174775-bd6dc0e9f298?w=600&q=80" alt="Sector pileta noche">
+              <img src="img/pileta.png" alt="Pileta iluminada">
+              <img src="img/pileta_2.png" alt="Sector pileta noche">
             </div>
             <button class="carousel-btn prev" onclick="moveCarousel('track-pileta', -1)">&#10094;</button>
             <button class="carousel-btn next" onclick="moveCarousel('track-pileta', 1)">&#10095;</button>

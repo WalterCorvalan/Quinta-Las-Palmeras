@@ -13,8 +13,10 @@
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
 
-  --radio: 4px;
-  --sombra: 0 2px 20px rgba(56, 102, 65, 0.15);
+  --radio: 10px;
+  --radio-chico: 6px;
+  --sombra: 0 4px 24px rgba(56, 102, 65, 0.12);
+  --sombra-suave: 0 2px 12px rgba(56, 102, 65, 0.08);
 }
 
 /* ── RESET ── */
@@ -126,7 +128,7 @@ nav .container {
 .hero {
   background: var(--verde-profundo);
   text-align: center;
-  padding: 100px 0 60px;
+  padding: 100px 0 90px;
   position: relative;
   overflow: hidden;
 }
@@ -134,11 +136,11 @@ nav .container {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(
-    circle at 20% 50%,
-    rgba(74, 140, 92, 0.18) 0%,
-    transparent 50%
-  );
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(167, 201, 87, 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(200, 169, 110, 0.12) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a7c957' fill-opacity='0.05'%3E%3Cpath d='M60 10c12 14 24 26 24 42 0 13-11 24-24 24s-24-11-24-24c0-16 12-28 24-42z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 220px 220px;
   pointer-events: none;
 }
 .hero .container {
@@ -163,6 +165,21 @@ nav .container {
   margin-bottom: 36px;
   max-width: 600px;
 }
+
+/* Separador ondulado orgánico entre hero y porque */
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: var(--arena);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20 C150 0 300 40 450 20 C600 0 750 40 900 20 C1050 0 1150 40 1200 20 L1200 40 L0 40 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20 C150 0 300 40 450 20 C600 0 750 40 900 20 C1050 0 1150 40 1200 20 L1200 40 L0 40 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -171,14 +188,17 @@ nav .container {
   background: var(--acento);
   color: var(--verde-profundo);
   font-weight: 700;
-  padding: 14px 28px;
-  border-radius: var(--radio);
-  transition: background 0.2s;
+  padding: 14px 30px;
+  border-radius: 999px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   cursor: pointer;
   text-decoration: none;
+  box-shadow: 0 4px 14px rgba(200, 169, 110, 0.3);
 }
 .btn-primary:hover {
   background: #daba81;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200, 169, 110, 0.4);
 }
 
 /* ── POR QUÉ ELEGIRNOS ── */
@@ -206,6 +226,14 @@ nav .container {
 .porque-icon {
   font-size: 1.5rem;
   color: var(--verde-profundo);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blanco);
+  border-radius: 50%;
+  box-shadow: var(--sombra-suave);
 }
 .porque-item h3 {
   font-size: 1rem;
@@ -228,12 +256,12 @@ nav .container {
 .promo-card {
   background: var(--blanco);
   border: 2px solid var(--acento);
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 50px 40px;
   max-width: 650px;
   margin: 0 auto;
   text-align: center;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 40px rgba(56, 102, 65, 0.18);
   position: relative;
   z-index: 2;
 }
@@ -264,7 +292,7 @@ nav .container {
 .promo-precio {
   background: var(--arena);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 14px;
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
@@ -317,9 +345,14 @@ nav .container {
 }
 .espacio-card {
   border: 1px solid var(--arena-oscura);
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   background: white;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.espacio-card:hover {
+  box-shadow: var(--sombra);
+  transform: translateY(-4px);
 }
 .espacio-card.destacado {
   grid-column: 1 / -1;
@@ -360,23 +393,24 @@ nav .container {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(26, 58, 42, 0.6);
+  background: rgba(56, 102, 65, 0.55);
   color: white;
   border: none;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 2;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.15s;
   font-size: 1rem;
 }
 .carousel-btn:hover {
   background: var(--acento);
   color: var(--verde-profundo);
+  transform: translateY(-50%) scale(1.08);
 }
 .carousel-btn.prev {
   left: 10px;
@@ -398,7 +432,7 @@ nav .container {
 .cot-categoria {
   background: var(--blanco);
   border: 1px solid var(--arena-oscura);
-  border-radius: 8px;
+  border-radius: 14px;
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -417,9 +451,10 @@ nav .container {
   border-top: 1px solid var(--arena);
   cursor: pointer;
   user-select: none;
+  transition: background 0.15s;
 }
 .cot-item:hover {
-  background: #fcfcfc;
+  background: var(--arena);
 }
 .cot-item-info {
   display: flex;
@@ -432,7 +467,7 @@ nav .container {
   width: 22px;
   height: 22px;
   border: 2px solid var(--arena-oscura);
-  border-radius: 4px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -445,6 +480,7 @@ nav .container {
 .cot-item input[type="checkbox"]:checked + .cot-checkbox {
   background: var(--verde-vivo);
   border-color: var(--verde-vivo);
+  transform: scale(1.05);
 }
 .cot-item input[type="checkbox"]:checked + .cot-checkbox::after {
   content: "✓";
@@ -482,9 +518,15 @@ nav .container {
   height: 28px;
   border: 1px solid var(--arena-oscura);
   background: white;
-  border-radius: 4px;
+  border-radius: 7px;
   cursor: pointer;
   font-weight: bold;
+  color: var(--verde-medio);
+  transition: background 0.15s, border-color 0.15s;
+}
+.cot-qty button:hover {
+  background: var(--arena);
+  border-color: var(--verde-vivo);
 }
 .cot-qty span {
   font-weight: 600;
@@ -496,9 +538,10 @@ nav .container {
   position: sticky;
   top: 90px;
   background: var(--verde-profundo);
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 28px;
   color: var(--blanco);
+  box-shadow: var(--sombra);
 }
 .cot-resumen h3 {
   color: var(--blanco);
@@ -542,10 +585,15 @@ nav .container {
   color: white;
   font-weight: 700;
   padding: 14px;
-  border-radius: var(--radio);
+  border-radius: 999px;
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.cot-resumen-cta:hover {
+  background: #1ebe5a;
+  transform: translateY(-2px);
 }
 
 /* ── RESPONSIVE ── */
@@ -580,4 +628,5 @@ footer {
   text-align: center;
   padding: 40px 0;
   font-size: 0.9rem;
+  border-top: 3px solid var(--verde-vivo);
 }

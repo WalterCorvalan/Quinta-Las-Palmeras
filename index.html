@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ░░ SEO ░░ -->
+  <title>Quinta Eventos — Espacio Premium para Fiestas</title>
+  <meta name="description" content="Quinta Eventos: El espacio perfecto para tu evento de hasta 100 personas. Horario nocturno, entrada de lujo, salón de baile láser, quincho completo y barra iluminada. Consultá disponibilidad." />
+  <meta name="keywords" content="quinta eventos, fiestas privadas, alquiler quinta nocturna, casamientos, cumpleaños, salón con pileta, pérgolas, eventos 100 personas" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ░░ Open Graph ░░ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Quinta Eventos — Tu fiesta inolvidable" />
+  <meta property="og:description" content="Espacio perfecto hasta 100 personas. Pista láser, parque kermés, quincho completo y alfombra roja." />
+  
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVEGACIÓN -->
+  <nav>
+    <div class="container">
+      <div class="nav-logo">Quinta <span>Eventos</span></div>
+      <div class="nav-links-right">
+        <a href="https://www.instagram.com/quinta_eventos_?igsh=MWEybnp2eHhjOTVodw==" target="_blank" class="nav-ig">📷 Instagram</a>
+        <a href="#cotizador" class="nav-cta">Armá tu Evento</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <h1>El espacio perfecto para tu evento de <em>hasta 100 personas</em></h1>
+      <p class="hero-desc">Viví una noche única. Entrada con alfombra roja, pista láser, parque estilo kermés y atención personalizada para que tu fiesta sea imperdible.</p>
+      <a href="#cotizador" class="btn-primary">Cotizá tu evento ahora</a>
+    </div>
+  </header>
+
+  <!-- POR QUÉ ELEGIRNOS -->
+  <section class="porque">
+    <div class="container porque-grid">
+      <div class="porque-item">
+        <div class="porque-icon">✨</div>
+        <h3>Entrada de Lujo</h3>
+        <p>Alfombra roja y pérgola decorada para ese momento especial. Opción de chispas frías para un ingreso triunfal.</p>
+      </div>
+      <div class="porque-item">
+        <div class="porque-icon">💃</div>
+        <h3>Salón de Baile</h3>
+        <p>Pista de baile completamente equipada con sistema de iluminación láser multicolor inmersiva.</p>
+      </div>
+      <div class="porque-item">
+        <div class="porque-icon">🍹</div>
+        <h3>Barra Iluminada</h3>
+        <p>Sector exclusivo de coctelería para despachar tragos personalizados con estilo durante toda la noche.</p>
+      </div>
+      <div class="porque-item">
+        <div class="porque-icon">🎯</div>
+        <h3>Diversión Total</h3>
+        <p>Sector infantil al aire libre con laberinto y metegoles. Parque iluminado con guirnaldas estilo kermés.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNER DE PROMOCIÓN REDISEÑADO -->
+  <section class="promo-banner">
+    <div class="container">
+      <div class="promo-card">
+        <div class="promo-badge">¡Súper Promo Viernes!</div>
+        <h2>Paquete "Llave en Mano"</h2>
+        <p class="promo-subtitle">Ideal para Cumples de 15, 18 y Casamientos en Marzo, Abril y Mayo.</p>
+        
+        <div class="promo-precio">
+          <span class="promo-anticipo">Anticipo <strong>$1.200.000</strong></span>
+          <span class="promo-cuotas">+ 4 cuotas de <strong>$350.000</strong></span>
+        </div>
+        
+        <p class="promo-capacidad">🎉 Hasta 60 Personas</p>
+        
+        <ul class="promo-lista">
+          <li>El lugar todo organizado</li>
+          <li>Mobiliario completo</li>
+          <li>Pista de baile y DJ</li>
+          <li>Pantalla y fotografía</li>
+        </ul>
+        
+        <a href="#cotizador" class="btn-primary" style="margin-top: 20px;">Quiero esta promo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESPACIOS CON CARRUSELES DE IMÁGENES -->
+  <section class="espacios">
+    <div class="container">
+      <h2 class="section-title">Nuestros Espacios</h2>
+      <div class="espacios-grid">
+        
+        <!-- Destacado -->
+        <div class="espacio-card destacado">
+          <div class="carousel-container">
+            <div class="carousel-track" id="track-parque">
+              <img src="img/parque.png" alt="Amplio parque Quinta Eventos">
+              
+              </div>
+            
+            <button class="carousel-btn prev" onclick="moveCarousel('track-parque', -1)">&#10094;</button>
+            <button class="carousel-btn next" onclick="moveCarousel('track-parque', 1)">&#10095;</button>
+          </div>
+          
+          <div class="espacio-body">
+            <h3>Amplio Parque con 3 Pérgolas</h3>
+            <p>Espacio verde versátil equipado con sillones y mesas ratonas. Tres pérgolas ideales para islas de comida fría, sector de fotos, decoración temática o incluso un escenario para banda en vivo.</p>
+          </div>
+        </div>
+
+        <!-- Secundarios -->
+        <div class="espacio-card">
+          <!-- Carrusel -->
+          <div class="carousel-container">
+            <div class="carousel-track" id="track-quincho">
+              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80" alt="Quincho cocina">
+              <img src="https://images.unsplash.com/photo-1522771731478-44fb89656606?w=600&q=80" alt="Sector parrilla">
+            </div>
+            <button class="carousel-btn prev" onclick="moveCarousel('track-quincho', -1)">&#10094;</button>
+            <button class="carousel-btn next" onclick="moveCarousel('track-quincho', 1)">&#10095;</button>
+          </div>
+          <div class="espacio-body">
+            <h3>Quincho Completo</h3>
+            <p>Totalmente equipado para cualquier exigencia gastronómica: parrilla, cocina, pava eléctrica, hornos, heladera, freezer, mesas y bacha.</p>
+          </div>
+        </div>
+
+        <div class="espacio-card">
+          <!-- Carrusel -->
+          <div class="carousel-container">
+            <div class="carousel-track" id="track-pileta">
+              <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&q=80" alt="Pileta iluminada">
+              <img src="https://images.unsplash.com/photo-1583316174775-bd6dc0e9f298?w=600&q=80" alt="Sector pileta noche">
+            </div>
+            <button class="carousel-btn prev" onclick="moveCarousel('track-pileta', -1)">&#10094;</button>
+            <button class="carousel-btn next" onclick="moveCarousel('track-pileta', 1)">&#10095;</button>
+          </div>
+          <div class="espacio-body">
+            <h3>Pileta Iluminada</h3>
+            <p>Piscina con iluminación LED, utilizada en modo exclusivamente decorativo durante eventos nocturnos con alcohol para máxima seguridad y estética.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- COTIZADOR INTERACTIVO -->
+  <section id="cotizador" class="cotizador">
+    <div class="container">
+      <h2 class="section-title">Armá tu propio presupuesto</h2>
+      
+      <div class="cotizador-layout">
+        <!-- Panel Izquierdo: Opciones -->
+        <div id="opciones-container">
+          
+          <!-- Categoría 1: Base -->
+          <div class="cot-categoria">
+            <div class="cot-categoria-head">1. Alquiler y Seguro</div>
+            <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Alquiler Quinta Nocturno Base" data-price="1200000" checked>
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Alquiler Quinta (20:30 a 5:30 hs)</strong>
+                  <span>Acceso a parque, salón, quincho y pileta decorativa.</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">$1.200.000</div>
+            </label>
+            <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Súper Promo Viernes (DJ+Foto+Mobiliario)" data-price="1400000">
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Upgrade a Súper Promo (Hasta 60 pers)</strong>
+                  <span>Suma Mobiliario, DJ, Pantalla y Fotografía al alquiler base.</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">+$1.400.000</div>
+            </label>
+            <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Seguro Reembolsable (Daños/Limpieza)" data-price="50000" checked>
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Seguro Obligatorio</strong>
+                  <span>Cobertura por roturas, limpieza y horarios (Reembolsable).</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">$50.000</div>
+            </label>
+            <div class="cot-item">
+              <div class="cot-item-info">
+                <div class="cot-item-text">
+                  <strong>Horas Extras (Unidad)</strong>
+                  <span>Ingreso anticipado o extensión de horario final.</span>
+                </div>
+              </div>
+              <div class="cot-qty">
+                <button type="button" onclick="updateQty('horas', -1)">-</button>
+                <span id="qty-horas">0</span>
+                <button type="button" onclick="updateQty('horas', 1)">+</button>
+              </div>
+              <div class="cot-item-precio">$20.000 c/u</div>
+              <input type="hidden" class="cot-calc-qty" id="input-horas" data-name="Horas Extras" data-price="20000" value="0">
+            </div>
+          </div>
+
+          <!-- Categoría 2: Gastronomía -->
+          <div class="cot-categoria">
+            <div class="cot-categoria-head">2. Servicios Gastronómicos</div>
+            
+            <div class="cot-item">
+              <div class="cot-item-info">
+                <div class="cot-item-text">
+                  <strong>Menú Catering (Por persona)</strong>
+                  <span>Servicio integral de comida.</span>
+                </div>
+              </div>
+              <div class="cot-qty">
+                <button type="button" onclick="updateQty('catering', -1)">-</button>
+                <span id="qty-catering">0</span>
+                <button type="button" onclick="updateQty('catering', 1)">+</button>
+              </div>
+              <div class="cot-item-precio">$8.000 c/u</div>
+              <input type="hidden" class="cot-calc-qty" id="input-catering" data-name="Catering (Persona)" data-price="8000" value="0">
+            </div>
+
+            <div class="cot-item">
+              <div class="cot-item-info">
+                <div class="cot-item-text">
+                  <strong>Vajilla y Mantelería (Por persona)</strong>
+                  <span>Platos, cubiertos, vasos y manteles.</span>
+                </div>
+              </div>
+              <div class="cot-qty">
+                <button type="button" onclick="updateQty('vajilla', -1)">-</button>
+                <span id="qty-vajilla">0</span>
+                <button type="button" onclick="updateQty('vajilla', 1)">+</button>
+              </div>
+              <div class="cot-item-precio">$2.000 c/u</div>
+              <input type="hidden" class="cot-calc-qty" id="input-vajilla" data-name="Vajilla/Manteles (Persona)" data-price="2000" value="0">
+            </div>
+
+            <div class="cot-item">
+              <div class="cot-item-info">
+                <div class="cot-item-text">
+                  <strong>Barril Cerveza Tirada</strong>
+                  <span>Incluye choperas listas para servir.</span>
+                </div>
+              </div>
+              <div class="cot-qty">
+                <button type="button" onclick="updateQty('barril', -1)">-</button>
+                <span id="qty-barril">0</span>
+                <button type="button" onclick="updateQty('barril', 1)">+</button>
+              </div>
+              <div class="cot-item-precio">$45.000 c/u</div>
+              <input type="hidden" class="cot-calc-qty" id="input-barril" data-name="Barril Cerveza" data-price="45000" value="0">
+            </div>
+
+            <div class="cot-item">
+              <div class="cot-item-info">
+                <div class="cot-item-text">
+                  <strong>Servicio de Mozos</strong>
+                  <span>Personal profesional para salón y pérgolas.</span>
+                </div>
+              </div>
+              <div class="cot-qty">
+                <button type="button" onclick="updateQty('mozos', -1)">-</button>
+                <span id="qty-mozos">0</span>
+                <button type="button" onclick="updateQty('mozos', 1)">+</button>
+              </div>
+              <div class="cot-item-precio">$15.000 c/u</div>
+              <input type="hidden" class="cot-calc-qty" id="input-mozos" data-name="Mozos" data-price="15000" value="0">
+            </div>
+          </div>
+
+          <!-- Categoría 3: Extras de Lujo -->
+          <div class="cot-categoria">
+            <div class="cot-categoria-head">3. Extras y Decoración</div>
+            <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Chispas Frías (Entrada)" data-price="15000">
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Chispas Frías</strong>
+                  <span>Adicional para una entrada triunfal en la alfombra roja.</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">$15.000</div>
+            </label>
+            <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Set Mesitas Candy Bar" data-price="10000">
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Candy Bar</strong>
+                  <span>Mesitas de varios estilos para exhibir tu mesa dulce.</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">$10.000</div>
+            </label>
+             <label class="cot-item">
+              <div class="cot-item-info">
+                <input type="checkbox" class="cot-calc-cb" data-name="Decoración Especial" data-price="25000">
+                <div class="cot-checkbox"></div>
+                <div class="cot-item-text">
+                  <strong>Decoración Especial</strong>
+                  <span>Ambientación personalizada para el evento.</span>
+                </div>
+              </div>
+              <div class="cot-item-precio">$25.000</div>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- Panel Derecho: Resumen -->
+        <div class="cot-resumen">
+          <h3>Tu Presupuesto Estimado</h3>
+          
+          <div id="cot-resumen-lista" class="cot-resumen-lista">
+            <!-- Se llena por JS -->
+          </div>
+
+          <div class="cot-resumen-total">
+            <span>Total Estimado</span>
+            <span class="cot-resumen-total-num" id="cot-total-ui">$0</span>
+          </div>
+
+          <button onclick="enviarWhatsApp()" class="cot-resumen-cta"><i class="hgi hgi-stroke hgi-rounded hgi-call-incoming-04" style="margin-right: 8px;"></i>Consultar disponibilidad por WhatsApp</button>
+          
+          <div style="margin-top: 15px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 6px;">
+            <p style="font-size: 0.72rem; text-align: left; color: rgba(255,255,255,0.7); margin-bottom: 6px;">
+              💳 <strong>Reserva:</strong> Anticipo fijado para congelar precio o seña del 40% (Plan de pago conversable).
+            </p>
+            <p style="font-size: 0.72rem; text-align: left; color: rgba(255,255,255,0.7);">
+              * Precios estimativos sujetos a vigencia. Derecho de admisión reservado.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>Quinta Eventos © 2024. Que cada cliente se sienta cómodo y cuidado.</p>
+      <p style="margin-top: 8px; font-size: 0.8rem; color: rgba(255,255,255,0.4);">⭐ Consultá nuestras referencias en Google. ¡Te recomendamos venir a conocer el lugar!</p>
+    </div>
+  </footer>
+
+  <script src="script.js" charset="UTF-8"></script>
+</body>
+</html>

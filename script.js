@@ -1,10 +1,57 @@
-// Llamamos al cálculo apenas carga la página
+// --- INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', calcularTotal);
 
+// --- LÓGICA DE LOS CARRUSELES DE IMÁGENES ---
+let carouselState = {};
+
+function moveCarousel(trackId, direction) {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  
+  if (carouselState[trackId] === undefined) {
+    carouselState[trackId] = 0;
+  }
+  
+  const slides = track.querySelectorAll('img');
+  const totalSlides = slides.length;
+  
+  if (totalSlides <= 1) return; 
+  
+  carouselState[trackId] += direction;
+  
+  if (carouselState[trackId] >= totalSlides) carouselState[trackId] = 0;
+  if (carouselState[trackId] < 0) carouselState[trackId] = totalSlides - 1;
+  
+  const percentageToMove = carouselState[trackId] * -100;
+  track.style.transform = `translateX(${percentageToMove}%)`;
+}
+
+// --- LÓGICA DEL COTIZADOR ---
 const checkboxes = document.querySelectorAll('.cot-calc-cb');
 const inputsQty = document.querySelectorAll('.cot-calc-qty');
 const resumenLista = document.getElementById('cot-resumen-lista');
 const totalUI = document.getElementById('cot-total-ui');
+
+// Función arreglada: Quita TODOS los checks por defecto y deja solo la promo
+function activarPromo() {
+  // 1. Desmarcamos todo (Alquiler base, seguro, extras, etc.)
+  checkboxes.forEach(cb => cb.checked = false);
+  
+  // 2. Ponemos todas las cantidades en 0 (mozos, catering, etc.)
+  inputsQty.forEach(input => {
+    input.value = 0;
+    const qtySpanId = `qty-${input.id.replace('input-', '')}`;
+    const span = document.getElementById(qtySpanId);
+    if(span) span.innerText = 0;
+  });
+
+  // 3. Activamos SOLO la casilla de la Súper Promo
+  const cbPromo = document.querySelector('input[data-name="Súper Promo Viernes (DJ+Foto+Mobiliario)"]');
+  if(cbPromo) cbPromo.checked = true;
+
+  // 4. Recalculamos para actualizar el numerito
+  calcularTotal();
+}
 
 function updateQty(id, change) {
   const span = document.getElementById(`qty-${id}`);
@@ -69,7 +116,7 @@ function calcularTotal() {
   totalUI.innerText = `$${total.toLocaleString('es-AR')}`;
 }
 
-// Función para compilar el mensaje usando Emojis Nativos
+// --- FUNCIÓN DE WHATSAPP ---
 function enviarWhatsApp() {
   let total = 0;
   let lineas = [];
@@ -101,7 +148,6 @@ function enviarWhatsApp() {
 
   const numeroWp = "5493856865979"; 
   
-  // Usamos palabras clave para los emojis de teléfono y billete
   let texto = "E_TELEFONO ¡Hola Quinta Eventos!\n";
   texto += "Estuve viendo la web y armé un presupuesto estimativo para mi evento. E_FIESTA\n\n";
   
@@ -114,12 +160,12 @@ function enviarWhatsApp() {
 
   let mensajeCodificado = encodeURIComponent(texto);
 
-  // Reemplazamos las palabras clave por los códigos puros de WhatsApp
-  mensajeCodificado = mensajeCodificado.replace(/E_TELEFONO/g, "%F0%9F%93%9E"); // 📞
-  mensajeCodificado = mensajeCodificado.replace(/E_FIESTA/g, "%F0%9F%8E%89");   // 🎉
-  mensajeCodificado = mensajeCodificado.replace(/E_ABAJO/g, "%F0%9F%91%87");    // 👇
-  mensajeCodificado = mensajeCodificado.replace(/E_BILLETE/g, "%F0%9F%92%B5");   // 💵
-  mensajeCodificado = mensajeCodificado.replace(/E_CHECK/g, "%E2%9C%94%EF%B8%8F"); // ✔️ (Un tilde negro más formal)
+  // Inyección de Emojis Hexadecimales MODERNOS para WhatsApp
+  mensajeCodificado = mensajeCodificado.replace(/E_TELEFONO/g, "%F0%9F%93%B1"); // 📱 (Celular moderno)
+  mensajeCodificado = mensajeCodificado.replace(/E_FIESTA/g, "%F0%9F%A5%82");   // 🥂 (Copas brindando)
+  mensajeCodificado = mensajeCodificado.replace(/E_ABAJO/g, "%F0%9F%91%87");    // 👇 (Mano señalando)
+  mensajeCodificado = mensajeCodificado.replace(/E_BILLETE/g, "%F0%9F%92%B3");  // 💳 (Tarjeta de crédito / Pago)
+  mensajeCodificado = mensajeCodificado.replace(/E_CHECK/g, "%E2%9C%85");       // ✅ (Check verde clásico y vibrante)
 
   const url = `https://wa.me/${numeroWp}?text=${mensajeCodificado}`;
   window.open(url, '_blank');

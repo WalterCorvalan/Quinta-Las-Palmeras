@@ -21,11 +21,19 @@
 <body>
 
   <!-- NAVEGACIÓN -->
+  <!-- NAVEGACIÓN -->
   <nav>
     <div class="container">
       <div class="nav-logo">Quinta <span>Eventos</span></div>
       <div class="nav-links-right">
-        <a href="https://www.instagram.com/quinta_eventos_?igsh=MWEybnp2eHhjOTVodw==" target="_blank" class="nav-ig">📷 Instagram</a>
+        <a href="https://www.instagram.com/quinta_eventos_?igsh=MWEybnp2eHhjOTVodw==" target="_blank" class="nav-ig" style="display: flex; align-items: center; gap: 6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          Instagram
+        </a>
         <a href="#cotizador" class="nav-cta">Armá tu Evento</a>
       </div>
     </div>
@@ -46,22 +54,18 @@
       <div class="porque-item">
         <div class="porque-icon">✨</div>
         <h3>Entrada de Lujo</h3>
-        <p>Alfombra roja y pérgola decorada para ese momento especial. Opción de chispas frías para un ingreso triunfal.</p>
       </div>
       <div class="porque-item">
         <div class="porque-icon">💃</div>
         <h3>Salón de Baile</h3>
-        <p>Pista de baile completamente equipada con sistema de iluminación láser multicolor inmersiva.</p>
       </div>
       <div class="porque-item">
         <div class="porque-icon">🍹</div>
         <h3>Barra Iluminada</h3>
-        <p>Sector exclusivo de coctelería para despachar tragos personalizados con estilo durante toda la noche.</p>
       </div>
       <div class="porque-item">
         <div class="porque-icon">🎯</div>
         <h3>Diversión Total</h3>
-        <p>Sector infantil al aire libre con laberinto y metegoles. Parque iluminado con guirnaldas estilo kermés.</p>
       </div>
     </div>
   </section>
@@ -88,7 +92,7 @@
           <li>Pantalla y fotografía</li>
         </ul>
         
-        <a href="#cotizador" class="btn-primary" style="margin-top: 20px;">Quiero esta promo</a>
+        <a href="#cotizador" class="btn-primary" style="margin-top: 20px;" onclick="activarPromo()">Quiero esta promo</a>
       </div>
     </div>
   </section>
@@ -104,7 +108,8 @@
           <div class="carousel-container">
             <div class="carousel-track" id="track-parque">
               <img src="img/parque.png" alt="Amplio parque Quinta Eventos">
-              
+              <img src="img/parque_2.png" alt="Amplio parque Quinta Eventos">
+              <img src="img/parque_3.png" alt="Amplio parque Quinta Eventos">
               </div>
             
             <button class="carousel-btn prev" onclick="moveCarousel('track-parque', -1)">&#10094;</button>
@@ -350,6 +355,30 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- UBICACIÓN Y MAPA -->
+  <section class="ubicacion" style="background: var(--blanco); padding: 20px 0 80px 0;">
+    <div class="container">
+      <h2 class="section-title">Cómo llegar</h2>
+      <div style="display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center;">
+        <p style="font-size: 1.1rem; color: var(--texto-suave); max-width: 600px;">
+          <i class="hgi hgi-stroke hgi-rounded hgi-location-01" style="color: var(--acento); font-size: 1.4rem;"></i><br>
+          <strong>Machado 660, Del Viso</strong><br>
+          Paralela a Ruta 26, una zona excelente y tranquila para que tus invitados lleguen cómodos y seguros.
+        </p>
+        <!-- Mapa de Google Embebido -->
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3289.4796366567527!2d-58.79505502343286!3d-34.46533054751419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc9ec95d85200f%3A0x867bc5dc8577535b!2sAntonio%20Machado%20660%2C%20B1669%20Del%20Viso%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1718220800000!5m2!1ses-419!2sar" 
+          width="100%" 
+          height="350" 
+          style="border:0; border-radius: 12px; box-shadow: var(--sombra); max-width: 900px;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
     </div>
   </section>

@@ -1,172 +1,259 @@
-// --- INICIALIZACIÓN ---
-document.addEventListener('DOMContentLoaded', calcularTotal);
+/* ══════════════════════════════════════
+   QUINTA LAS PALMERAS — script.js
+   ══════════════════════════════════════ */
 
-// --- LÓGICA DE LOS CARRUSELES DE IMÁGENES ---
-let carouselState = {};
+/* ── CONFIGURACIÓN DE PRECIOS ── */
+const CONFIG = {
+  wa: "5493856865979",
+  alquiler: 1200000,
+  seguro:    50000,
+};
 
-function moveCarousel(trackId, direction) {
+/* ── FECHAS DISPONIBLES ──
+   Para actualizar: cambiar ocupado: true/false
+   Para agregar fecha nueva: copiar un objeto { dia, num, mes, ocupado }
+   ──────────────────────── */
+const FECHAS = [
+  { dia:"Sáb", num:"12", mes:"Jul", ocupado:false },
+  { dia:"Dom", num:"13", mes:"Jul", ocupado:true  },
+  { dia:"Sáb", num:"19", mes:"Jul", ocupado:false },
+  { dia:"Dom", num:"20", mes:"Jul", ocupado:false },
+  { dia:"Sáb", num:"26", mes:"Jul", ocupado:true  },
+  { dia:"Dom", num:"27", mes:"Jul", ocupado:false },
+  { dia:"Sáb", num:"2",  mes:"Ago", ocupado:false },
+  { dia:"Dom", num:"3",  mes:"Ago", ocupado:false },
+  { dia:"Sáb", num:"9",  mes:"Ago", ocupado:false },
+  { dia:"Dom", num:"10", mes:"Ago", ocupado:true  },
+];
+
+/* ── SERVICIOS ── */
+const SERVICIOS = [
+  { id:"catering",   icon:"🍽️", nombre:"Catering",        precio_pp:8000,  pp:true,  desc:"Por persona" },
+  { id:"barra",      icon:"🍺", nombre:"Barra de bebidas", precio:25000,    pp:false, desc:"Durante el evento" },
+  { id:"mozos",      icon:"🤵", nombre:"Mozos",            precio:15000,    pp:false, desc:"Personal de servicio" },
+  { id:"dj",         icon:"🎧", nombre:"DJ",               precio:60000,    pp:false, desc:"Con equipo de sonido" },
+  { id:"fotografia", icon:"📸", nombre:"Fotografía",       precio:45000,    pp:false, desc:"Cobertura completa" },
+  { id:"decoracion", icon:"🎨", nombre:"Decoración",       precio:30000,    pp:false, desc:"Ambientación temática" },
+];
+
+/* ── JUEGOS ── */
+const JUEGOS = [
+  { id:"metegol",  icon:"⚽", nombre:"Metegol",          precio:8000,  pp:false, desc:"Alquiler por evento" },
+  { id:"castillo", icon:"🏰", nombre:"Castillo inflable", precio:15000, pp:false, desc:"Ideal para los nenes" },
+  { id:"pool",     icon:"🔵", nombre:"Pool de pelotas",  precio:10000, pp:false, desc:"Para los más chicos" },
+];
+
+/* ── EXTRAS ── */
+const EXTRAS = [
+  { id:"vajilla",  icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000, pp:true,  desc:"Por persona" },
+  { id:"candybar", icon:"🍬", nombre:"Candy bar",          precio:10000,  pp:false, desc:"Mesitas para mesa dulce" },
+  { id:"chispas",  icon:"✨", nombre:"Chispas frías",      precio:15000,  pp:false, desc:"Para la entrada" },
+  { id:"torta",    icon:"🎂", nombre:"Torta del evento",   precio:18000,  pp:false, desc:"Personalizada" },
+];
+
+/* ── ESTADO ── */
+const E = {
+  personas: 40,
+  fecha: null,
+  servicios: new Set(),
+  juegos:    new Set(),
+  extras:    new Set(),
+};
+
+/* ══════════════════════════
+   CARRUSELES (espacios)
+   ══════════════════════════ */
+const carouselState = {};
+function moveCarousel(trackId, dir) {
   const track = document.getElementById(trackId);
   if (!track) return;
-  
-  if (carouselState[trackId] === undefined) {
-    carouselState[trackId] = 0;
-  }
-  
+  if (carouselState[trackId] === undefined) carouselState[trackId] = 0;
   const slides = track.querySelectorAll('img');
-  const totalSlides = slides.length;
-  
-  if (totalSlides <= 1) return; 
-  
-  carouselState[trackId] += direction;
-  
-  if (carouselState[trackId] >= totalSlides) carouselState[trackId] = 0;
-  if (carouselState[trackId] < 0) carouselState[trackId] = totalSlides - 1;
-  
-  const percentageToMove = carouselState[trackId] * -100;
-  track.style.transform = `translateX(${percentageToMove}%)`;
+  if (slides.length <= 1) return;
+  carouselState[trackId] = (carouselState[trackId] + dir + slides.length) % slides.length;
+  track.style.transform = `translateX(${carouselState[trackId] * -100}%)`;
 }
 
-// --- LÓGICA DEL COTIZADOR ---
-const checkboxes = document.querySelectorAll('.cot-calc-cb');
-const inputsQty = document.querySelectorAll('.cot-calc-qty');
-const resumenLista = document.getElementById('cot-resumen-lista');
-const totalUI = document.getElementById('cot-total-ui');
-
-// Función arreglada: Quita TODOS los checks por defecto y deja solo la promo
-function activarPromo() {
-  // 1. Desmarcamos todo (Alquiler base, seguro, extras, etc.)
-  checkboxes.forEach(cb => cb.checked = false);
-  
-  // 2. Ponemos todas las cantidades en 0 (mozos, catering, etc.)
-  inputsQty.forEach(input => {
-    input.value = 0;
-    const qtySpanId = `qty-${input.id.replace('input-', '')}`;
-    const span = document.getElementById(qtySpanId);
-    if(span) span.innerText = 0;
-  });
-
-  // 3. Activamos SOLO la casilla de la Súper Promo
-  const cbPromo = document.querySelector('input[data-name="Súper Promo Viernes (DJ+Foto+Mobiliario)"]');
-  if(cbPromo) cbPromo.checked = true;
-
-  // 4. Recalculamos para actualizar el numerito
-  calcularTotal();
-}
-
-function updateQty(id, change) {
-  const span = document.getElementById(`qty-${id}`);
-  const input = document.getElementById(`input-${id}`);
-  
-  let currentValue = parseInt(input.value) || 0;
-  let newValue = currentValue + change;
-  if (newValue < 0) newValue = 0; 
-  
-  span.innerText = newValue;
-  input.value = newValue;
-  
-  calcularTotal();
-}
-
-checkboxes.forEach(cb => {
-  cb.addEventListener('change', calcularTotal);
-});
-
-function calcularTotal() {
-  let total = 0;
-  let itemsSeleccionados = [];
-
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      const precio = parseInt(cb.getAttribute('data-price'));
-      const nombre = cb.getAttribute('data-name');
-      total += precio;
-      itemsSeleccionados.push({ nombre: nombre, cant: 1, precioTotal: precio });
-    }
-  });
-
-  inputsQty.forEach(input => {
-    const cant = parseInt(input.value);
-    if (cant > 0) {
-      const precioUnitario = parseInt(input.getAttribute('data-price'));
-      const nombre = input.getAttribute('data-name');
-      const precioTotal = precioUnitario * cant;
-      total += precioTotal;
-      itemsSeleccionados.push({ nombre: nombre, cant: cant, precioTotal: precioTotal });
-    }
-  });
-
-  if (itemsSeleccionados.length === 0) {
-    resumenLista.innerHTML = `<div style="text-align: center; color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 20px;">
-          Seleccioná opciones a la izquierda para empezar a armar tu evento.
-        </div>`;
-  } else {
-    let htmlResumen = '';
-    itemsSeleccionados.forEach(item => {
-      let textoNombre = item.cant > 1 ? `${item.cant}x ${item.nombre}` : item.nombre;
-      htmlResumen += `
-        <div class="cot-resumen-item">
-          <span>${textoNombre}</span>
-          <strong style="color: var(--acento)">$${item.precioTotal.toLocaleString('es-AR')}</strong>
-        </div>
-      `;
+/* ══════════════════════════
+   GALERÍA — filtros
+   ══════════════════════════ */
+function initFiltros() {
+  document.querySelectorAll('.filtro').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro').forEach(b => b.classList.remove('activo'));
+      btn.classList.add('activo');
+      const f = btn.dataset.filtro;
+      document.querySelectorAll('.galeria-item').forEach(item => {
+        const tipo = item.dataset.tipo;
+        item.classList.toggle('oculto', f !== 'todo' && tipo !== f);
+      });
     });
-    resumenLista.innerHTML = htmlResumen;
-  }
-
-  totalUI.innerText = `$${total.toLocaleString('es-AR')}`;
+  });
 }
 
-// --- FUNCIÓN DE WHATSAPP ---
-function enviarWhatsApp() {
-  let total = 0;
-  let lineas = [];
+/* ══════════════════════════
+   COTIZADOR
+   ══════════════════════════ */
 
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      const precio = parseInt(cb.getAttribute('data-price'));
-      const nombre = cb.getAttribute('data-name');
-      lineas.push(`E_CHECK ${nombre} ($${precio.toLocaleString('es-AR')})`);
-      total += precio;
-    }
-  });
-
-  inputsQty.forEach(input => {
-    const cant = parseInt(input.value);
-    if (cant > 0) {
-      const precioUnitario = parseInt(input.getAttribute('data-price'));
-      const nombre = input.getAttribute('data-name');
-      const subtotal = precioUnitario * cant;
-      lineas.push(`E_CHECK ${cant} x ${nombre} ($${subtotal.toLocaleString('es-AR')})`);
-      total += subtotal;
-    }
-  });
-
-  if (total === 0) {
-    alert('Por favor, seleccioná al menos una opción para cotizar.');
-    return;
-  }
-
-  const numeroWp = "5493856865979"; 
-  
-  let texto = "E_TELEFONO ¡Hola Quinta Eventos!\n";
-  texto += "Estuve viendo la web y armé un presupuesto estimativo para mi evento. E_FIESTA\n\n";
-  
-  texto += "E_ABAJO *Esto es lo que elegí:*\n";
-  texto += lineas.join('\n') + "\n\n";
-  
-  texto += `E_BILLETE *Total aproximado: $${total.toLocaleString('es-AR')}*\n\n`;
-  
-  texto += "¿Me cuentan si tienen fechas disponibles y cómo hacemos para ir a conocer la quinta? ¡Mil gracias!";
-
-  let mensajeCodificado = encodeURIComponent(texto);
-
-  // Inyección de Emojis Hexadecimales MODERNOS para WhatsApp
-  mensajeCodificado = mensajeCodificado.replace(/E_TELEFONO/g, "%F0%9F%93%B1"); // 📱 (Celular moderno)
-  mensajeCodificado = mensajeCodificado.replace(/E_FIESTA/g, "%F0%9F%A5%82");   // 🥂 (Copas brindando)
-  mensajeCodificado = mensajeCodificado.replace(/E_ABAJO/g, "%F0%9F%91%87");    // 👇 (Mano señalando)
-  mensajeCodificado = mensajeCodificado.replace(/E_BILLETE/g, "%F0%9F%92%B3");  // 💳 (Tarjeta de crédito / Pago)
-  mensajeCodificado = mensajeCodificado.replace(/E_CHECK/g, "%E2%9C%85");       // ✅ (Check verde clásico y vibrante)
-
-  const url = `https://wa.me/${numeroWp}?text=${mensajeCodificado}`;
-  window.open(url, '_blank');
+/* Fechas */
+function renderFechas() {
+  const grid = document.getElementById('fechas-grid');
+  if (!grid) return;
+  grid.innerHTML = FECHAS.map((f, i) => `
+    <div class="fecha-card ${f.ocupado ? 'ocupado' : ''}"
+         onclick="${f.ocupado ? '' : `elegirFecha(${i})`}">
+      <div class="fecha-check">✓</div>
+      <div class="fecha-dia">${f.dia}</div>
+      <div class="fecha-num">${f.num}</div>
+      <div class="fecha-mes">${f.mes}</div>
+      <span class="fecha-badge ${f.ocupado ? 'ocupado' : 'libre'}">${f.ocupado ? 'Reservado' : 'Disponible'}</span>
+    </div>
+  `).join('');
 }
+
+function elegirFecha(i) {
+  E.fecha = i;
+  document.querySelectorAll('.fecha-card').forEach((el, idx) => {
+    el.classList.toggle('activo', idx === i);
+  });
+  actualizar();
+}
+
+/* Opciones */
+function renderOpciones(items, gridId, setKey) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = items.map(item => {
+    const p = item.pp
+      ? `$${(item.precio_pp * E.personas).toLocaleString('es-AR')} (×${E.personas})`
+      : `$${(item.precio || 0).toLocaleString('es-AR')}`;
+    return `
+      <div class="opc-card ${E[setKey].has(item.id) ? 'activo' : ''}"
+           onclick="toggleOpc('${item.id}','${setKey}','${gridId}')">
+        <div class="opc-check">✓</div>
+        <span class="opc-icon">${item.icon}</span>
+        <div class="opc-nombre">${item.nombre}</div>
+        <div class="opc-precio">${p}</div>
+        <div class="opc-desc">${item.desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleOpc(id, setKey, gridId) {
+  E[setKey].has(id) ? E[setKey].delete(id) : E[setKey].add(id);
+  renderOpciones(
+    setKey === 'servicios' ? SERVICIOS : setKey === 'juegos' ? JUEGOS : EXTRAS,
+    gridId, setKey
+  );
+  actualizar();
+}
+
+/* Slider personas */
+function initSlider() {
+  const slider = document.getElementById('slider-personas');
+  if (!slider) return;
+  slider.addEventListener('input', () => {
+    E.personas = parseInt(slider.value);
+    document.getElementById('personas-num').textContent = E.personas;
+    document.getElementById('cap-sillas').textContent   = E.personas;
+    document.getElementById('cap-mesas').textContent    = Math.ceil(E.personas / 8);
+    document.getElementById('personas-icon').textContent =
+      E.personas <= 20 ? '👨‍👩‍👧' : E.personas <= 50 ? '👨‍👩‍👧‍👦' : '🎉';
+    const ok = E.personas <= 100;
+    document.getElementById('cap-espacio').textContent       = ok ? '✓' : '⚠️';
+    document.getElementById('cap-espacio-label').textContent = ok ? 'dentro del límite' : 'capacidad máxima';
+    // Re-render grids con precio actualizado
+    renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
+    renderOpciones(EXTRAS,    'grid-extras',    'extras');
+    actualizar();
+  });
+}
+
+/* Calcular */
+function calcular() {
+  let total = CONFIG.alquiler + CONFIG.seguro;
+  const lineas = ['✅ Alquiler de la quinta', '✅ Seguro obligatorio'];
+  const addItem = (items, set) => items.forEach(item => {
+    if (!set.has(item.id)) return;
+    const m = item.pp ? item.precio_pp * E.personas : item.precio;
+    total += m;
+    lineas.push(`✅ ${item.nombre}: $${m.toLocaleString('es-AR')}`);
+  });
+  addItem(SERVICIOS, E.servicios);
+  addItem(JUEGOS,    E.juegos);
+  addItem(EXTRAS,    E.extras);
+  return { total, lineas };
+}
+
+/* Toggle resumen mobile */
+function toggleResumen() {
+  const r = document.getElementById('cot-resumen');
+  if (r) r.classList.toggle('expandido');
+}
+
+/* Actualizar UI */
+function actualizar() {
+  const { total, lineas } = calcular();
+  const totalFmt = `$${total.toLocaleString('es-AR')}`;
+  const barEl   = document.getElementById('cot-total-bar');
+  const panelEl = document.getElementById('cot-total');
+  if (barEl)   barEl.textContent   = totalFmt;
+  if (panelEl) panelEl.textContent = totalFmt;
+
+  const f = E.fecha !== null
+    ? `${FECHAS[E.fecha].dia} ${FECHAS[E.fecha].num} de ${FECHAS[E.fecha].mes}`
+    : 'Sin fecha elegida';
+  document.getElementById('cot-detalle').textContent = `${E.personas} personas · ${f}`;
+
+  const itemsEl = document.getElementById('cot-resumen-items');
+  const extras = lineas.length - 2;
+  if (extras === 0) {
+    itemsEl.innerHTML = '<p class="cot-resumen-vacio">Alquiler y seguro incluidos</p>';
+  } else {
+    itemsEl.innerHTML = lineas.slice(2).map(l => {
+      const [nombre, precio] = l.replace('✅ ', '').split(': ');
+      return `<div class="cot-resumen-row"><span>${nombre}</span><strong>${precio}</strong></div>`;
+    }).join('');
+  }
+}
+
+/* WhatsApp */
+function enviarWA() {
+  const { total, lineas } = calcular();
+  const f = E.fecha !== null
+    ? `${FECHAS[E.fecha].dia} ${FECHAS[E.fecha].num} de ${FECHAS[E.fecha].mes}`
+    : 'fecha a confirmar';
+  let msg = `🌿 ¡Hola! Armé mi evento en la web de Quinta Las Palmeras.\n\n`;
+  msg += `👥 *Personas:* ${E.personas}\n`;
+  msg += `📅 *Fecha:* ${f}\n\n`;
+  msg += `*Lo que seleccioné:*\n${lineas.join('\n')}\n\n`;
+  msg += `💰 *Total estimado: $${total.toLocaleString('es-AR')}*\n\n`;
+  msg += `¿Me confirman disponibilidad? ¡Gracias!`;
+  window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* Promo: activa el paquete todo incluido */
+function activarPromo() {
+  E.servicios = new Set(['dj','fotografia']);
+  E.juegos    = new Set();
+  E.extras    = new Set();
+  renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
+  renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
+  renderOpciones(EXTRAS,    'grid-extras',    'extras');
+  actualizar();
+  document.getElementById('cotizador')?.scrollIntoView({ behavior:'smooth' });
+}
+
+/* ══════════════════════════
+   INIT
+   ══════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initFiltros();
+  renderFechas();
+  renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
+  renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
+  renderOpciones(EXTRAS,    'grid-extras',    'extras');
+  initSlider();
+  actualizar();
+});

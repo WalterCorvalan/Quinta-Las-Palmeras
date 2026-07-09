@@ -4,7 +4,7 @@
 
 /* ── CONFIGURACIÓN DE PRECIOS ── */
 const CONFIG = {
-  wa: "5493856865979",
+  wa: "5491159895267",
   alquiler: 1200000,
   seguro:    50000,
 };

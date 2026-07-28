@@ -353,3 +353,35 @@ document.addEventListener('DOMContentLoaded', () => {
   initSlider();
   actualizar();
 });
+
+async function pagarConMercadoPago() {
+  const { anticipo } = calcular(); // Usamos el valor del anticipo (o podés usar 'total')
+  
+  // Opcional: Cambiar el texto del botón mientras carga
+  // document.getElementById('btn-pagar').innerText = 'Generando pago...';
+
+  try {
+    // Llama a la función de Netlify que acabamos de crear
+    const respuesta = await fetch('/.netlify/functions/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        total: anticipo,
+        descripcion: "Anticipo - Quinta Las Palmeras"
+      })
+    });
+
+    const datos = await respuesta.json();
+    
+    // Redirige al cliente a la pantalla de pago de Mercado Pago
+    if (datos.init_point) {
+      window.location.href = datos.init_point;
+    } else {
+      alert("Hubo un error al generar el pago.");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Error de conexión al procesar el pago.");
+  }
+}

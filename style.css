@@ -1070,3 +1070,24 @@ footer {
 .input-group label { font-size: .85rem; font-weight: 600; color: var(--texto); }
 .input-text { padding: 12px; border: 2px solid var(--arena-d); border-radius: 8px; font-family: inherit; font-size: .95rem; color: var(--texto); outline: none; transition: border-color .2s; background: var(--blanco); }
 .input-text:focus { border-color: var(--verde-m); }
+
+/* Botón Mercado Pago */
+.btn-mp {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #009ee3;
+  color: white;
+  font-weight: 700;
+  font-size: .95rem;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-mp:hover {
+  background: #0087c1;
+}

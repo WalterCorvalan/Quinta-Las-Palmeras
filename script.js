@@ -355,13 +355,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function pagarConMercadoPago() {
-  const { anticipo } = calcular(); // Usamos el valor del anticipo (o podés usar 'total')
+  const { anticipo } = calcular(); 
   
-  // Opcional: Cambiar el texto del botón mientras carga
-  // document.getElementById('btn-pagar').innerText = 'Generando pago...';
+  // 1. Capturamos el botón
+  const btnPagar = document.getElementById('btn-pagar');
+  
+  // 2. Guardamos su contenido original (para no perder el iconito SVG si falla)
+  const contenidoOriginal = btnPagar.innerHTML;
+  
+  // 3. Lo ponemos en estado de carga y lo bloqueamos
+  btnPagar.innerHTML = '⏳ Generando pago...';
+  btnPagar.disabled = true;
+  btnPagar.style.opacity = '0.7'; // Le bajamos la opacidad para que se vea inactivo
+  btnPagar.style.cursor = 'not-allowed';
 
   try {
-    // Llama a la función de Netlify que acabamos de crear
     const respuesta = await fetch('/.netlify/functions/crear-pago', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -373,15 +381,25 @@ async function pagarConMercadoPago() {
 
     const datos = await respuesta.json();
     
-    // Redirige al cliente a la pantalla de pago de Mercado Pago
+    // Si todo sale bien, lo redirigimos. No hace falta restaurar el botón.
     if (datos.init_point) {
       window.location.href = datos.init_point;
     } else {
       alert("Hubo un error al generar el pago.");
+      restaurarBoton();
     }
 
   } catch (error) {
     console.error(error);
     alert("Error de conexión al procesar el pago.");
+    restaurarBoton();
+  }
+
+  // Función interna cortita para volver el botón a la normalidad si algo falla
+  function restaurarBoton() {
+    btnPagar.innerHTML = contenidoOriginal;
+    btnPagar.disabled = false;
+    btnPagar.style.opacity = '1';
+    btnPagar.style.cursor = 'pointer';
   }
 }

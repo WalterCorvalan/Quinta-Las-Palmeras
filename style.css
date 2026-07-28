@@ -1082,12 +1082,22 @@ footer {
   color: white;
   font-weight: 700;
   font-size: .95rem;
-  padding: 14px;
+  padding: 1px 5px; /* Reducimos el padding superior e inferior para contener el logo grande */
   border-radius: 999px;
   border: none;
   cursor: pointer;
   transition: background .2s;
+  margin-top: 10px;
 }
+
 .btn-mp:hover {
   background: #0087c1;
+}
+
+/* Estilo específico para ajustar el logo a la perfección */
+.mp-logo {
+  height: 48px; /* Podés probar subirlo o bajarlo entre 40px y 48px a tu gusto */
+  width: auto;
+  object-fit: contain;
+  display: block;
 }

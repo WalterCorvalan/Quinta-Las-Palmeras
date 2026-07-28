@@ -4,74 +4,72 @@
 
 /* ── CONFIGURACIÓN DE PRECIOS ── */
 const CONFIG = {
-  wa: "5491159895267",
-  alquiler: 1200000,
-  seguro:    50000,
+  wa: "5491159895267"
 };
-
-/* ── FECHAS DISPONIBLES ──
-   Para actualizar: cambiar ocupado: true/false
-   Para agregar fecha nueva: copiar un objeto { dia, num, mes, ocupado }
-   ──────────────────────── */
-const FECHAS = [
-  { dia:"Sáb", num:"12", mes:"Jul", ocupado:false },
-  { dia:"Dom", num:"13", mes:"Jul", ocupado:true  },
-  { dia:"Sáb", num:"19", mes:"Jul", ocupado:false },
-  { dia:"Dom", num:"20", mes:"Jul", ocupado:false },
-  { dia:"Sáb", num:"26", mes:"Jul", ocupado:true  },
-  { dia:"Dom", num:"27", mes:"Jul", ocupado:false },
-  { dia:"Sáb", num:"2",  mes:"Ago", ocupado:false },
-  { dia:"Dom", num:"3",  mes:"Ago", ocupado:false },
-  { dia:"Sáb", num:"9",  mes:"Ago", ocupado:false },
-  { dia:"Dom", num:"10", mes:"Ago", ocupado:true  },
-];
 
 /* ── SERVICIOS ── */
 const SERVICIOS = [
+  { id:"sonido",     icon:"🔈", nombre:"Equipo de sonido", precio:0,        pp:false, desc:"Incluido en el espacio" },
   { id:"catering",   icon:"🍽️", nombre:"Catering",        precio_pp:8000,  pp:true,  desc:"Por persona" },
   { id:"barra",      icon:"🍺", nombre:"Barra de bebidas", precio:25000,    pp:false, desc:"Durante el evento" },
   { id:"mozos",      icon:"🤵", nombre:"Mozos",            precio:15000,    pp:false, desc:"Personal de servicio" },
-  { id:"dj",         icon:"🎧", nombre:"DJ",               precio:60000,    pp:false, desc:"Con equipo de sonido" },
+  { id:"dj",         icon:"🎧", nombre:"DJ",               precio:60000,    pp:false, desc:"Con equipo propio" },
   { id:"fotografia", icon:"📸", nombre:"Fotografía",       precio:45000,    pp:false, desc:"Cobertura completa" },
-  { id:"decoracion", icon:"🎨", nombre:"Decoración",       precio:30000,    pp:false, desc:"Ambientación temática" },
+  { id:"decoracion", icon:"🎨", nombre:"Decoración",       precio:30000,    pp:false, desc:"Ambientación temática" }
 ];
 
 /* ── JUEGOS ── */
 const JUEGOS = [
   { id:"metegol",  icon:"⚽", nombre:"Metegol",          precio:8000,  pp:false, desc:"Alquiler por evento" },
   { id:"castillo", icon:"🏰", nombre:"Castillo inflable", precio:15000, pp:false, desc:"Ideal para los nenes" },
-  { id:"pool",     icon:"🔵", nombre:"Pool de pelotas",  precio:10000, pp:false, desc:"Para los más chicos" },
+  { id:"pool",     icon:"🔵", nombre:"Pool de pelotas",  precio:10000, pp:false, desc:"Para los más chicos" }
 ];
 
 /* ── EXTRAS ── */
 const EXTRAS = [
-  { id:"vajilla",  icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000, pp:true,  desc:"Por persona" },
-  { id:"candybar", icon:"🍬", nombre:"Candy bar",          precio:10000,  pp:false, desc:"Mesitas para mesa dulce" },
-  { id:"chispas",  icon:"✨", nombre:"Chispas frías",      precio:15000,  pp:false, desc:"Para la entrada" },
-  { id:"torta",    icon:"🎂", nombre:"Torta del evento",   precio:18000,  pp:false, desc:"Personalizada" },
+  { id:"parrilla",    icon:"🍖", nombre:"Parrilla",           precio:0,        pp:false, desc:"Sector equipado" },
+  { id:"heladera",    icon:"🧊", nombre:"Heladera",           precio:0,        pp:false, desc:"Incluido" },
+  { id:"apoya_torta", icon:"🎂", nombre:"Apoya torta",        precio:0,        pp:false, desc:"Incluido" },
+  { id:"shimer",      icon:"✨", nombre:"Shimer",             precio:0,        pp:false, desc:"Panel incluido" },
+  { id:"vajilla",     icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000,  pp:true,  desc:"Por persona" },
+  { id:"candybar",    icon:"🍬", nombre:"Candy bar",          precio:10000,    pp:false, desc:"Mesitas para mesa dulce" },
+  { id:"chispas",     icon:"🎆", nombre:"Chispas frías",      precio:15000,    pp:false, desc:"Para la entrada" },
+  { id:"torta",       icon:"🍰", nombre:"Torta del evento",   precio:18000,    pp:false, desc:"Personalizada" }
 ];
 
-/* ── ESTADO ── */
+/* ── ESTADO INICIAL ── */
 const E = {
+  espacio: 'salon',  
+  dia: 'semana',     
+  fechaExacta: '',   
+  horaInicio: '',    
   personas: 40,
-  fecha: null,
-  servicios: new Set(),
+  servicios: new Set(['sonido']),
   juegos:    new Set(),
-  extras:    new Set(),
+  extras:    new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']),
 };
 
 /* ══════════════════════════
-   CARRUSELES (espacios)
+   BANNER PROMO DINÁMICO
    ══════════════════════════ */
-const carouselState = {};
-function moveCarousel(trackId, dir) {
-  const track = document.getElementById(trackId);
-  if (!track) return;
-  if (carouselState[trackId] === undefined) carouselState[trackId] = 0;
-  const slides = track.querySelectorAll('img');
-  if (slides.length <= 1) return;
-  carouselState[trackId] = (carouselState[trackId] + dir + slides.length) % slides.length;
-  track.style.transform = `translateX(${carouselState[trackId] * -100}%)`;
+function actualizarBannerPromo() {
+  const basePromo = 1200000;
+  const costoPersonasExtra = (60 - 40) * 25000;
+  const djPrecio = SERVICIOS.find(s => s.id === 'dj').precio;
+  const fotoPrecio = SERVICIOS.find(s => s.id === 'fotografia').precio;
+  
+  const totalReal = basePromo + costoPersonasExtra + djPrecio + fotoPrecio; 
+  const descuentoPromo = 5000;
+  const totalPromo = totalReal - descuentoPromo;
+  
+  const anticipo = basePromo;
+  const resto = totalPromo - anticipo;
+  const cuotas = Math.round(resto / 3);
+  
+  const antEl = document.querySelector('.promo-anticipo');
+  const cuotasEl = document.querySelector('.promo-cuotas');
+  if(antEl) antEl.innerHTML = `Anticipo <strong>$${anticipo.toLocaleString('es-AR')}</strong>`;
+  if(cuotasEl) cuotasEl.innerHTML = `+ 3 cuotas de <strong>$${cuotas.toLocaleString('es-AR')}</strong>`;
 }
 
 /* ══════════════════════════
@@ -92,41 +90,42 @@ function initFiltros() {
 }
 
 /* ══════════════════════════
-   COTIZADOR
+   COTIZADOR DINÁMICO
    ══════════════════════════ */
 
-/* Fechas */
-function renderFechas() {
-  const grid = document.getElementById('fechas-grid');
-  if (!grid) return;
-  grid.innerHTML = FECHAS.map((f, i) => `
-    <div class="fecha-card ${f.ocupado ? 'ocupado' : ''}"
-         onclick="${f.ocupado ? '' : `elegirFecha(${i})`}">
-      <div class="fecha-check">✓</div>
-      <div class="fecha-dia">${f.dia}</div>
-      <div class="fecha-num">${f.num}</div>
-      <div class="fecha-mes">${f.mes}</div>
-      <span class="fecha-badge ${f.ocupado ? 'ocupado' : 'libre'}">${f.ocupado ? 'Reservado' : 'Disponible'}</span>
-    </div>
-  `).join('');
-}
-
-function elegirFecha(i) {
-  E.fecha = i;
-  document.querySelectorAll('.fecha-card').forEach((el, idx) => {
-    el.classList.toggle('activo', idx === i);
-  });
+function setEspacio(tipo) {
+  E.espacio = tipo;
+  document.getElementById('opc-salon').classList.toggle('activo', tipo === 'salon');
+  document.getElementById('opc-quinta').classList.toggle('activo', tipo === 'quinta');
   actualizar();
 }
 
-/* Opciones */
+function setDia(tipo) {
+  E.dia = tipo;
+  document.getElementById('opc-semana').classList.toggle('activo', tipo === 'semana');
+  document.getElementById('opc-finde').classList.toggle('activo', tipo === 'finde');
+  actualizar();
+}
+
+function setFechaHora() {
+  E.fechaExacta = document.getElementById('fecha-exacta').value;
+  E.horaInicio = document.getElementById('hora-inicio').value;
+  actualizar();
+}
+
 function renderOpciones(items, gridId, setKey) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
   grid.innerHTML = items.map(item => {
-    const p = item.pp
-      ? `$${(item.precio_pp * E.personas).toLocaleString('es-AR')} (×${E.personas})`
-      : `$${(item.precio || 0).toLocaleString('es-AR')}`;
+    let p = "";
+    if (item.precio === 0 && !item.pp) {
+      p = "Incluido";
+    } else {
+      p = item.pp 
+        ? `$${(item.precio_pp * E.personas).toLocaleString('es-AR')} (×${E.personas})`
+        : `$${(item.precio || 0).toLocaleString('es-AR')}`;
+    }
+
     return `
       <div class="opc-card ${E[setKey].has(item.id) ? 'activo' : ''}"
            onclick="toggleOpc('${item.id}','${setKey}','${gridId}')">
@@ -149,7 +148,6 @@ function toggleOpc(id, setKey, gridId) {
   actualizar();
 }
 
-/* Slider personas */
 function initSlider() {
   const slider = document.getElementById('slider-personas');
   if (!slider) return;
@@ -160,97 +158,195 @@ function initSlider() {
     document.getElementById('cap-mesas').textContent    = Math.ceil(E.personas / 8);
     document.getElementById('personas-icon').textContent =
       E.personas <= 20 ? '👨‍👩‍👧' : E.personas <= 50 ? '👨‍👩‍👧‍👦' : '🎉';
+    
     const ok = E.personas <= 100;
     document.getElementById('cap-espacio').textContent       = ok ? '✓' : '⚠️';
     document.getElementById('cap-espacio-label').textContent = ok ? 'dentro del límite' : 'capacidad máxima';
-    // Re-render grids con precio actualizado
+    
     renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
     renderOpciones(EXTRAS,    'grid-extras',    'extras');
     actualizar();
   });
 }
 
-/* Calcular */
+/* Calcular lógica principal */
 function calcular() {
-  let total = CONFIG.alquiler + CONFIG.seguro;
-  const lineas = ['✅ Alquiler de la quinta', '✅ Seguro obligatorio'];
+  let baseAlquiler = 0;
+  let nombreAlquiler = '';
+
+  if (E.espacio === 'salon' && E.dia === 'semana') { baseAlquiler = 350000; nombreAlquiler = 'Salón (Día de Semana)'; }
+  if (E.espacio === 'salon' && E.dia === 'finde')  { baseAlquiler = 650000; nombreAlquiler = 'Salón (Fin de Semana)'; }
+  if (E.espacio === 'quinta' && E.dia === 'semana') { baseAlquiler = 1000000; nombreAlquiler = 'Quinta (Día de Semana)'; }
+  if (E.espacio === 'quinta' && E.dia === 'finde')  { baseAlquiler = 1200000; nombreAlquiler = 'Quinta (Fin de Semana)'; }
+
+  let costoPersonasExtra = 0;
+  if (E.personas > 40) {
+    costoPersonasExtra = (E.personas - 40) * 25000;
+  }
+
+  let total = baseAlquiler + costoPersonasExtra;
+
+  // Creamos un array de objetos para guardar temporalmente y poder ordenar por precio
+  let itemsDesglose = [];
+
+  itemsDesglose.push({ nombre: `Alquiler base (${nombreAlquiler})`, precio: baseAlquiler });
+
+  if (costoPersonasExtra > 0) {
+    itemsDesglose.push({ nombre: `Adicional por excedente (${E.personas - 40} invitados extra)`, precio: costoPersonasExtra });
+  }
+
   const addItem = (items, set) => items.forEach(item => {
     if (!set.has(item.id)) return;
     const m = item.pp ? item.precio_pp * E.personas : item.precio;
     total += m;
-    lineas.push(`✅ ${item.nombre}: $${m.toLocaleString('es-AR')}`);
+    itemsDesglose.push({ nombre: item.nombre, precio: m });
   });
+  
   addItem(SERVICIOS, E.servicios);
   addItem(JUEGOS,    E.juegos);
   addItem(EXTRAS,    E.extras);
-  return { total, lineas };
+  
+  // Ordenamos matemáticamente de mayor a menor
+  itemsDesglose.sort((a, b) => b.precio - a.precio);
+
+  // Convertimos los objetos ya ordenados a su formato de texto
+  const lineas = itemsDesglose.map(item => {
+    const labelPrecio = item.precio === 0 ? 'Incluido' : `$${item.precio.toLocaleString('es-AR')}`;
+    return `✅ ${item.nombre}: ${labelPrecio}`;
+  });
+
+  // Detección automática del Paquete Promo (se agrega al final del todo)
+  const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.servicios.has('dj') && E.servicios.has('fotografia'));
+  if (esPromo) {
+    total -= 5000;
+    lineas.push(`🎁 Bonificación paquete Todo Incluido: -$5.000`);
+  }
+
+  let anticipo = baseAlquiler;
+  let resto = total - anticipo;
+  let cuotas = resto > 0 ? Math.round(resto / 3) : 0;
+  
+  return { total, lineas, anticipo, cuotas, resto };
 }
 
-/* Toggle resumen mobile */
 function toggleResumen() {
   const r = document.getElementById('cot-resumen');
   if (r) r.classList.toggle('expandido');
 }
 
-/* Actualizar UI */
 function actualizar() {
-  const { total, lineas } = calcular();
+  const { total, lineas, anticipo, cuotas, resto } = calcular();
   const totalFmt = `$${total.toLocaleString('es-AR')}`;
+  
   const barEl   = document.getElementById('cot-total-bar');
   const panelEl = document.getElementById('cot-total');
   if (barEl)   barEl.textContent   = totalFmt;
   if (panelEl) panelEl.textContent = totalFmt;
 
-  const f = E.fecha !== null
-    ? `${FECHAS[E.fecha].dia} ${FECHAS[E.fecha].num} de ${FECHAS[E.fecha].mes}`
-    : 'Sin fecha elegida';
-  document.getElementById('cot-detalle').textContent = `${E.personas} personas · ${f}`;
+  const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
+  let diaMostrado = E.dia === 'semana' ? 'Día de Sem' : 'Finde';
+  
+  if (E.fechaExacta) {
+    const [year, month, day] = E.fechaExacta.split('-');
+    diaMostrado += ` (${day}/${month})`;
+  }
+  if (E.horaInicio) {
+    diaMostrado += ` a las ${E.horaInicio}hs`;
+  }
+
+  document.getElementById('cot-detalle').textContent = `${E.personas} pers · ${esp} · ${diaMostrado}`;
 
   const itemsEl = document.getElementById('cot-resumen-items');
-  const extras = lineas.length - 2;
-  if (extras === 0) {
-    itemsEl.innerHTML = '<p class="cot-resumen-vacio">Alquiler y seguro incluidos</p>';
+  
+  let html = lineas.map(l => {
+    const partes = l.replace('✅ ', '').replace('🎁 ', '').split(': ');
+    const nombre = partes[0];
+    const precio = partes.slice(1).join(': ');
+    return `<div class="cot-resumen-row"><span>${nombre}</span><strong>${precio}</strong></div>`;
+  }).join('');
+
+  if (resto > 0) {
+    html += `
+      <div class="cot-resumen-row" style="margin-top:14px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.4); color:var(--acento);">
+        <span style="font-weight:600;">💳 Plan de Pagos</span>
+        <div style="text-align:right;">
+          <div style="font-size:0.85rem; font-weight:700;">Anticipo $${anticipo.toLocaleString('es-AR')}</div>
+          <div style="font-size:0.75rem;">+ 3 cuotas de $${cuotas.toLocaleString('es-AR')}</div>
+        </div>
+      </div>
+    `;
   } else {
-    itemsEl.innerHTML = lineas.slice(2).map(l => {
-      const [nombre, precio] = l.replace('✅ ', '').split(': ');
-      return `<div class="cot-resumen-row"><span>${nombre}</span><strong>${precio}</strong></div>`;
-    }).join('');
+    html += `
+      <div class="cot-resumen-row" style="margin-top:14px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.4); color:var(--acento);">
+        <span style="font-weight:600;">💳 Pago Único</span>
+        <div style="text-align:right;">
+          <div style="font-size:0.85rem; font-weight:700;">$${anticipo.toLocaleString('es-AR')}</div>
+        </div>
+      </div>
+    `;
   }
+
+  itemsEl.innerHTML = html;
 }
 
-/* WhatsApp */
 function enviarWA() {
-  const { total, lineas } = calcular();
-  const f = E.fecha !== null
-    ? `${FECHAS[E.fecha].dia} ${FECHAS[E.fecha].num} de ${FECHAS[E.fecha].mes}`
-    : 'fecha a confirmar';
+  const { total, lineas, anticipo, cuotas, resto } = calcular();
+  const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta Completa';
+  const dia = E.dia === 'semana' ? 'Día de Semana' : 'Fin de Semana';
+  
   let msg = `🌿 ¡Hola! Armé mi evento en la web de Quinta Las Palmeras.\n\n`;
-  msg += `👥 *Personas:* ${E.personas}\n`;
-  msg += `📅 *Fecha:* ${f}\n\n`;
-  msg += `*Lo que seleccioné:*\n${lineas.join('\n')}\n\n`;
-  msg += `💰 *Total estimado: $${total.toLocaleString('es-AR')}*\n\n`;
+  msg += `📍 *Espacio elegido:* ${esp}\n`;
+  msg += `📅 *Tipo de día:* ${dia}\n`;
+  
+  if (E.fechaExacta) {
+    const [year, month, day] = E.fechaExacta.split('-');
+    msg += `🗓️ *Fecha exacta:* ${day}/${month}/${year}\n`;
+  }
+  if (E.horaInicio) {
+    msg += `⏰ *Horario de inicio:* ${E.horaInicio} hs\n`;
+  }
+  
+  msg += `👥 *Personas:* ${E.personas}\n\n`;
+  msg += `*Detalle del presupuesto:*\n${lineas.join('\n')}\n\n`;
+  msg += `💰 *Total estimado: $${total.toLocaleString('es-AR')}*\n`;
+  
+  if (resto > 0) {
+    msg += `💳 *Plan sugerido:* Anticipo de $${anticipo.toLocaleString('es-AR')} y 3 cuotas de $${cuotas.toLocaleString('es-AR')}\n\n`;
+    msg += `✅ *Para bloquear la fecha, podés transferir el anticipo al Alias:* QUINTA.PALMERAS\n\n`;
+  } else {
+    msg += `✅ *Para bloquear la fecha, podés transferir el total al Alias:* QUINTA.PALMERAS\n\n`;
+  }
+  
   msg += `¿Me confirman disponibilidad? ¡Gracias!`;
+  
   window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-/* Promo: activa el paquete todo incluido */
 function activarPromo() {
-  E.servicios = new Set(['dj','fotografia']);
+  setEspacio('quinta');
+  setDia('finde');
+  
+  const slider = document.getElementById('slider-personas');
+  if(slider) {
+      slider.value = 60;
+      slider.dispatchEvent(new Event('input'));
+  }
+
+  E.servicios = new Set(['dj','fotografia','sonido']);
   E.juegos    = new Set();
-  E.extras    = new Set();
+  E.extras    = new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']);
+  
   renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
   renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
   renderOpciones(EXTRAS,    'grid-extras',    'extras');
   actualizar();
+  
   document.getElementById('cotizador')?.scrollIntoView({ behavior:'smooth' });
 }
 
-/* ══════════════════════════
-   INIT
-   ══════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  actualizarBannerPromo();
   initFiltros();
-  renderFechas();
   renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
   renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
   renderOpciones(EXTRAS,    'grid-extras',    'extras');

@@ -74,41 +74,26 @@
 
       <!-- GRID -->
       <div class="galeria-grid" id="galeria-grid">
-
-        <!-- FOTOS: reemplazar src con las imágenes reales -->
-        <!-- Para agregar foto: copiar un bloque <div class="galeria-item foto"> -->
-        <!-- Para agregar video YouTube: copiar bloque con data-tipo="video" -->
-        <!-- Para agregar video Instagram: copiar bloque con data-tipo="video" y class="ig-embed" -->
-
         <div class="galeria-item foto" data-tipo="foto">
           <img src="img/parque.png" alt="Parque quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Parque con pérgolas</span></div>
         </div>
-
         <div class="galeria-item foto grande" data-tipo="foto">
           <img src="img/quincho.png" alt="Quincho quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Quincho equipado</span></div>
         </div>
-
         <div class="galeria-item foto" data-tipo="foto">
           <img src="img/pileta.png" alt="Pileta quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Pileta iluminada</span></div>
         </div>
-
         <div class="galeria-item foto" data-tipo="foto">
           <img src="img/parque_2.png" alt="Evento en el parque" loading="lazy">
           <div class="galeria-overlay"><span>Eventos en el parque</span></div>
         </div>
-
-        <!-- VIDEO YOUTUBE: reemplazar VIDEO_ID con el ID real del video -->
+        
         <div class="galeria-item video grande" data-tipo="video">
           <div class="video-wrap">
-            <iframe
-              src="https://www.youtube.com/embed/VIDEO_ID_1?rel=0&modestbranding=1"
-              title="Evento en Quinta Las Palmeras"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen loading="lazy">
-            </iframe>
+            <iframe src="https://www.youtube.com/embed/VIDEO_ID_1?rel=0&modestbranding=1" title="Evento en Quinta Las Palmeras" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="video-label">🎬 Cumpleaños en la quinta</div>
         </div>
@@ -117,42 +102,15 @@
           <img src="img/parque_3.png" alt="Decoración evento" loading="lazy">
           <div class="galeria-overlay"><span>Decoración</span></div>
         </div>
-
         <div class="galeria-item foto" data-tipo="foto">
           <img src="img/pileta_2.png" alt="Pileta de noche" loading="lazy">
           <div class="galeria-overlay"><span>Ambiente nocturno</span></div>
         </div>
-
-        <!-- VIDEO YOUTUBE 2 -->
-        <div class="galeria-item video" data-tipo="video">
-          <div class="video-wrap">
-            <iframe
-              src="https://www.youtube.com/embed/VIDEO_ID_2?rel=0&modestbranding=1"
-              title="Fiesta en Quinta Las Palmeras"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen loading="lazy">
-            </iframe>
-          </div>
-          <div class="video-label">🎬 Casamiento</div>
-        </div>
-
-        <!-- VIDEO INSTAGRAM REEL -->
-        <!-- Para embeds de Instagram: pegar el blockquote de Instagram acá -->
-        <!-- Ejemplo:
-        <div class="galeria-item video" data-tipo="video">
-          <div class="ig-embed-wrap">
-            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/TU_REEL_ID/" data-instgrm-version="14"></blockquote>
-          </div>
-          <div class="video-label">🎬 Reel de Instagram</div>
-        </div>
-        -->
-
         <div class="galeria-item foto" data-tipo="foto">
           <img src="img/quincho_2.png" alt="Sector parrilla" loading="lazy">
           <div class="galeria-overlay"><span>Sector parrilla</span></div>
         </div>
-
-      </div><!-- /galeria-grid -->
+      </div>
 
       <div class="galeria-ig-cta">
         <p>¿Querés ver más?</p>
@@ -196,14 +154,82 @@
       </div>
 
       <div class="cot-layout">
-
         <!-- PASOS -->
         <div class="cot-pasos">
 
-          <!-- PASO 1: PERSONAS -->
+          <!-- PASO 1: ESPACIO -->
           <div class="cot-paso">
             <div class="cot-paso-head">
               <span class="cot-paso-num">1</span>
+              <h3>¿Qué espacio vas a alquilar?</h3>
+            </div>
+            <div class="cot-paso-body">
+              <div class="opc-grid">
+                <div class="opc-card activo" id="opc-salon" onclick="setEspacio('salon')">
+                  <div class="opc-check">✓</div>
+                  <span class="opc-icon">🏠</span>
+                  <div class="opc-nombre">Solo Salón</div>
+                  <div class="opc-desc">Eventos de 5 horas</div>
+                </div>
+                <div class="opc-card" id="opc-quinta" onclick="setEspacio('quinta')">
+                  <div class="opc-check">✓</div>
+                  <span class="opc-icon">🌳</span>
+                  <div class="opc-nombre">Quinta Completa</div>
+                  <div class="opc-desc">Parque, pileta y más (5 hs)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 2: TIPO DE DÍA -->
+          <div class="cot-paso">
+            <div class="cot-paso-head">
+              <span class="cot-paso-num">2</span>
+              <h3>¿Tipo de día?</h3>
+            </div>
+            <div class="cot-paso-body">
+              <div class="opc-grid">
+                <div class="opc-card activo" id="opc-semana" onclick="setDia('semana')">
+                  <div class="opc-check">✓</div>
+                  <span class="opc-icon">📅</span>
+                  <div class="opc-nombre">Día de semana</div>
+                  <div class="opc-desc">Lunes a Jueves</div>
+                </div>
+                <div class="opc-card" id="opc-finde" onclick="setDia('finde')">
+                  <div class="opc-check">✓</div>
+                  <span class="opc-icon">🎉</span>
+                  <div class="opc-nombre">Fin de semana</div>
+                  <div class="opc-desc">Vie a Dom y Feriados</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 3: FECHA Y HORA (NUEVO CALENDARIO) -->
+          <div class="cot-paso">
+            <div class="cot-paso-head">
+              <span class="cot-paso-num">3</span>
+              <h3>Elegí la fecha y hora</h3>
+            </div>
+            <div class="cot-paso-body">
+              <div class="fecha-hora-grid">
+                <div class="input-group">
+                  <label for="fecha-exacta">Fecha del evento</label>
+                  <input type="date" id="fecha-exacta" class="input-text" onchange="setFechaHora()">
+                </div>
+                <div class="input-group">
+                  <label for="hora-inicio">Hora de inicio</label>
+                  <input type="time" id="hora-inicio" class="input-text" onchange="setFechaHora()">
+                </div>
+              </div>
+              <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* Recordá que los alquileres base incluyen 5 horas de evento.</p>
+            </div>
+          </div>
+
+          <!-- PASO 4: PERSONAS -->
+          <div class="cot-paso">
+            <div class="cot-paso-head">
+              <span class="cot-paso-num">4</span>
               <h3>¿Cuántas personas van a ser?</h3>
             </div>
             <div class="cot-paso-body">
@@ -212,8 +238,11 @@
                 <div class="personas-num" id="personas-num">40</div>
                 <div class="personas-label">personas</div>
               </div>
-              <input type="range" id="slider-personas" min="10" max="100" value="40" step="5" class="slider">
+              <input type="range" id="slider-personas" min="10" max="100" value="40" step="1" class="slider">
               <div class="slider-limits"><span>10</span><span>100</span></div>
+              <p style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
+                <strong>Nota:</strong> El alquiler base cubre hasta 40 personas. Adicional: $25.000 por invitado extra.
+              </p>
               <div class="cap-grid">
                 <div class="cap-item">
                   <div class="cap-icon">🪑</div>
@@ -234,25 +263,10 @@
             </div>
           </div>
 
-          <!-- PASO 2: FECHA -->
+          <!-- PASO 5: SERVICIOS -->
           <div class="cot-paso">
             <div class="cot-paso-head">
-              <span class="cot-paso-num">2</span>
-              <h3>¿Cuándo querés festejar?</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="fechas-grid" id="fechas-grid"><!-- JS --></div>
-              <div class="fechas-leyenda">
-                <span><span class="dot verde"></span>Disponible</span>
-                <span><span class="dot rojo"></span>Reservado</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- PASO 3: SERVICIOS -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">3</span>
+              <span class="cot-paso-num">5</span>
               <h3>¿Qué servicios necesitás?</h3>
             </div>
             <div class="cot-paso-body">
@@ -260,10 +274,10 @@
             </div>
           </div>
 
-          <!-- PASO 4: JUEGOS -->
+          <!-- PASO 6: JUEGOS -->
           <div class="cot-paso">
             <div class="cot-paso-head">
-              <span class="cot-paso-num">4</span>
+              <span class="cot-paso-num">6</span>
               <h3>¿Sumamos juegos o actividades?</h3>
             </div>
             <div class="cot-paso-body">
@@ -271,10 +285,10 @@
             </div>
           </div>
 
-          <!-- PASO 5: EXTRAS -->
+          <!-- PASO 7: EXTRAS -->
           <div class="cot-paso">
             <div class="cot-paso-head">
-              <span class="cot-paso-num">5</span>
+              <span class="cot-paso-num">7</span>
               <h3>¿Algo más para tu evento?</h3>
             </div>
             <div class="cot-paso-body">
@@ -284,38 +298,34 @@
 
         </div><!-- /cot-pasos -->
 
-        <!-- RESUMEN: barra fija mobile + sticky desktop -->
+        <!-- RESUMEN -->
         <div class="cot-resumen" id="cot-resumen">
-
-          <!-- Barra siempre visible en mobile (oculta en desktop) -->
           <div class="cot-resumen-bar" onclick="toggleResumen()">
             <div class="cot-resumen-bar-left">
               <span class="cot-resumen-bar-label">Tu presupuesto estimado</span>
-              <span class="cot-total-num" id="cot-total-bar">$1.250.000</span>
+              <span class="cot-total-num" id="cot-total-bar">$0</span>
             </div>
             <div class="cot-resumen-bar-toggle">
               Ver detalle <span class="toggle-arrow">▲</span>
             </div>
           </div>
 
-          <!-- Cuerpo expandible en mobile, siempre visible en desktop -->
           <div class="cot-resumen-body">
             <h3>Tu presupuesto</h3>
             <div class="cot-resumen-items" id="cot-resumen-items">
-              <p class="cot-resumen-vacio">Elegí opciones para ver el total</p>
+              <!-- JS -->
             </div>
             <div class="cot-resumen-total-row">
               <span>Total estimado</span>
-              <span class="cot-total-num" id="cot-total">$1.250.000</span>
+              <span class="cot-total-num" id="cot-total">$0</span>
             </div>
-            <div class="cot-resumen-detalle" id="cot-detalle">40 personas · Sin fecha elegida</div>
+            <div class="cot-resumen-detalle" id="cot-detalle">40 personas · Salón en día de semana</div>
             <button class="btn-wa" onclick="enviarWA()">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
               Consultar por WhatsApp
             </button>
             <p class="cot-nota">* Precios estimados. Confirmamos disponibilidad y valores actualizados.</p>
           </div>
-
         </div>
 
       </div><!-- /cot-layout -->
@@ -326,12 +336,15 @@
   <section class="ubicacion">
     <div class="container">
       <h2 class="section-title">Cómo llegar</h2>
-      <p class="section-subtitle">Machado 660, Del Viso — zona tranquila y de fácil acceso.</p>
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3289.4796366567527!2d-58.79505502343286!3d-34.46533054751419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc9ec95d85200f%3A0x867bc5dc8577535b!2sAntonio%20Machado%20660%2C%20B1669%20Del%20Viso%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1718220800000!5m2!1ses-419!2sar"
-        width="100%" height="300"
-        style="border:0;border-radius:12px;"
-        allowfullscreen loading="lazy"
+      <p class="section-subtitle">Antonio Machado 660, Del Viso — zona tranquila y de fácil acceso.</p>
+      <iframe 
+        src="https://maps.google.com/maps?q=Quinta+para+eventos,+Antonio+Machado+660,+Del+Viso&t=m&z=16&output=embed&iwloc=near&hl=es" 
+        width="100%" 
+        height="300" 
+        style="border:0; border-radius:12px;" 
+        allowfullscreen 
+        loading="lazy" 
+        title="Mapa Quinta Las Palmeras"
         referrerpolicy="no-referrer-when-downgrade">
       </iframe>
     </div>
@@ -350,7 +363,7 @@
     <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </a>
 
-  <!-- Instagram embed script (solo carga si hay reels embebidos) -->
+  <!-- Instagram embed script -->
   <script async defer src="//www.instagram.com/embed.js"></script>
   <script src="script.js"></script>
 </body>

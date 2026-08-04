@@ -2,41 +2,44 @@
    QUINTA LAS PALMERAS — script.js
    ══════════════════════════════════════ */
 
-/* ── SERVICIOS ── */
-const SERVICIOS = [
-  { id:"sonido",     icon:"🔈", nombre:"Equipo de sonido", precio:0,        pp:false, desc:"Incluido en el espacio" },
-  { id:"catering",   icon:"🍽️", nombre:"Catering",        precio_pp:8000,  pp:true,  desc:"Por persona" },
-  { id:"barra",      icon:"🍺", nombre:"Barra de bebidas", precio:25000,    pp:false, desc:"Durante el evento" },
-  { id:"mozos",      icon:"🤵", nombre:"Mozos",            precio:15000,    pp:false, desc:"Personal de servicio" },
-  { id:"dj",         icon:"🎧", nombre:"DJ",               precio:60000,    pp:false, desc:"Con equipo propio" },
-  { id:"fotografia", icon:"📸", nombre:"Fotografía",       precio:45000,    pp:false, desc:"Cobertura completa" },
-  { id:"decoracion", icon:"🎨", nombre:"Decoración",       precio:30000,    pp:false, desc:"Ambientación temática" }
-];
-
-/* ── JUEGOS ── */
-const JUEGOS = [
-  { id:"metegol",  icon:"⚽", nombre:"Metegol",          precio:8000,  pp:false, desc:"Alquiler por evento" },
-  { id:"castillo", icon:"🏰", nombre:"Castillo inflable", precio:15000, pp:false, desc:"Ideal para los nenes" },
-  { id:"pool",     icon:"🔵", nombre:"Pool de pelotas",  precio:10000, pp:false, desc:"Para los más chicos" }
-];
-
-/* ── EXTRAS ── */
-const EXTRAS = [
-  { id:"parrilla",    icon:"🍖", nombre:"Parrilla",           precio:0,        pp:false, desc:"Sector equipado" },
-  { id:"heladera",    icon:"🧊", nombre:"Heladera",           precio:0,        pp:false, desc:"Incluido" },
-  { id:"apoya_torta", icon:"🎂", nombre:"Apoya torta",        precio:0,        pp:false, desc:"Incluido" },
-  { id:"shimer",      icon:"✨", nombre:"Shimer",             precio:0,        pp:false, desc:"Panel incluido" },
-  { id:"vajilla",     icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000,  pp:true,  desc:"Por persona" },
-  { id:"candybar",    icon:"🍬", nombre:"Candy bar",          precio:10000,    pp:false, desc:"Mesitas para mesa dulce" },
-  { id:"chispas",     icon:"🎆", nombre:"Chispas frías",      precio:15000,    pp:false, desc:"Para la entrada" },
-  { id:"torta",       icon:"🍰", nombre:"Torta del evento",   precio:18000,    pp:false, desc:"Personalizada" }
-];
-
-/* ── CONFIGURACIÓN DE PRECIOS ── */
+/* ── CONFIGURACIÓN DE PRECIOS Y OPCIONES ── */
 const CONFIG = {
   wa: "5491159895267",
   precioCopaPp: 800 // Costo adicional por persona si elige copas
 };
+
+const CATERING = [
+  { id:"catering", icon:"🍽️", nombre:"Catering", precio_pp:8000, pp:true, desc:"Por persona" }
+];
+
+const BARRA = [
+  { id:"barra", icon:"🍺", nombre:"Barra de bebidas", precio:25000, pp:false, desc:"Durante el evento" }
+];
+
+const MUSICA_PERSONAL = [
+  { id:"dj", icon:"🎧", nombre:"DJ", precio:550000, pp:false, desc:"Varía según turno" },
+  { id:"parlante", icon:"🔊", nombre:"Parlante Bluetooth", precio:0, pp:false, desc:"Audio básico incluido" },
+  { id:"mozos", icon:"🤵", nombre:"Mozos", precio:70000, pp:false, desc:"Personal de servicio c/u" },
+  { id:"parrillero", icon:"🍖", nombre:"Parrillero", precio:90000, pp:false, desc:"Asador profesional" },
+  { id:"combo_dj_foto", icon:"🌟", nombre:"Combo DJ + Fotografía", precio:450000, pp:false, desc:"Paquete especial" }
+];
+
+const JUEGOS = [
+  { id:"metegol", icon:"⚽", nombre:"Metegol", precio:8000, pp:false, desc:"Alquiler por evento" },
+  { id:"castillo", icon:"🏰", nombre:"Castillo inflable", precio:15000, pp:false, desc:"Ideal para los nenes" },
+  { id:"pool", icon:"🔵", nombre:"Pool de pelotas", precio:10000, pp:false, desc:"Para los más chicos" }
+];
+
+const EXTRAS = [
+  { id:"parrilla", icon:"🔥", nombre:"Sector Parrilla", precio:0, pp:false, desc:"Sector equipado" },
+  { id:"heladera", icon:"🧊", nombre:"Heladera", precio:0, pp:false, desc:"Incluido" },
+  { id:"apoya_torta", icon:"🎂", nombre:"Apoya torta", precio:0, pp:false, desc:"Incluido" },
+  { id:"shimer", icon:"✨", nombre:"Shimer", precio:0, pp:false, desc:"Panel incluido" },
+  { id:"vajilla", icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000, pp:true, desc:"Por persona" },
+  { id:"candybar", icon:"🍬", nombre:"Candy bar", precio:10000, pp:false, desc:"Mesitas para mesa dulce" },
+  { id:"chispas", icon:"🎆", nombre:"Chispas frías", precio:15000, pp:false, desc:"Para la entrada" },
+  { id:"torta", icon:"🍰", nombre:"Torta del evento", precio:18000, pp:false, desc:"Personalizada" }
+];
 
 /* ── ESTADO INICIAL ── */
 const E = {
@@ -45,11 +48,20 @@ const E = {
   fechaExacta: '',   
   turno: 'dia',      
   personas: 40,
-  usaCopas: false,   // false = vasos incluidos, true = copas adicionales
-  servicios: new Set(['sonido']),
-  juegos:    new Set(),
-  extras:    new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']),
+  usaCopas: false,   
+  catering: new Set(),
+  barra: new Set(),
+  musicaPersonal: new Set(),
+  juegos: new Set(),
+  extras: new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']),
 };
+
+function getPrecioItem(item) {
+  if (item.id === 'dj') {
+    return E.turno === 'dia' ? 550000 : 650000;
+  }
+  return item.precio;
+}
 
 function toggleCopas() {
   E.usaCopas = !E.usaCopas;
@@ -78,10 +90,10 @@ function toggleCopas() {
 function actualizarBannerPromo() {
   const basePromo = 1200000;
   const costoPersonasExtra = (60 - 40) * 25000;
-  const djPrecio = SERVICIOS.find(s => s.id === 'dj').precio;
-  const fotoPrecio = SERVICIOS.find(s => s.id === 'fotografia').precio;
+  // Usamos el combo de DJ y fotografía
+  const comboPrecio = MUSICA_PERSONAL.find(s => s.id === 'combo_dj_foto').precio;
   
-  const totalReal = basePromo + costoPersonasExtra + djPrecio + fotoPrecio; 
+  const totalReal = basePromo + costoPersonasExtra + comboPrecio; 
   const descuentoPromo = 5000;
   const totalPromo = totalReal - descuentoPromo;
   
@@ -140,6 +152,7 @@ function setTurno(tipo) {
   E.turno = tipo;
   document.getElementById('turno-dia').classList.toggle('activo', tipo === 'dia');
   document.getElementById('turno-noche').classList.toggle('activo', tipo === 'noche');
+  renderOpciones(MUSICA_PERSONAL, 'grid-musica-personal', 'musicaPersonal');
   actualizar();
 }
 
@@ -148,17 +161,18 @@ function renderOpciones(items, gridId, setKey) {
   if (!grid) return;
   grid.innerHTML = items.map(item => {
     let p = "";
-    if (item.precio === 0 && !item.pp) {
+    const precioReal = getPrecioItem(item);
+    if (precioReal === 0 && !item.pp) {
       p = "Incluido";
     } else {
       p = item.pp 
         ? `$${(item.precio_pp * E.personas).toLocaleString('es-AR')} (×${E.personas})`
-        : `$${(item.precio || 0).toLocaleString('es-AR')}`;
+        : `$${precioReal.toLocaleString('es-AR')}`;
     }
 
     return `
       <div class="opc-card ${E[setKey].has(item.id) ? 'activo' : ''}"
-           onclick="toggleOpc('${item.id}','${setKey}','${gridId}')">
+            onclick="toggleOpc('${item.id}','${setKey}','${gridId}')">
         <div class="opc-check">✓</div>
         <span class="opc-icon">${item.icon}</span>
         <div class="opc-nombre">${item.nombre}</div>
@@ -171,10 +185,14 @@ function renderOpciones(items, gridId, setKey) {
 
 function toggleOpc(id, setKey, gridId) {
   E[setKey].has(id) ? E[setKey].delete(id) : E[setKey].add(id);
-  renderOpciones(
-    setKey === 'servicios' ? SERVICIOS : setKey === 'juegos' ? JUEGOS : EXTRAS,
-    gridId, setKey
-  );
+  
+  let dataset = CATERING;
+  if (setKey === 'barra') dataset = BARRA;
+  else if (setKey === 'musicaPersonal') dataset = MUSICA_PERSONAL;
+  else if (setKey === 'juegos') dataset = JUEGOS;
+  else if (setKey === 'extras') dataset = EXTRAS;
+
+  renderOpciones(dataset, gridId, setKey);
   actualizar();
 }
 
@@ -194,13 +212,16 @@ function initSlider() {
       document.getElementById('cap-vasos-copas').textContent = `+$${(CONFIG.precioCopaPp * E.personas).toLocaleString('es-AR')}`;
     }
     
-    renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
-    renderOpciones(EXTRAS,    'grid-extras',    'extras');
+    // Recargar todas las grillas que dependen del slider de personas
+    renderOpciones(CATERING, 'grid-catering', 'catering');
+    renderOpciones(BARRA, 'grid-barra', 'barra');
+    renderOpciones(MUSICA_PERSONAL, 'grid-musica-personal', 'musicaPersonal');
+    renderOpciones(JUEGOS, 'grid-juegos', 'juegos');
+    renderOpciones(EXTRAS, 'grid-extras', 'extras');
     actualizar();
   });
 }
 
-/* Calcular lógica principal */
 function calcular() {
   let baseAlquiler = 0;
   let nombreAlquiler = '';
@@ -216,7 +237,6 @@ function calcular() {
   }
 
   let total = baseAlquiler + costoPersonasExtra;
-
   let itemsDesglose = [];
 
   itemsDesglose.push({ nombre: `Alquiler base (${nombreAlquiler})`, precio: baseAlquiler });
@@ -225,23 +245,29 @@ function calcular() {
     itemsDesglose.push({ nombre: `Adicional por excedente (${E.personas - 40} invitados extra)`, precio: costoPersonasExtra });
   }
 
-  // Sumar adicional de copas si está activo
   if (E.usaCopas) {
-    const costoCopas = CONFIG.precioCopaPp * E.personas;
+    const costoCopas = 800 * E.personas;
     total += costoCopas;
     itemsDesglose.push({ nombre: `Adicional de copas (${E.personas} pers.)`, precio: costoCopas });
   }
 
-  const addItem = (items, set) => items.forEach(item => {
+  const addItems = (items, set) => items.forEach(item => {
     if (!set.has(item.id)) return;
-    const m = item.pp ? item.precio_pp * E.personas : item.precio;
+    const precioUnit = getPrecioItem(item);
+    const m = item.pp ? item.precio_pp * E.personas : precioUnit;
     total += m;
-    itemsDesglose.push({ nombre: item.nombre, precio: m });
+    let nombreMostrado = item.nombre;
+    if (item.id === 'dj') {
+      nombreMostrado += E.turno === 'dia' ? ' (De Día)' : ' (De Noche)';
+    }
+    itemsDesglose.push({ nombre: nombreMostrado, precio: m });
   });
-  
-  addItem(SERVICIOS, E.servicios);
-  addItem(JUEGOS,    E.juegos);
-  addItem(EXTRAS,    E.extras);
+
+  addItems(CATERING, E.catering);
+  addItems(BARRA, E.barra);
+  addItems(MUSICA_PERSONAL, E.musicaPersonal);
+  addItems(JUEGOS, E.juegos);
+  addItems(EXTRAS, E.extras);
   
   itemsDesglose.sort((a, b) => b.precio - a.precio);
 
@@ -250,7 +276,8 @@ function calcular() {
     return `✅ ${item.nombre}: ${labelPrecio}`;
   });
 
-  const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.servicios.has('dj') && E.servicios.has('fotografia'));
+  // Paquete Promo Automático
+  const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.musicaPersonal.has('combo_dj_foto'));
   if (esPromo) {
     total -= 5000;
     lineas.push(`🎁 Bonificación paquete Todo Incluido: -$5.000`);
@@ -277,7 +304,7 @@ function actualizar() {
   if (barEl)   barEl.textContent   = totalFmt;
   if (panelEl) panelEl.textContent = totalFmt;
 
-const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
+  const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
   let diaMostrado = E.dia === 'semana' ? 'Día de Sem' : 'Finde';
   
   if (E.fechaExacta) {
@@ -287,8 +314,6 @@ const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
   
   const turnoTexto = E.turno === 'dia' ? 'Día (10:30 a 18hs)' : 'Noche (20:30 a 05hs)';
   document.getElementById('cot-detalle').textContent = `${E.personas} pers · ${esp} · ${diaMostrado} · ${turnoTexto}`;
-
-  document.getElementById('cot-detalle').textContent = `${E.personas} pers · ${esp} · ${diaMostrado}`;
 
   const itemsEl = document.getElementById('cot-resumen-items');
   
@@ -365,11 +390,16 @@ function activarPromo() {
       slider.dispatchEvent(new Event('input'));
   }
 
-  E.servicios = new Set(['dj','fotografia','sonido']);
+  // Agregamos el combo de dj + fotografía
+  E.musicaPersonal = new Set(['combo_dj_foto', 'parlante']);
   E.juegos    = new Set();
   E.extras    = new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']);
+  E.catering  = new Set();
+  E.barra     = new Set();
   
-  renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
+  renderOpciones(CATERING, 'grid-catering', 'catering');
+  renderOpciones(BARRA, 'grid-barra', 'barra');
+  renderOpciones(MUSICA_PERSONAL, 'grid-musica-personal', 'musicaPersonal');
   renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
   renderOpciones(EXTRAS,    'grid-extras',    'extras');
   actualizar();
@@ -380,9 +410,11 @@ function activarPromo() {
 document.addEventListener('DOMContentLoaded', () => {
   actualizarBannerPromo();
   initFiltros();
-  renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
-  renderOpciones(JUEGOS,    'grid-juegos',    'juegos');
-  renderOpciones(EXTRAS,    'grid-extras',    'extras');
+  renderOpciones(CATERING, 'grid-catering', 'catering');
+  renderOpciones(BARRA, 'grid-barra', 'barra');
+  renderOpciones(MUSICA_PERSONAL, 'grid-musica-personal', 'musicaPersonal');
+  renderOpciones(JUEGOS, 'grid-juegos', 'juegos');
+  renderOpciones(EXTRAS, 'grid-extras', 'extras');
   initSlider();
   actualizar();
 });
@@ -390,16 +422,12 @@ document.addEventListener('DOMContentLoaded', () => {
 async function pagarConMercadoPago() {
   const { anticipo } = calcular(); 
   
-  // 1. Capturamos el botón
   const btnPagar = document.getElementById('btn-pagar');
-  
-  // 2. Guardamos su contenido original (para no perder el iconito SVG si falla)
   const contenidoOriginal = btnPagar.innerHTML;
   
-  // 3. Lo ponemos en estado de carga y lo bloqueamos
   btnPagar.innerHTML = '⏳ Generando pago...';
   btnPagar.disabled = true;
-  btnPagar.style.opacity = '0.7'; // Le bajamos la opacidad para que se vea inactivo
+  btnPagar.style.opacity = '0.7'; 
   btnPagar.style.cursor = 'not-allowed';
 
   try {
@@ -414,7 +442,6 @@ async function pagarConMercadoPago() {
 
     const datos = await respuesta.json();
     
-    // Si todo sale bien, lo redirigimos. No hace falta restaurar el botón.
     if (datos.init_point) {
       window.location.href = datos.init_point;
     } else {
@@ -428,7 +455,6 @@ async function pagarConMercadoPago() {
     restaurarBoton();
   }
 
-  // Función interna cortita para volver el botón a la normalidad si algo falla
   function restaurarBoton() {
     btnPagar.innerHTML = contenidoOriginal;
     btnPagar.disabled = false;

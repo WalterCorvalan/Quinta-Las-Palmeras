@@ -2,11 +2,6 @@
    QUINTA LAS PALMERAS — script.js
    ══════════════════════════════════════ */
 
-/* ── CONFIGURACIÓN DE PRECIOS ── */
-const CONFIG = {
-  wa: "5491159895267"
-};
-
 /* ── SERVICIOS ── */
 const SERVICIOS = [
   { id:"sonido",     icon:"🔈", nombre:"Equipo de sonido", precio:0,        pp:false, desc:"Incluido en el espacio" },
@@ -37,17 +32,45 @@ const EXTRAS = [
   { id:"torta",       icon:"🍰", nombre:"Torta del evento",   precio:18000,    pp:false, desc:"Personalizada" }
 ];
 
+/* ── CONFIGURACIÓN DE PRECIOS ── */
+const CONFIG = {
+  wa: "5491159895267",
+  precioCopaPp: 800 // Costo adicional por persona si elige copas
+};
+
 /* ── ESTADO INICIAL ── */
 const E = {
   espacio: 'salon',  
   dia: 'semana',     
   fechaExacta: '',   
-  horaInicio: '',    
+  turno: 'dia',      
   personas: 40,
+  usaCopas: false,   // false = vasos incluidos, true = copas adicionales
   servicios: new Set(['sonido']),
   juegos:    new Set(),
   extras:    new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']),
 };
+
+function toggleCopas() {
+  E.usaCopas = !E.usaCopas;
+  const card = document.getElementById('card-copas');
+  const icon = document.getElementById('copas-icon');
+  const num = document.getElementById('cap-vasos-copas');
+  const label = document.getElementById('copas-label');
+
+  if (E.usaCopas) {
+    card.classList.add('activo');
+    icon.textContent = '🍷';
+    num.textContent = `+$${(CONFIG.precioCopaPp * E.personas).toLocaleString('es-AR')}`;
+    label.textContent = 'Copas seleccionadas';
+  } else {
+    card.classList.remove('activo');
+    icon.textContent = '🥛';
+    num.textContent = 'Incluido';
+    label.textContent = 'Vasos (Copas +$800/u)';
+  }
+  actualizar();
+}
 
 /* ══════════════════════════
    BANNER PROMO DINÁMICO
@@ -72,8 +95,9 @@ function actualizarBannerPromo() {
   if(cuotasEl) cuotasEl.innerHTML = `+ 3 cuotas de <strong>$${cuotas.toLocaleString('es-AR')}</strong>`;
 }
 
+
 /* ══════════════════════════
-   GALERÍA — filtros
+   GALERÍA — filtros por espacio
    ══════════════════════════ */
 function initFiltros() {
   document.querySelectorAll('.filtro').forEach(btn => {
@@ -82,8 +106,8 @@ function initFiltros() {
       btn.classList.add('activo');
       const f = btn.dataset.filtro;
       document.querySelectorAll('.galeria-item').forEach(item => {
-        const tipo = item.dataset.tipo;
-        item.classList.toggle('oculto', f !== 'todo' && tipo !== f);
+        const espacio = item.dataset.espacio;
+        item.classList.toggle('oculto', f !== 'todo' && espacio !== f);
       });
     });
   });
@@ -107,9 +131,15 @@ function setDia(tipo) {
   actualizar();
 }
 
-function setFechaHora() {
+function setFecha() {
   E.fechaExacta = document.getElementById('fecha-exacta').value;
-  E.horaInicio = document.getElementById('hora-inicio').value;
+  actualizar();
+}
+
+function setTurno(tipo) {
+  E.turno = tipo;
+  document.getElementById('turno-dia').classList.toggle('activo', tipo === 'dia');
+  document.getElementById('turno-noche').classList.toggle('activo', tipo === 'noche');
   actualizar();
 }
 
@@ -155,13 +185,14 @@ function initSlider() {
     E.personas = parseInt(slider.value);
     document.getElementById('personas-num').textContent = E.personas;
     document.getElementById('cap-sillas').textContent   = E.personas;
-    document.getElementById('cap-mesas').textContent    = Math.ceil(E.personas / 8);
+    document.getElementById('cap-mesas').textContent    = Math.ceil(E.personas / 8); // 8 sillas por mesa
     document.getElementById('personas-icon').textContent =
       E.personas <= 20 ? '👨‍👩‍👧' : E.personas <= 50 ? '👨‍👩‍👧‍👦' : '🎉';
     
-    const ok = E.personas <= 100;
-    document.getElementById('cap-espacio').textContent       = ok ? '✓' : '⚠️';
-    document.getElementById('cap-espacio-label').textContent = ok ? 'dentro del límite' : 'capacidad máxima';
+    // Si las copas están activas, actualizar su precio dinámicamente según la cantidad de personas
+    if (E.usaCopas) {
+      document.getElementById('cap-vasos-copas').textContent = `+$${(CONFIG.precioCopaPp * E.personas).toLocaleString('es-AR')}`;
+    }
     
     renderOpciones(SERVICIOS, 'grid-servicios', 'servicios');
     renderOpciones(EXTRAS,    'grid-extras',    'extras');
@@ -186,13 +217,19 @@ function calcular() {
 
   let total = baseAlquiler + costoPersonasExtra;
 
-  // Creamos un array de objetos para guardar temporalmente y poder ordenar por precio
   let itemsDesglose = [];
 
   itemsDesglose.push({ nombre: `Alquiler base (${nombreAlquiler})`, precio: baseAlquiler });
 
   if (costoPersonasExtra > 0) {
     itemsDesglose.push({ nombre: `Adicional por excedente (${E.personas - 40} invitados extra)`, precio: costoPersonasExtra });
+  }
+
+  // Sumar adicional de copas si está activo
+  if (E.usaCopas) {
+    const costoCopas = CONFIG.precioCopaPp * E.personas;
+    total += costoCopas;
+    itemsDesglose.push({ nombre: `Adicional de copas (${E.personas} pers.)`, precio: costoCopas });
   }
 
   const addItem = (items, set) => items.forEach(item => {
@@ -206,16 +243,13 @@ function calcular() {
   addItem(JUEGOS,    E.juegos);
   addItem(EXTRAS,    E.extras);
   
-  // Ordenamos matemáticamente de mayor a menor
   itemsDesglose.sort((a, b) => b.precio - a.precio);
 
-  // Convertimos los objetos ya ordenados a su formato de texto
   const lineas = itemsDesglose.map(item => {
     const labelPrecio = item.precio === 0 ? 'Incluido' : `$${item.precio.toLocaleString('es-AR')}`;
     return `✅ ${item.nombre}: ${labelPrecio}`;
   });
 
-  // Detección automática del Paquete Promo (se agrega al final del todo)
   const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.servicios.has('dj') && E.servicios.has('fotografia'));
   if (esPromo) {
     total -= 5000;
@@ -243,16 +277,16 @@ function actualizar() {
   if (barEl)   barEl.textContent   = totalFmt;
   if (panelEl) panelEl.textContent = totalFmt;
 
-  const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
+const esp = E.espacio === 'salon' ? 'Salón' : 'Quinta';
   let diaMostrado = E.dia === 'semana' ? 'Día de Sem' : 'Finde';
   
   if (E.fechaExacta) {
     const [year, month, day] = E.fechaExacta.split('-');
     diaMostrado += ` (${day}/${month})`;
   }
-  if (E.horaInicio) {
-    diaMostrado += ` a las ${E.horaInicio}hs`;
-  }
+  
+  const turnoTexto = E.turno === 'dia' ? 'Día (10:30 a 18hs)' : 'Noche (20:30 a 05hs)';
+  document.getElementById('cot-detalle').textContent = `${E.personas} pers · ${esp} · ${diaMostrado} · ${turnoTexto}`;
 
   document.getElementById('cot-detalle').textContent = `${E.personas} pers · ${esp} · ${diaMostrado}`;
 
@@ -302,10 +336,9 @@ function enviarWA() {
     const [year, month, day] = E.fechaExacta.split('-');
     msg += `🗓️ *Fecha exacta:* ${day}/${month}/${year}\n`;
   }
-  if (E.horaInicio) {
-    msg += `⏰ *Horario de inicio:* ${E.horaInicio} hs\n`;
-  }
   
+  const turnoMsg = E.turno === 'dia' ? '☀️ Día (10:30 a 18:00 hs)' : '🌙 Noche (20:30 a 05:00 hs)';
+  msg += `⏰ *Horario:* ${turnoMsg}\n`;
   msg += `👥 *Personas:* ${E.personas}\n\n`;
   msg += `*Detalle del presupuesto:*\n${lineas.join('\n')}\n\n`;
   msg += `💰 *Total estimado: $${total.toLocaleString('es-AR')}*\n`;

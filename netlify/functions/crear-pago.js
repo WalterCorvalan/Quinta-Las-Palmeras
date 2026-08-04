@@ -9,6 +9,9 @@ exports.handler = async (event) => {
   try {
     const data = JSON.parse(event.body);
     
+    // Detectar dinámicamente la URL base del sitio en Netlify
+    const baseUrl = event.headers.origin || process.env.URL || 'https://tu-sitio.netlify.app';
+
     // Conecta con Mercado Pago usando la variable de entorno de Netlify
     const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
     const preference = new Preference(client);
@@ -23,8 +26,9 @@ exports.handler = async (event) => {
           currency_id: 'ARS'
         }],
         back_urls: {
-          success: "https://tu-sitio.netlify.app", // Cambiá esto por tu URL real
-          failure: "https://tu-sitio.netlify.app",
+          success: baseUrl,
+          failure: baseUrl,
+          pending: baseUrl
         },
         auto_return: "approved"
       }

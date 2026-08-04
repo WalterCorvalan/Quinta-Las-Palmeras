@@ -89,30 +89,30 @@
       <!-- FILTROS -->
       <div class="galeria-filtros">
         <button class="filtro activo" data-filtro="todo">Todo</button>
-        <button class="filtro" data-filtro="foto">📷 Fotos</button>
-        <button class="filtro" data-filtro="video">🎬 Videos</button>
+        <button class="filtro" data-filtro="salon">🏠 Salón</button>
+        <button class="filtro" data-filtro="quinta">🌳 Quinta</button>
       </div>
 
       <!-- GRID -->
       <div class="galeria-grid" id="galeria-grid">
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="quinta">
           <img src="img/parque.png" alt="Parque quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Parque con pérgolas</span></div>
         </div>
-        <div class="galeria-item foto grande" data-tipo="foto">
+        <div class="galeria-item grande" data-espacio="salon">
           <img src="img/quincho.png" alt="Quincho quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Quincho equipado</span></div>
         </div>
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="quinta">
           <img src="img/pileta.png" alt="Pileta quinta Las Palmeras" loading="lazy">
           <div class="galeria-overlay"><span>Pileta iluminada</span></div>
         </div>
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="quinta">
           <img src="img/parque_2.png" alt="Evento en el parque" loading="lazy">
           <div class="galeria-overlay"><span>Eventos en el parque</span></div>
         </div>
 
-        <div class="galeria-item video grande" data-tipo="video">
+        <div class="galeria-item grande" data-espacio="salon">
           <div class="video-wrap">
             <iframe src="https://www.youtube.com/embed/VIDEO_ID_1?rel=0&modestbranding=1"
               title="Evento en Quinta Las Palmeras"
@@ -122,15 +122,15 @@
           <div class="video-label">🎬 Cumpleaños en la quinta</div>
         </div>
 
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="salon">
           <img src="img/parque_3.png" alt="Decoración evento" loading="lazy">
           <div class="galeria-overlay"><span>Decoración</span></div>
         </div>
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="quinta">
           <img src="img/pileta_2.png" alt="Pileta de noche" loading="lazy">
           <div class="galeria-overlay"><span>Ambiente nocturno</span></div>
         </div>
-        <div class="galeria-item foto" data-tipo="foto">
+        <div class="galeria-item" data-espacio="salon">
           <img src="img/quincho_2.png" alt="Sector parrilla" loading="lazy">
           <div class="galeria-overlay"><span>Sector parrilla</span></div>
         </div>
@@ -233,65 +233,75 @@
             </div>
           </div>
 
-          <!-- PASO 3: FECHA Y HORA (NUEVO CALENDARIO) -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">3</span>
-              <h3>Elegí la fecha y hora</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="fecha-hora-grid">
-                <div class="input-group">
-                  <label for="fecha-exacta">Fecha del evento</label>
-                  <input type="date" id="fecha-exacta" class="input-text" onchange="setFechaHora()">
-                </div>
-                <div class="input-group">
-                  <label for="hora-inicio">Hora de inicio</label>
-                  <input type="time" id="hora-inicio" class="input-text" onchange="setFechaHora()">
-                </div>
-              </div>
-              <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* Recordá que los alquileres base
-                incluyen 5 horas de evento.</p>
-            </div>
+          <!-- PASO 3: FECHA Y TURNO -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">3</span>
+            <h3>Elegí la fecha y el horario</h3>
           </div>
+          <div class="cot-paso-body">
+            <div class="input-group" style="margin-bottom: 14px;">
+              <label for="fecha-exacta">Fecha del evento</label>
+              <input type="date" id="fecha-exacta" class="input-text" onchange="setFecha()">
+            </div>
+            
+            <label style="font-size: .85rem; font-weight: 600; color: var(--texto); display: block; margin-bottom: 6px;">Horario del evento</label>
+            <div class="opc-grid">
+              <div class="opc-card activo" id="turno-dia" onclick="setTurno('dia')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">☀️</span>
+                <div class="opc-nombre">De Día</div>
+                <div class="opc-desc">10:30 a 18:00 hs</div>
+              </div>
+              <div class="opc-card" id="turno-noche" onclick="setTurno('noche')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">🌙</span>
+                <div class="opc-nombre">De Noche</div>
+                <div class="opc-desc">20:30 a 05:00 hs</div>
+              </div>
+            </div>
+            <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* El turno incluye el horario establecido para tu celebración.</p>
+          </div>
+        </div>
 
-          <!-- PASO 4: PERSONAS -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">4</span>
-              <h3>¿Cuántas personas van a ser?</h3>
+          <!-- PASO 4: PERSONAS Y VAJILLA -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">4</span>
+            <h3>¿Cuántas personas van a ser?</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="personas-display">
+              <div class="personas-icon" id="personas-icon">👨‍👩‍👧‍👦</div>
+              <div class="personas-num" id="personas-num">40</div>
+              <div class="personas-label">personas</div>
             </div>
-            <div class="cot-paso-body">
-              <div class="personas-display">
-                <div class="personas-icon" id="personas-icon">👨‍👩‍👧‍👦</div>
-                <div class="personas-num" id="personas-num">40</div>
-                <div class="personas-label">personas</div>
+            <input type="range" id="slider-personas" min="10" max="150" value="40" step="1" class="slider">
+            <div class="slider-limits"><span>10</span><span>150</span></div>
+            <p
+              style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
+              <strong>Nota:</strong> El alquiler base cubre hasta 40 personas. Adicional: $25.000 por invitado extra.
+            </p>
+            <div class="cap-grid">
+              <div class="cap-item">
+                <div class="cap-icon">🪑</div>
+                <div class="cap-num" id="cap-sillas">40</div>
+                <div class="cap-label">sillas (8 x mesa)</div>
               </div>
-              <input type="range" id="slider-personas" min="10" max="100" value="40" step="1" class="slider">
-              <div class="slider-limits"><span>10</span><span>100</span></div>
-              <p
-                style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
-                <strong>Nota:</strong> El alquiler base cubre hasta 40 personas. Adicional: $25.000 por invitado extra.
-              </p>
-              <div class="cap-grid">
-                <div class="cap-item">
-                  <div class="cap-icon">🪑</div>
-                  <div class="cap-num" id="cap-sillas">40</div>
-                  <div class="cap-label">sillas</div>
-                </div>
-                <div class="cap-item">
-                  <div class="cap-icon">🍽️</div>
-                  <div class="cap-num" id="cap-mesas">5</div>
-                  <div class="cap-label">mesas</div>
-                </div>
-                <div class="cap-item">
-                  <div class="cap-icon">🎪</div>
-                  <div class="cap-num" id="cap-espacio">✓</div>
-                  <div class="cap-label" id="cap-espacio-label">dentro del límite</div>
-                </div>
+              <div class="cap-item">
+                <div class="cap-icon">🍽️</div>
+                <div class="cap-num" id="cap-mesas">5</div>
+                <div class="cap-label">mesas</div>
+              </div>
+              <!-- OPCIÓN DE VASOS / COPAS -->
+              <div class="cap-item opc-card" id="card-copas" onclick="toggleCopas()" style="cursor:pointer; border:2px solid var(--arena-d); transition:all 0.2s;">
+                <div class="cap-icon" id="copas-icon">🥛</div>
+                <div class="cap-num" id="cap-vasos-copas" style="font-size:1rem;">Incluido</div>
+                <div class="cap-label" id="copas-label">Vasos (Copas +$800/u)</div>
               </div>
             </div>
           </div>
+        </div>
 
           <!-- PASO 5: SERVICIOS -->
           <div class="cot-paso">

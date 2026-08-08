@@ -9,36 +9,39 @@ const CONFIG = {
 };
 
 const CATERING = [
-  { id:"catering", icon:"🍽️", nombre:"Catering", precio_pp:8000, pp:true, desc:"Por persona" }
+  { id:"catering_formal", icon:"🍽️", nombre:"Catering Formal", precio_pp:8000, pp:true, desc:"Entrada, plato y postre" },
+  { id:"pizza_libre", icon:"🍕", nombre:"Pizza Libre", precio_pp:4500, pp:true, desc:"Variedad de pizzas" },
+  { id:"pernil", icon:"🍖", nombre:"Pernil de Cerdo", precio:65000, pp:false, desc:"Para 40 personas con panes" },
+  { id:"mesa_dulce", icon:"🧁", nombre:"Mesa Dulce", precio_pp:2500, pp:true, desc:"Variedad de tartas" }
 ];
 
 const BARRA = [
-  { id:"barra", icon:"🍺", nombre:"Barra de bebidas", precio:25000, pp:false, desc:"Durante el evento" }
+  { id:"barra_premium", icon:"🍹", nombre:"Barra Premium", precio:45000, pp:false, desc:"Tragos con alcohol libre" },
+  { id:"barra_soft", icon:"🥤", nombre:"Barra Soft", precio:25000, pp:false, desc:"Gaseosas, agua y jugos" },
+  { id:"cerveza", icon:"🍺", nombre:"Cerveza Tirada", precio:35000, pp:false, desc:"Barril de 30 litros" }
 ];
 
 const MUSICA_PERSONAL = [
   { id:"dj", icon:"🎧", nombre:"DJ", precio:550000, pp:false, desc:"Varía según turno" },
-  { id:"parlante", icon:"🔊", nombre:"Parlante Bluetooth", precio:0, pp:false, desc:"Audio básico incluido" },
-  { id:"mozos", icon:"🤵", nombre:"Mozos", precio:70000, pp:false, desc:"Personal de servicio c/u" },
-  { id:"parrillero", icon:"🍖", nombre:"Parrillero", precio:90000, pp:false, desc:"Asador profesional" },
-  { id:"combo_dj_foto", icon:"🌟", nombre:"Combo DJ + Fotografía", precio:450000, pp:false, desc:"Paquete especial" }
+  { id:"fotografia", icon:"📸", nombre:"Fotógrafo", precio:450000, pp:false, desc:"Cobertura del evento" },
+  { id:"mozos", icon:"🤵", nombre:"Mozos", precio:0, pp:false, desc:"Cada 20 p. 1 mozo" },
+  { id:"parrillero", icon:"🍖", nombre:"Parrillero", precio:90000, pp:false, desc:"Asador profesional" }
 ];
 
 const JUEGOS = [
-  { id:"metegol", icon:"⚽", nombre:"Metegol", precio:8000, pp:false, desc:"Alquiler por evento" },
-  { id:"castillo", icon:"🏰", nombre:"Castillo inflable", precio:15000, pp:false, desc:"Ideal para los nenes" },
-  { id:"pool", icon:"🔵", nombre:"Pool de pelotas", precio:10000, pp:false, desc:"Para los más chicos" }
+  { id:"metegol", icon:"⚽", nombre:"Metegol", precio:15000, pp:false, desc:"Alquiler por evento" },
+  { id:"pelotero_acuatico", icon:"💦", nombre:"Pelotero Acuático", precio:120000, pp:false, desc:"Ideal para el verano" },
+  { id:"pool", icon:"🔵", nombre:"Pool de pelotas", precio:35000, pp:false, desc:"Para los más chicos" }
 ];
 
 const EXTRAS = [
   { id:"parrilla", icon:"🔥", nombre:"Sector Parrilla", precio:0, pp:false, desc:"Sector equipado" },
   { id:"heladera", icon:"🧊", nombre:"Heladera", precio:0, pp:false, desc:"Incluido" },
   { id:"apoya_torta", icon:"🎂", nombre:"Apoya torta", precio:0, pp:false, desc:"Incluido" },
-  { id:"shimer", icon:"✨", nombre:"Shimer", precio:0, pp:false, desc:"Panel incluido" },
-  { id:"vajilla", icon:"🍴", nombre:"Vajilla y manteles", precio_pp:2000, pp:true, desc:"Por persona" },
-  { id:"candybar", icon:"🍬", nombre:"Candy bar", precio:10000, pp:false, desc:"Mesitas para mesa dulce" },
-  { id:"chispas", icon:"🎆", nombre:"Chispas frías", precio:15000, pp:false, desc:"Para la entrada" },
-  { id:"torta", icon:"🍰", nombre:"Torta del evento", precio:18000, pp:false, desc:"Personalizada" }
+  { id:"shimer", icon:"✨", nombre:"Panel Shimer", precio:80000, pp:false, desc:"Fondo decorativo" },
+  { id:"candybar", icon:"🍬", nombre:"Candy bar", precio:35000, pp:false, desc:"Mesitas para mesa dulce" },
+  { id:"chispas", icon:"🎆", nombre:"Chispas frías", precio:65000, pp:false, desc:"Por unidad" },
+  { id:"torta", icon:"🍰", nombre:"Torta del evento", precio:80000, pp:false, desc:"Personalizada" }
 ];
 
 /* ── ESTADO INICIAL ── */
@@ -52,13 +55,19 @@ const E = {
   catering: new Set(),
   barra: new Set(),
   musicaPersonal: new Set(),
+  premioGanado: null,
   juegos: new Set(),
-  extras: new Set(['parrilla', 'heladera', 'apoya_torta', 'shimer']),
+  // 👇 Le sacamos 'shimer' para que ya no aparezca tildado y gratis
+  extras: new Set(['parrilla', 'heladera', 'apoya_torta']), 
 };
 
 function getPrecioItem(item) {
   if (item.id === 'dj') {
     return E.turno === 'dia' ? 550000 : 650000;
+  }
+  if (item.id === 'mozos') {
+    const cantidadMozos = Math.ceil(E.personas / 20); // Redondea para arriba: 50/20 = 2.5 -> 3 mozos
+    return cantidadMozos * 70000;
   }
   return item.precio;
 }
@@ -87,24 +96,69 @@ function toggleCopas() {
 /* ══════════════════════════
    BANNER PROMO DINÁMICO
    ══════════════════════════ */
-function actualizarBannerPromo() {
-  const basePromo = 1200000;
-  const costoPersonasExtra = (60 - 40) * 25000;
-  // Usamos el combo de DJ y fotografía
-  const comboPrecio = MUSICA_PERSONAL.find(s => s.id === 'combo_dj_foto').precio;
+
+/* ══════════════════════════
+   LÓGICA DE LA RULETA
+   ══════════════════════════ */
+const premiosRuleta = [
+  { id: 'candybar', nombre: 'Candy Bar', index: 0 },
+  { id: null,       nombre: '¡Casi! Seguí participando', index: 1 },
+  { id: 'shimer',   nombre: 'Panel Shimer', index: 2 },
+  { id: 'metegol',  nombre: 'Metegol', index: 3 },
+  { id: null,       nombre: '¡Ups! No hay premio', index: 4 },
+  { id: 'chispas',  nombre: 'Chispas Frías', index: 5 }
+];
+
+let giroActual = 0;
+
+function girarRuleta() {
+  const btn = document.getElementById('btn-girar');
+  btn.disabled = true;
+  btn.innerHTML = "Girando...";
   
-  const totalReal = basePromo + costoPersonasExtra + comboPrecio; 
-  const descuentoPromo = 5000;
-  const totalPromo = totalReal - descuentoPromo;
+  const ruleta = document.getElementById('ruleta');
   
-  const anticipo = basePromo;
-  const resto = totalPromo - anticipo;
-  const cuotas = Math.round(resto / 3);
+  // 1. Elegimos un ganador aleatorio (podés forzar que caiga en uno específico cambiando esta línea si quisieras)
+  const ganador = premiosRuleta[Math.floor(Math.random() * premiosRuleta.length)];
   
-  const antEl = document.querySelector('.promo-anticipo');
-  const cuotasEl = document.querySelector('.promo-cuotas');
-  if(antEl) antEl.innerHTML = `Anticipo <strong>$${anticipo.toLocaleString('es-AR')}</strong>`;
-  if(cuotasEl) cuotasEl.innerHTML = `+ 3 cuotas de <strong>$${cuotas.toLocaleString('es-AR')}</strong>`;
+  // 2. Cálculo matemático para frenar exactamente en el segmento elegido
+  const anguloCentro = ganador.index * 60 + 30; 
+  const rotacionTarget = 360 - anguloCentro;
+  const vueltasExtra = 1800; // 5 vueltas visuales
+  const offsetRestante = rotacionTarget - (giroActual % 360);
+  const giroTotal = giroActual + vueltasExtra + (offsetRestante < 0 ? 360 + offsetRestante : offsetRestante);
+  
+  giroActual = giroTotal;
+  ruleta.style.transform = `rotate(${giroTotal}deg)`;
+  
+  // 3. Esperar a que termine la animación (4s) para dar el premio
+  setTimeout(() => {
+    mostrarPremio(ganador);
+    btn.innerHTML = "¡Ruleta Girada!";
+  }, 4000);
+}
+
+function mostrarPremio(ganador) {
+  const resEl = document.getElementById('ruleta-resultado');
+  resEl.classList.remove('oculto');
+  
+  if (ganador.id) {
+    resEl.innerHTML = `🎉 ¡Ganaste <strong>${ganador.nombre} Gratis</strong>! Ya lo sumamos a tu cotización.`;
+    
+    // Guardamos el premio y lo marcamos automáticamente en las opciones
+    E.premioGanado = ganador;
+    if (ganador.id === 'candybar') E.extras.add('candybar');
+    if (ganador.id === 'shimer') E.extras.add('shimer');
+    if (ganador.id === 'metegol') E.juegos.add('metegol');
+    if (ganador.id === 'chispas') E.extras.add('chispas');
+    
+    // Refrescamos la vista para que el botón muestre "Incluido" o "Gratis"
+    renderOpciones(EXTRAS, 'grid-extras', 'extras');
+    renderOpciones(JUEGOS, 'grid-juegos', 'juegos');
+    actualizar();
+  } else {
+    resEl.innerHTML = `😅 <strong>${ganador.nombre}</strong>. ¡Animate a armar tu evento igual!`;
+  }
 }
 
 
@@ -225,11 +279,23 @@ function initSlider() {
 function calcular() {
   let baseAlquiler = 0;
   let nombreAlquiler = '';
+  const nombreEspacio = E.espacio === 'salon' ? 'Salón' : 'Quinta Completa';
 
-  if (E.espacio === 'salon' && E.dia === 'semana') { baseAlquiler = 350000; nombreAlquiler = 'Salón (Día de Semana)'; }
-  if (E.espacio === 'salon' && E.dia === 'finde')  { baseAlquiler = 650000; nombreAlquiler = 'Salón (Fin de Semana)'; }
-  if (E.espacio === 'quinta' && E.dia === 'semana') { baseAlquiler = 1000000; nombreAlquiler = 'Quinta (Día de Semana)'; }
-  if (E.espacio === 'quinta' && E.dia === 'finde')  { baseAlquiler = 1200000; nombreAlquiler = 'Quinta (Fin de Semana)'; }
+  // --- PRECIOS PARA SOLO SALÓN ---
+  if (E.espacio === 'salon') {
+    if (E.dia === 'semana' && E.turno === 'dia') { baseAlquiler = 350000; nombreAlquiler = `Salón (Día de Sem. - De Día)`; }
+    if (E.dia === 'semana' && E.turno === 'noche') { baseAlquiler = 450000; nombreAlquiler = `Salón (Día de Sem. - De Noche)`; }
+    if (E.dia === 'finde' && E.turno === 'dia') { baseAlquiler = 550000; nombreAlquiler = `Salón (Fin de Sem. - De Día)`; }
+    if (E.dia === 'finde' && E.turno === 'noche') { baseAlquiler = 650000; nombreAlquiler = `Salón (Fin de Sem. - De Noche)`; }
+  }
+  
+  // --- PRECIOS PARA QUINTA COMPLETA ---
+  if (E.espacio === 'quinta') {
+    if (E.dia === 'semana' && E.turno === 'dia') { baseAlquiler = 1000000; nombreAlquiler = `Quinta (Día de Sem. - De Día)`; }
+    if (E.dia === 'semana' && E.turno === 'noche') { baseAlquiler = 1250000; nombreAlquiler = `Quinta (Día de Sem. - De Noche)`; }
+    if (E.dia === 'finde' && E.turno === 'dia') { baseAlquiler = 1350000; nombreAlquiler = `Quinta (Fin de Sem. - De Día)`; }
+    if (E.dia === 'finde' && E.turno === 'noche') { baseAlquiler = 1500000; nombreAlquiler = `Quinta (Fin de Sem. - De Noche)`; }
+  }
 
   let costoPersonasExtra = 0;
   if (E.personas > 40) {
@@ -239,27 +305,36 @@ function calcular() {
   let total = baseAlquiler + costoPersonasExtra;
   let itemsDesglose = [];
 
-  itemsDesglose.push({ nombre: `Alquiler base (${nombreAlquiler})`, precio: baseAlquiler });
+  itemsDesglose.push({ nombre: `Alquiler base: ${nombreAlquiler}`, precio: baseAlquiler });
 
   if (costoPersonasExtra > 0) {
     itemsDesglose.push({ nombre: `Adicional por excedente (${E.personas - 40} invitados extra)`, precio: costoPersonasExtra });
   }
 
   if (E.usaCopas) {
-    const costoCopas = 800 * E.personas;
+    const costoCopas = CONFIG.precioCopaPp * E.personas;
     total += costoCopas;
     itemsDesglose.push({ nombre: `Adicional de copas (${E.personas} pers.)`, precio: costoCopas });
   }
 
-  const addItems = (items, set) => items.forEach(item => {
+ const addItems = (items, set) => items.forEach(item => {
     if (!set.has(item.id)) return;
     const precioUnit = getPrecioItem(item);
-    const m = item.pp ? item.precio_pp * E.personas : precioUnit;
-    total += m;
+    let m = item.pp ? item.precio_pp * E.personas : precioUnit;
+    
     let nombreMostrado = item.nombre;
-    if (item.id === 'dj') {
+
+    // APLICAR DESCUENTO DE LA RULETA (Con validación segura)
+    if (E.premioGanado !== null && E.premioGanado.id === item.id) {
+       m = 0; // Lo hace gratis
+       nombreMostrado += " (🎁 GRATIS por Ruleta)";
+    } else if (item.id === 'dj') {
       nombreMostrado += E.turno === 'dia' ? ' (De Día)' : ' (De Noche)';
+    } else if (item.id === 'mozos') {
+      nombreMostrado += ` (${Math.ceil(E.personas / 20)} mozos)`; 
     }
+    
+    total += m;
     itemsDesglose.push({ nombre: nombreMostrado, precio: m });
   });
 
@@ -276,8 +351,19 @@ function calcular() {
     return `✅ ${item.nombre}: ${labelPrecio}`;
   });
 
-  // Paquete Promo Automático
-  const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.musicaPersonal.has('combo_dj_foto'));
+  // --- LÓGICA DE PROMO DJ + FOTÓGRAFO ---
+  if (E.musicaPersonal.has('dj') && E.musicaPersonal.has('fotografia')) {
+    const precioDJ = E.turno === 'dia' ? 550000 : 650000;
+    const precioFoto = 450000;
+    // Vemos cuánta plata hay que descontarle para que el combo quede en $850.000 exactos
+    const descuentoDjFoto = (precioDJ + precioFoto) - 850000;
+    
+    total -= descuentoDjFoto;
+    lineas.push(`🎁 Promo DJ + Fotógrafo aplicada: -$${descuentoDjFoto.toLocaleString('es-AR')}`);
+  }
+
+  // Paquete Promo Automático General (Seña Fija)
+  const esPromo = (E.espacio === 'quinta' && E.dia === 'finde' && E.personas === 60 && E.musicaPersonal.has('dj') && E.musicaPersonal.has('fotografia'));
   if (esPromo) {
     total -= 5000;
     lineas.push(`🎁 Bonificación paquete Todo Incluido: -$5.000`);
@@ -408,7 +494,6 @@ function activarPromo() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  actualizarBannerPromo();
   initFiltros();
   renderOpciones(CATERING, 'grid-catering', 'catering');
   renderOpciones(BARRA, 'grid-barra', 'barra');

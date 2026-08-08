@@ -1101,3 +1101,87 @@ footer {
   object-fit: contain;
   display: block;
 }
+
+/* ── RULETA INTERACTIVA ── */
+.ruleta-section {
+  background: var(--verde);
+  padding: 56px 0;
+}
+.ruleta-card {
+  background: var(--blanco);
+  border: 2px solid var(--acento);
+  border-radius: 16px;
+  padding: 36px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+}
+.ruleta-contenedor {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 24px auto;
+}
+.ruleta-flecha {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 28px solid var(--texto);
+  z-index: 10;
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
+}
+.ruleta-rueda {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
+  border: 6px solid var(--arena);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  background: conic-gradient(
+    var(--verde) 0deg 60deg,
+    var(--verde-m) 60deg 120deg,
+    var(--acento) 120deg 180deg,
+    var(--verde-v) 180deg 240deg,
+    var(--verde) 240deg 300deg,
+    var(--verde-m) 300deg 360deg
+  );
+}
+.ruleta-texto {
+  position: absolute;
+  width: 80px;
+  height: 140px; /* Mitad de la rueda */
+  left: calc(50% - 40px);
+  top: 0;
+  transform-origin: bottom center;
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  box-sizing: border-box;
+}
+.ruleta-resultado {
+  margin-top: 16px;
+  padding: 14px;
+  background: #edf7e8;
+  border: 2px solid var(--verde-m);
+  color: var(--verde);
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+.ruleta-resultado.oculto {
+  display: none;
+}

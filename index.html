@@ -150,25 +150,29 @@
     </div>
   </section>
 
-  <!-- PROMO -->
-  <section class="promo-banner">
+  <!-- PROMO RULETA -->
+  <section class="ruleta-section">
     <div class="container">
-      <div class="promo-card">
-        <div class="promo-badge">Promo especial</div>
-        <h2>Paquete "Todo Incluido"</h2>
-        <p class="promo-subtitle">Ideal para cumpleaños de 15, 18 y casamientos en marzo, abril y mayo.</p>
-        <div class="promo-precio">
-          <span class="promo-anticipo">Anticipo <strong>$1.200.000</strong></span>
-          <span class="promo-cuotas">+ 4 cuotas de <strong>$350.000</strong></span>
+      <div class="ruleta-card">
+        <div class="promo-badge">¡Girá y Ganá!</div>
+        <h2>Ruleta de Beneficios</h2>
+        <p class="promo-subtitle">Probá tu suerte y llevate un premio exclusivo para tu evento. ¡Se aplica automáticamente al presupuesto!</p>
+        
+        <div class="ruleta-contenedor">
+          <div class="ruleta-flecha"></div>
+          <div class="ruleta-rueda" id="ruleta">
+            <!-- Los 6 segmentos -->
+            <div class="ruleta-texto" style="transform: rotate(30deg)"><span>Candy Bar<br>Gratis</span></div>
+            <div class="ruleta-texto" style="transform: rotate(90deg)"><span>¡Casi!</span></div>
+            <div class="ruleta-texto" style="transform: rotate(150deg)"><span>Shimer<br>Gratis</span></div>
+            <div class="ruleta-texto" style="transform: rotate(210deg)"><span>Metegol<br>Gratis</span></div>
+            <div class="ruleta-texto" style="transform: rotate(270deg)"><span>¡Ups!</span></div>
+            <div class="ruleta-texto" style="transform: rotate(330deg)"><span>Chispas<br>Gratis</span></div>
+          </div>
         </div>
-        <p class="promo-capacidad">🎉 Hasta 60 personas</p>
-        <ul class="promo-lista">
-          <li>El lugar totalmente organizado</li>
-          <li>Mobiliario completo</li>
-          <li>Pista de baile y DJ</li>
-          <li>Pantalla y fotografía</li>
-        </ul>
-        <a href="#cotizador" class="btn-primary" style="margin-top:20px;" onclick="activarPromo()">Quiero esta promo</a>
+
+        <button id="btn-girar" class="btn-primary" style="margin-top:20px;" onclick="girarRuleta()">Girar Ruleta</button>
+        <div id="ruleta-resultado" class="ruleta-resultado oculto"></div>
       </div>
     </div>
   </section>
@@ -303,25 +307,32 @@
           </div>
         </div>
 
-          <!-- PASO 5: CATERING Y BARRA -->
+          <!-- PASO 5: CATERING -->
         <div class="cot-paso">
           <div class="cot-paso-head">
             <span class="cot-paso-num">5</span>
-            <h3>Catering y Barra</h3>
+            <h3>Catering y Comida</h3>
           </div>
           <div class="cot-paso-body">
-            <h4 style="font-size:0.85rem; color:var(--verde); margin-bottom:8px;">Catering</h4>
             <div class="opc-grid" id="grid-catering"><!-- JS --></div>
-            
-            <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Barra de Bebidas</h4>
+          </div>
+        </div>
+
+        <!-- PASO 6: BARRA DE BEBIDAS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">6</span>
+            <h3>Barra de Bebidas</h3>
+          </div>
+          <div class="cot-paso-body">
             <div class="opc-grid" id="grid-barra"><!-- JS --></div>
           </div>
         </div>
 
-        <!-- PASO 6: MÚSICA, PERSONAL Y COMBOS -->
+        <!-- PASO 7: MÚSICA, PERSONAL Y COMBOS -->
         <div class="cot-paso">
           <div class="cot-paso-head">
-            <span class="cot-paso-num">6</span>
+            <span class="cot-paso-num">7</span>
             <h3>Música, Personal y Combos</h3>
           </div>
           <div class="cot-paso-body">
@@ -329,10 +340,10 @@
           </div>
         </div>
 
-        <!-- PASO 7: JUEGOS Y EXTRAS -->
+        <!-- PASO 8: JUEGOS Y EXTRAS -->
         <div class="cot-paso">
           <div class="cot-paso-head">
-            <span class="cot-paso-num">7</span>
+            <span class="cot-paso-num">8</span>
             <h3>Juegos y Extras</h3>
           </div>
           <div class="cot-paso-body">

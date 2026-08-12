@@ -165,18 +165,42 @@ function mostrarPremio(ganador) {
 /* ══════════════════════════
    GALERÍA — filtros por espacio
    ══════════════════════════ */
+const ultimasElegidas = {};
+
+function aplicarFiltroGaleria(f) {
+  const items = document.querySelectorAll('.galeria-item');
+  if (f !== 'todo') {
+    items.forEach(item => item.classList.toggle('oculto', item.dataset.espacio !== f));
+    return;
+  }
+  items.forEach(item => item.classList.add('oculto'));
+  const grupos = {};
+  items.forEach(item => {
+    if (item.classList.contains('es-video')) return;
+    const espacio = item.dataset.espacio;
+    (grupos[espacio] = grupos[espacio] || []).push(item);
+  });
+  Object.entries(grupos).forEach(([espacio, arr]) => {
+    let candidatos = arr;
+    if (arr.length > 1) {
+      candidatos = arr.filter(item => item !== ultimasElegidas[espacio]);
+    }
+    const elegida = candidatos[Math.floor(Math.random() * candidatos.length)];
+    elegida.classList.remove('oculto');
+    ultimasElegidas[espacio] = elegida;
+  });
+  document.querySelectorAll('.es-video').forEach(v => v.classList.remove('oculto'));
+}
+
 function initFiltros() {
   document.querySelectorAll('.filtro').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filtro').forEach(b => b.classList.remove('activo'));
       btn.classList.add('activo');
-      const f = btn.dataset.filtro;
-      document.querySelectorAll('.galeria-item').forEach(item => {
-        const espacio = item.dataset.espacio;
-        item.classList.toggle('oculto', f !== 'todo' && espacio !== f);
-      });
+      aplicarFiltroGaleria(btn.dataset.filtro);
     });
   });
+  aplicarFiltroGaleria('todo');
 }
 
 /* ══════════════════════════

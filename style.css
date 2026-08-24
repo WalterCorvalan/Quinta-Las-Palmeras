@@ -1319,3 +1319,22 @@ footer {
   opacity: 0.7;
   pointer-events: none;
 }
+
+/* --- AJUSTE PARA VIDEO VERTICAL DE CELULAR --- */
+.galeria-item.es-video .video-wrap {
+  padding-bottom: 0 !important; /* Quitamos la proporción apaisada (16:9) */
+  height: 100%; 
+  min-height: 400px;
+  background-color: #000; /* Fondo negro para los bordes sobrantes */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.galeria-item.es-video .video-wrap video {
+  position: relative !important; /* Anula la posición absoluta del contenedor original */
+  width: 100%;
+  height: 100%;
+  max-height: 600px; /* Límite para que no ocupe toda la pantalla en la compu */
+  object-fit: contain; /* Clave: esto encaja el video vertical sin cortar ni arriba ni abajo */
+}

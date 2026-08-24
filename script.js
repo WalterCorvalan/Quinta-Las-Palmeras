@@ -192,6 +192,41 @@ function aplicarFiltroGaleria(f) {
   document.querySelectorAll('.es-video').forEach(v => v.classList.remove('oculto'));
 }
 
+/* ══════════════════════════
+   GALERÍA — Mezclar fotos al azar
+   ══════════════════════════ */
+function randomizarGaleria() {
+  const grid = document.getElementById('galeria-grid');
+  if (!grid) return;
+
+  // 1. Obtenemos todos los elementos de la galería
+  const items = Array.from(grid.querySelectorAll('.galeria-item'));
+  
+  // 2. Buscamos el video y guardamos su posición original (index)
+  const videoItem = items.find(item => item.classList.contains('es-video'));
+  const videoIndex = items.indexOf(videoItem);
+
+  // 3. Filtramos para quedarnos solo con las imágenes (excluimos el video)
+  let imagenes = items.filter(item => !item.classList.contains('es-video'));
+
+  // 4. Mezclamos las imágenes de forma aleatoria (Algoritmo de Fisher-Yates)
+  for (let i = imagenes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [imagenes[i], imagenes[j]] = [imagenes[j], imagenes[i]];
+  }
+
+  // 5. Vaciamos la grilla
+  grid.innerHTML = '';
+
+  // 6. Volvemos a insertar el video en su posición fija dentro del array mezclado
+  if (videoItem && videoIndex > -1) {
+    imagenes.splice(videoIndex, 0, videoItem);
+  }
+
+  // 7. Agregamos todos los elementos de nuevo al HTML
+  imagenes.forEach(item => grid.appendChild(item));
+}
+
 function initFiltros() {
   document.querySelectorAll('.filtro').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -518,6 +553,7 @@ function activarPromo() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  randomizarGaleria();
   initFiltros();
   renderOpciones(CATERING, 'grid-catering', 'catering');
   renderOpciones(BARRA, 'grid-barra', 'barra');

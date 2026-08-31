@@ -887,9 +887,15 @@ nav .container {
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+  animation: pulso-wa 2s infinite;
 }
 .btn-wa:hover {
   background: #1ebe5a;
+  animation: none;
+}
+@keyframes pulso-wa {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,.5); }
+  50% { box-shadow: 0 0 0 8px rgba(37,211,102,0); }
 }
 .cot-nota {
   font-size: 0.68rem;
@@ -1337,4 +1343,43 @@ footer {
   height: 100%;
   max-height: 600px; /* Límite para que no ocupe toda la pantalla en la compu */
   object-fit: contain; /* Clave: esto encaja el video vertical sin cortar ni arriba ni abajo */
+}
+
+.cot-resumen-bar-toggle {
+  animation: rebote-detalle 1.8s ease-in-out infinite;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+/* Se detiene y la flecha rota cuando está abierto */
+.cot-resumen.expandido .cot-resumen-bar-toggle {
+  animation: none;
+  color: white;
+}
+
+.toggle-arrow {
+  display: inline-block;
+  animation: rebote-flecha 1.2s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.cot-resumen.expandido .toggle-arrow {
+  animation: none;
+  transform: rotate(180deg); /* la flecha apunta para abajo, indicando "cerrar" */
+}
+
+.cot-resumen.expandido ~ .wa-float,
+body:has(.cot-resumen.expandido) .wa-float {
+  display: none;
+}
+
+@keyframes rebote-detalle {
+  0%, 100% { transform: translateY(0); color: white; }
+  50% { transform: translateY(-4px); color: #ffd166; }
+}
+
+@keyframes rebote-flecha {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }

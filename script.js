@@ -222,7 +222,9 @@ const E = {
 };
 
 function juegosDe(espacio) {
-  return espacio === "quinta" ? JUEGOS_COMUNES.concat(JUEGOS_QUINTA) : JUEGOS_COMUNES;
+  return espacio === "quinta"
+    ? JUEGOS_COMUNES.concat(JUEGOS_QUINTA)
+    : JUEGOS_COMUNES;
 }
 
 function getPrecioItem(item, espacio) {
@@ -275,20 +277,16 @@ function aplicarFiltroGaleria(f) {
   items.forEach((item) => item.classList.add("oculto"));
   const grupos = {};
   items.forEach((item) => {
-    if (item.classList.contains("es-video")) return;
     const espacio = item.dataset.espacio;
     (grupos[espacio] = grupos[espacio] || []).push(item);
   });
-  const CANTIDAD_POR_ESPACIO_EN_TODO = 6;
+  const CANTIDAD_POR_ESPACIO_EN_TODO = 4;
   Object.entries(grupos).forEach(([espacio, arr]) => {
     const mezclado = [...arr].sort(() => Math.random() - 0.5);
     mezclado
       .slice(0, CANTIDAD_POR_ESPACIO_EN_TODO)
       .forEach((item) => item.classList.remove("oculto"));
   });
-  document
-    .querySelectorAll(".es-video")
-    .forEach((v) => v.classList.remove("oculto"));
 }
 
 /* ══════════════════════════
@@ -301,12 +299,8 @@ function randomizarGaleria() {
   // 1. Obtenemos todos los elementos de la galería
   const items = Array.from(grid.querySelectorAll(".galeria-item"));
 
-  // 2. Buscamos el video y guardamos su posición original (index)
-  const videoItem = items.find((item) => item.classList.contains("es-video"));
-  const videoIndex = items.indexOf(videoItem);
-
-  // 3. Filtramos para quedarnos solo con las imágenes (excluimos el video)
-  let imagenes = items.filter((item) => !item.classList.contains("es-video"));
+  // 2. Mezclamos solo las imágenes de la galería
+  const imagenes = items;
 
   // 4. Mezclamos las imágenes de forma aleatoria (Algoritmo de Fisher-Yates)
   for (let i = imagenes.length - 1; i > 0; i--) {
@@ -314,15 +308,10 @@ function randomizarGaleria() {
     [imagenes[i], imagenes[j]] = [imagenes[j], imagenes[i]];
   }
 
-  // 5. Vaciamos la grilla
+  // 3. Vaciamos la grilla
   grid.innerHTML = "";
 
-  // 6. Volvemos a insertar el video en su posición fija dentro del array mezclado
-  if (videoItem && videoIndex > -1) {
-    imagenes.splice(videoIndex, 0, videoItem);
-  }
-
-  // 7. Agregamos todos los elementos de nuevo al HTML
+  // 4. Agregamos todos los elementos de nuevo al HTML
   imagenes.forEach((item) => grid.appendChild(item));
 }
 
@@ -385,7 +374,9 @@ function ajustarSliderAlEspacio(espacio) {
   slider.value = st.personas;
   document.getElementById(`personas-num-${espacio}`).textContent = st.personas;
   document.getElementById(`cap-sillas-${espacio}`).textContent = st.personas;
-  document.getElementById(`cap-mesas-${espacio}`).textContent = Math.ceil(st.personas / 8);
+  document.getElementById(`cap-mesas-${espacio}`).textContent = Math.ceil(
+    st.personas / 8,
+  );
 }
 
 function setDia(tipo, espacio) {
@@ -406,7 +397,9 @@ function setDia(tipo, espacio) {
 }
 
 function setFecha(espacio) {
-  E[espacio].fechaExacta = document.getElementById(`fecha-exacta-${espacio}`).value;
+  E[espacio].fechaExacta = document.getElementById(
+    `fecha-exacta-${espacio}`,
+  ).value;
   E.activo = espacio;
   actualizar();
   try {
@@ -425,7 +418,12 @@ function setTurno(tipo, espacio) {
   document
     .getElementById(`turno-noche-${espacio}`)
     .classList.toggle("activo", tipo === "noche");
-  renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
+  renderOpciones(
+    MUSICA_PERSONAL,
+    `grid-musica-personal-${espacio}`,
+    "musicaPersonal",
+    espacio,
+  );
   actualizar();
   try {
     avanzarPaso(document.getElementById(`turno-dia-${espacio}`));
@@ -438,20 +436,29 @@ function renderOpciones(items, gridId, setKey, espacio) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
   const st = E[espacio];
-  grid.innerHTML = items
-    .map((item) => {
-      let p = "";
-      const precioReal = getPrecioItem(item, espacio);
-      if (precioReal === 0 && !item.pp) {
-        p = "Incluido";
-      } else {
-        p = item.pp
-          ? `$${(item.precio_pp * st.personas).toLocaleString("es-AR")} (×${st.personas})`
-          : `$${precioReal.toLocaleString("es-AR")}`;
-      }
+  const comboActivo =
+    setKey === "musicaPersonal" &&
+    st.musicaPersonal.has("dj") &&
+    st.musicaPersonal.has("fotografia");
+  grid.innerHTML =
+    items
+      .map((item) => {
+        let p = "";
+        const precioReal = getPrecioItem(item, espacio);
+        if (precioReal === 0 && !item.pp) {
+          p = "Incluido";
+        } else {
+          p = item.pp
+            ? `$${(item.precio_pp * st.personas).toLocaleString("es-AR")} (×${st.personas})`
+            : `$${precioReal.toLocaleString("es-AR")}`;
+        }
 
-      return `
-      <div class="opc-card ${st[setKey].has(item.id) ? "activo" : ""}"
+        return `
+      <div class="opc-card ${st[setKey].has(item.id) ? "activo" : ""} ${
+        comboActivo && (item.id === "dj" || item.id === "fotografia")
+          ? "combo-activo"
+          : ""
+      }"
             onclick="toggleOpc('${item.id}','${setKey}','${gridId}','${espacio}')">
         <div class="opc-check">✓</div>
         <span class="opc-icon">${item.icon}</span>
@@ -460,8 +467,14 @@ function renderOpciones(items, gridId, setKey, espacio) {
         <div class="opc-desc">${item.desc}</div>
       </div>
     `;
-    })
-    .join("");
+      })
+      .join("") +
+    (comboActivo
+      ? `<div class="combo-aviso" role="status">
+          <strong>🎉 Combo DJ + Fotógrafo aplicado</strong>
+          <span>Juntos te queda en <b>$850.000</b></span>
+        </div>`
+      : "");
 }
 
 function toggleOpc(id, setKey, gridId, espacio) {
@@ -487,7 +500,8 @@ function initSlider(espacio) {
     const st = E[espacio];
     st.personas = parseInt(slider.value);
     E.activo = espacio;
-    document.getElementById(`personas-num-${espacio}`).textContent = st.personas;
+    document.getElementById(`personas-num-${espacio}`).textContent =
+      st.personas;
     document.getElementById(`cap-sillas-${espacio}`).textContent = st.personas;
     document.getElementById(`cap-mesas-${espacio}`).textContent = Math.ceil(
       st.personas / 8,
@@ -502,8 +516,18 @@ function initSlider(espacio) {
 
     renderOpciones(CATERING, `grid-catering-${espacio}`, "catering", espacio);
     renderOpciones(BARRA, `grid-barra-${espacio}`, "barra", espacio);
-    renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
-    renderOpciones(juegosDe(espacio), `grid-juegos-${espacio}`, "juegos", espacio);
+    renderOpciones(
+      MUSICA_PERSONAL,
+      `grid-musica-personal-${espacio}`,
+      "musicaPersonal",
+      espacio,
+    );
+    renderOpciones(
+      juegosDe(espacio),
+      `grid-juegos-${espacio}`,
+      "juegos",
+      espacio,
+    );
     renderOpciones(EXTRAS, `grid-extras-${espacio}`, "extras", espacio);
     actualizar();
   });
@@ -709,8 +733,18 @@ function enviarWA() {
 function renderTodo(espacio) {
   renderOpciones(CATERING, `grid-catering-${espacio}`, "catering", espacio);
   renderOpciones(BARRA, `grid-barra-${espacio}`, "barra", espacio);
-  renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
-  renderOpciones(juegosDe(espacio), `grid-juegos-${espacio}`, "juegos", espacio);
+  renderOpciones(
+    MUSICA_PERSONAL,
+    `grid-musica-personal-${espacio}`,
+    "musicaPersonal",
+    espacio,
+  );
+  renderOpciones(
+    juegosDe(espacio),
+    `grid-juegos-${espacio}`,
+    "juegos",
+    espacio,
+  );
   renderOpciones(EXTRAS, `grid-extras-${espacio}`, "extras", espacio);
 }
 
@@ -737,8 +771,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.querySelectorAll('input[type="date"]').forEach((inputFecha) => {
-    const hoy = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
-    inputFecha.setAttribute('min', hoy);
+    const hoy = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
+    inputFecha.setAttribute("min", hoy);
   });
 });
 

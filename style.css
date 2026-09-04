@@ -352,33 +352,6 @@ nav .container {
   letter-spacing: 0.02em;
 }
 
-/* Video embed */
-.video-wrap {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-}
-.video-wrap iframe,
-.video-wrap video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  object-fit: cover;
-}
-.video-label {
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  color: var(--suave);
-  background: var(--arena);
-}
-.galeria-item.video.grande .video-wrap {
-  /* ocupa full */
-}
-
 /* Instagram embed wrapper */
 .ig-embed-wrap {
   overflow: hidden;
@@ -521,8 +494,7 @@ nav .container {
 }
 .banner-img img {
   width: 100%;
-  height: 260px;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 .banner-img-overlay {
@@ -795,6 +767,32 @@ nav .container {
   border-color: var(--verde);
   background: #edf7e8;
 }
+.opc-card.combo-activo {
+  animation: combo-seleccionado 0.7s ease both;
+}
+.combo-aviso {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px;
+  border: 1px solid var(--acento);
+  border-radius: 10px;
+  background: #fff8e8;
+  color: var(--texto);
+  text-align: center;
+  animation: combo-aviso-entrada 0.35s ease both;
+}
+.combo-aviso strong {
+  color: var(--verde);
+  font-size: 0.82rem;
+}
+.combo-aviso span {
+  font-size: 0.78rem;
+}
+.combo-aviso b {
+  color: var(--verde);
+}
 .opc-check {
   position: absolute;
   top: 7px;
@@ -973,6 +971,27 @@ nav .container {
   }
   50% {
     box-shadow: 0 0 0 8px rgba(37, 211, 102, 0);
+  }
+}
+@keyframes combo-seleccionado {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.035);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes combo-aviso-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 .cot-nota {
@@ -1180,25 +1199,6 @@ footer {
   width: auto;
   object-fit: contain;
   display: block;
-}
-
-/* --- AJUSTE PARA VIDEO VERTICAL DE CELULAR --- */
-.galeria-item.es-video .video-wrap {
-  padding-bottom: 0 !important; /* Quitamos la proporción apaisada (16:9) */
-  height: 100%;
-  min-height: 400px;
-  background-color: #000; /* Fondo negro para los bordes sobrantes */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.galeria-item.es-video .video-wrap video {
-  position: relative !important; /* Anula la posición absoluta del contenedor original */
-  width: 100%;
-  height: 100%;
-  max-height: 600px; /* Límite para que no ocupe toda la pantalla en la compu */
-  object-fit: contain; /* Clave: esto encaja el video vertical sin cortar ni arriba ni abajo */
 }
 
 .cot-resumen-bar-toggle {

@@ -280,7 +280,7 @@ function aplicarFiltroGaleria(f) {
     const espacio = item.dataset.espacio;
     (grupos[espacio] = grupos[espacio] || []).push(item);
   });
-  const CANTIDAD_POR_ESPACIO_EN_TODO = 4;
+  const CANTIDAD_POR_ESPACIO_EN_TODO = 2;
   Object.entries(grupos).forEach(([espacio, arr]) => {
     const mezclado = [...arr].sort(() => Math.random() - 0.5);
     mezclado

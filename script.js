@@ -8,6 +8,11 @@ const CONFIG = {
   precioCopaPp: 800, // Costo adicional por persona si elige copas
 };
 
+const LIMITES = {
+  salon: { min: 25, max: 65, dia: 10000, noche: 15000 },
+  quinta: { min: 40, max: 150, dia: 20000, noche: 25000 },
+};
+
 const CATERING = [
   {
     id: "catering_formal",
@@ -105,7 +110,7 @@ const MUSICA_PERSONAL = [
   },
 ];
 
-const JUEGOS = [
+const JUEGOS_COMUNES = [
   {
     id: "metegol",
     icon: "⚽",
@@ -114,6 +119,9 @@ const JUEGOS = [
     pp: false,
     desc: "Alquiler por evento",
   },
+];
+
+const JUEGOS_QUINTA = [
   {
     id: "pelotero_acuatico",
     icon: "💦",
@@ -192,44 +200,56 @@ const EXTRAS = [
 ];
 
 /* ── ESTADO INICIAL ── */
+function crearEstadoEspacio(personas) {
+  return {
+    dia: "semana",
+    fechaExacta: "",
+    turno: "dia",
+    personas,
+    usaCopas: false,
+    catering: new Set(),
+    barra: new Set(),
+    musicaPersonal: new Set(),
+    juegos: new Set(),
+    extras: new Set(["parrilla", "heladera", "apoya_torta"]),
+  };
+}
+
 const E = {
-  espacio: "salon",
-  dia: "semana",
-  fechaExacta: "",
-  turno: "dia",
-  personas: 40,
-  usaCopas: false,
-  catering: new Set(),
-  barra: new Set(),
-  musicaPersonal: new Set(),
-  premioGanado: null,
-  juegos: new Set(),
-  // 👇 Le sacamos 'shimer' para que ya no aparezca tildado y gratis
-  extras: new Set(["parrilla", "heladera", "apoya_torta"]),
+  activo: "salon",
+  salon: crearEstadoEspacio(LIMITES.salon.min),
+  quinta: crearEstadoEspacio(LIMITES.quinta.min),
 };
 
-function getPrecioItem(item) {
+function juegosDe(espacio) {
+  return espacio === "quinta" ? JUEGOS_COMUNES.concat(JUEGOS_QUINTA) : JUEGOS_COMUNES;
+}
+
+function getPrecioItem(item, espacio) {
+  const st = E[espacio];
   if (item.id === "dj") {
-    return E.turno === "dia" ? 550000 : 650000;
+    return st.turno === "dia" ? 550000 : 650000;
   }
   if (item.id === "mozos") {
-    const cantidadMozos = Math.ceil(E.personas / 20); // Redondea para arriba: 50/20 = 2.5 -> 3 mozos
+    const cantidadMozos = Math.ceil(st.personas / 20); // Redondea para arriba: 50/20 = 2.5 -> 3 mozos
     return cantidadMozos * 70000;
   }
   return item.precio;
 }
 
-function toggleCopas() {
-  E.usaCopas = !E.usaCopas;
-  const card = document.getElementById("card-copas");
-  const icon = document.getElementById("copas-icon");
-  const num = document.getElementById("cap-vasos-copas");
-  const label = document.getElementById("copas-label");
+function toggleCopas(espacio) {
+  const st = E[espacio];
+  st.usaCopas = !st.usaCopas;
+  E.activo = espacio;
+  const card = document.getElementById(`card-copas-${espacio}`);
+  const icon = document.getElementById(`copas-icon-${espacio}`);
+  const num = document.getElementById(`cap-vasos-copas-${espacio}`);
+  const label = document.getElementById(`copas-label-${espacio}`);
 
-  if (E.usaCopas) {
+  if (st.usaCopas) {
     card.classList.add("activo");
     icon.textContent = "🍷";
-    num.textContent = `+$${(CONFIG.precioCopaPp * E.personas).toLocaleString("es-AR")}`;
+    num.textContent = `+$${(CONFIG.precioCopaPp * st.personas).toLocaleString("es-AR")}`;
     label.textContent = "Copas seleccionadas";
   } else {
     card.classList.remove("activo");
@@ -241,121 +261,11 @@ function toggleCopas() {
 }
 
 /* ══════════════════════════
-   BANNER PROMO DINÁMICO
-   ══════════════════════════ */
-
-/* ══════════════════════════
-   LÓGICA DE LA RULETA
-   ══════════════════════════ */
-const premiosRuleta = [
-  { id: 'candybar', nombre: 'Candy Bar', index: 0, peso: 12 },
-  { id: null,       nombre: '¡Casi! Seguí participando', index: 1, peso: 30 },
-  { id: 'shimer',   nombre: 'Panel Shimer', index: 2, peso: 12 },
-  { id: 'metegol',  nombre: 'Metegol', index: 3, peso: 16 },
-  { id: null,       nombre: '¡Ups! No hay premio', index: 4, peso: 18 },
-  { id: 'chispas',  nombre: 'Chispas Frías', index: 5, peso: 12 }
-];
-
-function elegirGanadorPonderado() {
-  const pesoTotal = premiosRuleta.reduce((acc, p) => acc + p.peso, 0);
-  let rand = Math.random() * pesoTotal;
-  for (const premio of premiosRuleta) {
-    if (rand < premio.peso) return premio;
-    rand -= premio.peso;
-  }
-  return premiosRuleta[premiosRuleta.length - 1]; // fallback
-}
-
-let giroActual = 0;
-
-function girarRuleta() {
-  // Bloqueo: si ya jugó antes, no dejar girar de nuevo
-  if (localStorage.getItem('ruletaJugada')) {
-    mostrarPremio(JSON.parse(localStorage.getItem('ruletaPremio')));
-    return;
-  }
-
-  const btn = document.getElementById('btn-girar');
-  btn.disabled = true;
-  btn.innerHTML = "Girando...";
-
-  const ruleta = document.getElementById('ruleta');
-  const ganador = elegirGanadorPonderado();
-
-  const anguloCentro = ganador.index * 60 + 30;
-  const rotacionTarget = 360 - anguloCentro;
-  const vueltasExtra = 1800;
-  const offsetRestante = rotacionTarget - (giroActual % 360);
-  const giroTotal = giroActual + vueltasExtra + (offsetRestante < 0 ? 360 + offsetRestante : offsetRestante);
-
-  giroActual = giroTotal;
-  ruleta.style.transform = `rotate(${giroTotal}deg)`;
-
-  setTimeout(() => {
-    mostrarPremio(ganador);
-    btn.innerHTML = "¡Ruleta Girada!";
-
-    // Guardar resultado para que no pueda volver a jugar
-    localStorage.setItem('ruletaJugada', 'true');
-    localStorage.setItem('ruletaPremio', JSON.stringify(ganador));
-  }, 4000);
-}
-
-function initRuletaGuardada() {
-  if (!localStorage.getItem('ruletaJugada')) return;
-
-  const ganador = JSON.parse(localStorage.getItem('ruletaPremio'));
-  const btn = document.getElementById('btn-girar');
-
-  // Dejamos la rueda apuntando al resultado guardado, sin animación
-  const anguloCentro = ganador.index * 60 + 30;
-  const ruleta = document.getElementById('ruleta');
-  ruleta.style.transition = 'none';
-  ruleta.style.transform = `rotate(${360 - anguloCentro}deg)`;
-
-  btn.disabled = true;
-  btn.innerHTML = "Ya jugaste 🎉";
-
-  mostrarPremio(ganador);
-
-  // Aplicamos el premio de nuevo al estado E (por si el usuario recargó y perdió el estado)
-  if (ganador.id === 'candybar') E.extras.add('candybar');
-  if (ganador.id === 'shimer') E.extras.add('shimer');
-  if (ganador.id === 'metegol') E.juegos.add('metegol');
-  if (ganador.id === 'chispas') E.extras.add('chispas');
-  E.premioGanado = ganador;
-}
-
-function mostrarPremio(ganador) {
-  const resEl = document.getElementById("ruleta-resultado");
-  resEl.classList.remove("oculto");
-
-  if (ganador.id) {
-    resEl.innerHTML = `🎉 ¡Ganaste <strong>${ganador.nombre} Gratis</strong>! Ya lo sumamos a tu cotización.`;
-
-    // Guardamos el premio y lo marcamos automáticamente en las opciones
-    E.premioGanado = ganador;
-    if (ganador.id === "candybar") E.extras.add("candybar");
-    if (ganador.id === "shimer") E.extras.add("shimer");
-    if (ganador.id === "metegol") E.juegos.add("metegol");
-    if (ganador.id === "chispas") E.extras.add("chispas");
-
-    // Refrescamos la vista para que el botón muestre "Incluido" o "Gratis"
-    renderOpciones(EXTRAS, "grid-extras", "extras");
-    renderOpciones(JUEGOS, "grid-juegos", "juegos");
-    actualizar();
-  } else {
-    resEl.innerHTML = `😅 <strong>${ganador.nombre}</strong>. ¡Animate a armar tu evento igual!`;
-  }
-}
-
-/* ══════════════════════════
    GALERÍA — filtros por espacio
    ══════════════════════════ */
-const ultimasElegidas = {};
 
 function aplicarFiltroGaleria(f) {
-  const items = document.querySelectorAll(".galeria-item");
+  const items = document.querySelectorAll(".galeria-item[data-espacio]");
   if (f !== "todo") {
     items.forEach((item) =>
       item.classList.toggle("oculto", item.dataset.espacio !== f),
@@ -369,14 +279,12 @@ function aplicarFiltroGaleria(f) {
     const espacio = item.dataset.espacio;
     (grupos[espacio] = grupos[espacio] || []).push(item);
   });
+  const CANTIDAD_POR_ESPACIO_EN_TODO = 6;
   Object.entries(grupos).forEach(([espacio, arr]) => {
-    let candidatos = arr;
-    if (arr.length > 1) {
-      candidatos = arr.filter((item) => item !== ultimasElegidas[espacio]);
-    }
-    const elegida = candidatos[Math.floor(Math.random() * candidatos.length)];
-    elegida.classList.remove("oculto");
-    ultimasElegidas[espacio] = elegida;
+    const mezclado = [...arr].sort(() => Math.random() - 0.5);
+    mezclado
+      .slice(0, CANTIDAD_POR_ESPACIO_EN_TODO)
+      .forEach((item) => item.classList.remove("oculto"));
   });
   document
     .querySelectorAll(".es-video")
@@ -436,7 +344,9 @@ function initFiltros() {
    ══════════════════════════ */
 
 function avanzarPaso(elActual) {
-  const pasos = Array.from(document.querySelectorAll(".cot-paso"));
+  const contenedor = elActual.closest(".cot-pasos");
+  if (!contenedor) return;
+  const pasos = Array.from(contenedor.querySelectorAll(".cot-paso"));
   const idx = pasos.indexOf(elActual.closest(".cot-paso"));
   const siguiente = pasos[idx + 1];
   if (siguiente) {
@@ -447,89 +357,102 @@ function avanzarPaso(elActual) {
   }
 }
 
-function setEspacio(tipo) {
-  E.espacio = tipo;
+function elegirEspacio(espacio) {
+  E.activo = espacio;
   document
-    .getElementById("opc-salon")
-    .classList.toggle("activo", tipo === "salon");
+    .getElementById("btn-elegir-salon")
+    .classList.toggle("activo", espacio === "salon");
   document
-    .getElementById("opc-quinta")
-    .classList.toggle("activo", tipo === "quinta");
+    .getElementById("btn-elegir-quinta")
+    .classList.toggle("activo", espacio === "quinta");
+  document
+    .getElementById("bloque-salon")
+    .classList.toggle("oculto", espacio !== "salon");
+  document
+    .getElementById("bloque-quinta")
+    .classList.toggle("oculto", espacio !== "quinta");
   actualizar();
-  try {
-    avanzarPaso(
-      document.getElementById(tipo === "salon" ? "opc-salon" : "opc-quinta"),
-    );
-  } catch (e) {
-    console.warn(e);
-  }
+  document
+    .getElementById(`bloque-${espacio}`)
+    .scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function setDia(tipo) {
-  E.dia = tipo;
+function ajustarSliderAlEspacio(espacio) {
+  const lim = LIMITES[espacio];
+  const st = E[espacio];
+  const slider = document.getElementById(`slider-personas-${espacio}`);
+  if (!slider) return;
+  slider.value = st.personas;
+  document.getElementById(`personas-num-${espacio}`).textContent = st.personas;
+  document.getElementById(`cap-sillas-${espacio}`).textContent = st.personas;
+  document.getElementById(`cap-mesas-${espacio}`).textContent = Math.ceil(st.personas / 8);
+}
+
+function setDia(tipo, espacio) {
+  E[espacio].dia = tipo;
+  E.activo = espacio;
   document
-    .getElementById("opc-semana")
+    .getElementById(`opc-semana-${espacio}`)
     .classList.toggle("activo", tipo === "semana");
   document
-    .getElementById("opc-finde")
+    .getElementById(`opc-finde-${espacio}`)
     .classList.toggle("activo", tipo === "finde");
   actualizar();
   try {
-    avanzarPaso(
-      document.getElementById(tipo === "semana" ? "opc-semana" : "opc-finde"),
-    );
+    avanzarPaso(document.getElementById(`opc-semana-${espacio}`));
   } catch (e) {
     console.warn(e);
   }
 }
 
-function setFecha() {
-  E.fechaExacta = document.getElementById("fecha-exacta").value;
+function setFecha(espacio) {
+  E[espacio].fechaExacta = document.getElementById(`fecha-exacta-${espacio}`).value;
+  E.activo = espacio;
   actualizar();
   try {
-    avanzarPaso(document.getElementById("fecha-exacta"));
+    avanzarPaso(document.getElementById(`fecha-exacta-${espacio}`));
   } catch (e) {
     console.warn(e);
   }
 }
 
-function setTurno(tipo) {
-  E.turno = tipo;
+function setTurno(tipo, espacio) {
+  E[espacio].turno = tipo;
+  E.activo = espacio;
   document
-    .getElementById("turno-dia")
+    .getElementById(`turno-dia-${espacio}`)
     .classList.toggle("activo", tipo === "dia");
   document
-    .getElementById("turno-noche")
+    .getElementById(`turno-noche-${espacio}`)
     .classList.toggle("activo", tipo === "noche");
-  renderOpciones(MUSICA_PERSONAL, "grid-musica-personal", "musicaPersonal");
+  renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
   actualizar();
   try {
-    avanzarPaso(
-      document.getElementById(tipo === "salon" ? "opc-salon" : "opc-quinta"),
-    );
+    avanzarPaso(document.getElementById(`turno-dia-${espacio}`));
   } catch (e) {
     console.warn(e);
   }
 }
 
-function renderOpciones(items, gridId, setKey) {
+function renderOpciones(items, gridId, setKey, espacio) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
+  const st = E[espacio];
   grid.innerHTML = items
     .map((item) => {
       let p = "";
-      const precioReal = getPrecioItem(item);
+      const precioReal = getPrecioItem(item, espacio);
       if (precioReal === 0 && !item.pp) {
         p = "Incluido";
       } else {
         p = item.pp
-          ? `$${(item.precio_pp * E.personas).toLocaleString("es-AR")} (×${E.personas})`
+          ? `$${(item.precio_pp * st.personas).toLocaleString("es-AR")} (×${st.personas})`
           : `$${precioReal.toLocaleString("es-AR")}`;
       }
 
       return `
-      <div class="opc-card ${E[setKey].has(item.id) ? "activo" : ""}"
-            onclick="toggleOpc('${item.id}','${setKey}','${gridId}')">
+      <div class="opc-card ${st[setKey].has(item.id) ? "activo" : ""}"
+            onclick="toggleOpc('${item.id}','${setKey}','${gridId}','${espacio}')">
         <div class="opc-check">✓</div>
         <span class="opc-icon">${item.icon}</span>
         <div class="opc-nombre">${item.nombre}</div>
@@ -541,99 +464,62 @@ function renderOpciones(items, gridId, setKey) {
     .join("");
 }
 
-function toggleOpc(id, setKey, gridId) {
-  E[setKey].has(id) ? E[setKey].delete(id) : E[setKey].add(id);
+function toggleOpc(id, setKey, gridId, espacio) {
+  const st = E[espacio];
+  E.activo = espacio;
+  st[setKey].has(id) ? st[setKey].delete(id) : st[setKey].add(id);
 
   let dataset = CATERING;
   if (setKey === "barra") dataset = BARRA;
   else if (setKey === "musicaPersonal") dataset = MUSICA_PERSONAL;
-  else if (setKey === "juegos") dataset = JUEGOS;
+  else if (setKey === "juegos") dataset = juegosDe(espacio);
   else if (setKey === "extras") dataset = EXTRAS;
 
-  renderOpciones(dataset, gridId, setKey);
+  renderOpciones(dataset, gridId, setKey, espacio);
   actualizar();
 }
 
-function initSlider() {
-  const slider = document.getElementById("slider-personas");
+function initSlider(espacio) {
+  const slider = document.getElementById(`slider-personas-${espacio}`);
   if (!slider) return;
+  ajustarSliderAlEspacio(espacio);
   slider.addEventListener("input", () => {
-    E.personas = parseInt(slider.value);
-    document.getElementById("personas-num").textContent = E.personas;
-    document.getElementById("cap-sillas").textContent = E.personas;
-    document.getElementById("cap-mesas").textContent = Math.ceil(
-      E.personas / 8,
+    const st = E[espacio];
+    st.personas = parseInt(slider.value);
+    E.activo = espacio;
+    document.getElementById(`personas-num-${espacio}`).textContent = st.personas;
+    document.getElementById(`cap-sillas-${espacio}`).textContent = st.personas;
+    document.getElementById(`cap-mesas-${espacio}`).textContent = Math.ceil(
+      st.personas / 8,
     ); // 8 sillas por mesa
-    document.getElementById("personas-icon").textContent =
-      E.personas <= 20 ? "👨‍👩‍👧" : E.personas <= 50 ? "👨‍👩‍👧‍👦" : "🎉";
+    document.getElementById(`personas-icon-${espacio}`).textContent =
+      st.personas <= 20 ? "👨‍👩‍👧" : st.personas <= 50 ? "👨‍👩‍👧‍👦" : "🎉";
 
-    // Si las copas están activas, actualizar su precio dinámicamente según la cantidad de personas
-    if (E.usaCopas) {
-      document.getElementById("cap-vasos-copas").textContent =
-        `+$${(CONFIG.precioCopaPp * E.personas).toLocaleString("es-AR")}`;
+    if (st.usaCopas) {
+      document.getElementById(`cap-vasos-copas-${espacio}`).textContent =
+        `+$${(CONFIG.precioCopaPp * st.personas).toLocaleString("es-AR")}`;
     }
 
-    // Recargar todas las grillas que dependen del slider de personas
-    renderOpciones(CATERING, "grid-catering", "catering");
-    renderOpciones(BARRA, "grid-barra", "barra");
-    renderOpciones(MUSICA_PERSONAL, "grid-musica-personal", "musicaPersonal");
-    renderOpciones(JUEGOS, "grid-juegos", "juegos");
-    renderOpciones(EXTRAS, "grid-extras", "extras");
+    renderOpciones(CATERING, `grid-catering-${espacio}`, "catering", espacio);
+    renderOpciones(BARRA, `grid-barra-${espacio}`, "barra", espacio);
+    renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
+    renderOpciones(juegosDe(espacio), `grid-juegos-${espacio}`, "juegos", espacio);
+    renderOpciones(EXTRAS, `grid-extras-${espacio}`, "extras", espacio);
     actualizar();
   });
 }
 
 function calcular() {
-  let baseAlquiler = 0;
-  let nombreAlquiler = "";
-  const nombreEspacio = E.espacio === "salon" ? "Salón" : "Quinta Completa";
+  const espacio = E.activo;
+  const st = E[espacio];
+  const lim = LIMITES[espacio];
+  const precioPp = st.turno === "dia" ? lim.dia : lim.noche;
+  const nombreEspacio = espacio === "salon" ? "Salón" : "Quinta Completa";
+  const turnoNombre = st.turno === "dia" ? "De Día" : "De Noche";
+  const baseAlquiler = precioPp * st.personas;
+  const nombreAlquiler = `${nombreEspacio} (${turnoNombre}, ${st.personas} pers. × $${precioPp.toLocaleString("es-AR")})`;
 
-  // --- PRECIOS PARA SOLO SALÓN ---
-  if (E.espacio === "salon") {
-    if (E.dia === "semana" && E.turno === "dia") {
-      baseAlquiler = 350000;
-      nombreAlquiler = `Salón (Día de Sem. - De Día)`;
-    }
-    if (E.dia === "semana" && E.turno === "noche") {
-      baseAlquiler = 450000;
-      nombreAlquiler = `Salón (Día de Sem. - De Noche)`;
-    }
-    if (E.dia === "finde" && E.turno === "dia") {
-      baseAlquiler = 550000;
-      nombreAlquiler = `Salón (Fin de Sem. - De Día)`;
-    }
-    if (E.dia === "finde" && E.turno === "noche") {
-      baseAlquiler = 650000;
-      nombreAlquiler = `Salón (Fin de Sem. - De Noche)`;
-    }
-  }
-
-  // --- PRECIOS PARA QUINTA COMPLETA ---
-  if (E.espacio === "quinta") {
-    if (E.dia === "semana" && E.turno === "dia") {
-      baseAlquiler = 1000000;
-      nombreAlquiler = `Quinta (Día de Sem. - De Día)`;
-    }
-    if (E.dia === "semana" && E.turno === "noche") {
-      baseAlquiler = 1250000;
-      nombreAlquiler = `Quinta (Día de Sem. - De Noche)`;
-    }
-    if (E.dia === "finde" && E.turno === "dia") {
-      baseAlquiler = 1350000;
-      nombreAlquiler = `Quinta (Fin de Sem. - De Día)`;
-    }
-    if (E.dia === "finde" && E.turno === "noche") {
-      baseAlquiler = 1500000;
-      nombreAlquiler = `Quinta (Fin de Sem. - De Noche)`;
-    }
-  }
-
-  let costoPersonasExtra = 0;
-  if (E.personas > 40) {
-    costoPersonasExtra = (E.personas - 40) * 25000;
-  }
-
-  let total = baseAlquiler + costoPersonasExtra;
+  let total = baseAlquiler;
   let itemsDesglose = [];
 
   itemsDesglose.push({
@@ -641,18 +527,11 @@ function calcular() {
     precio: baseAlquiler,
   });
 
-  if (costoPersonasExtra > 0) {
-    itemsDesglose.push({
-      nombre: `Adicional por excedente (${E.personas - 40} invitados extra)`,
-      precio: costoPersonasExtra,
-    });
-  }
-
-  if (E.usaCopas) {
-    const costoCopas = CONFIG.precioCopaPp * E.personas;
+  if (st.usaCopas) {
+    const costoCopas = CONFIG.precioCopaPp * st.personas;
     total += costoCopas;
     itemsDesglose.push({
-      nombre: `Adicional de copas (${E.personas} pers.)`,
+      nombre: `Adicional de copas (${st.personas} pers.)`,
       precio: costoCopas,
     });
   }
@@ -660,30 +539,26 @@ function calcular() {
   const addItems = (items, set) =>
     items.forEach((item) => {
       if (!set.has(item.id)) return;
-      const precioUnit = getPrecioItem(item);
-      let m = item.pp ? item.precio_pp * E.personas : precioUnit;
+      const precioUnit = getPrecioItem(item, espacio);
+      let m = item.pp ? item.precio_pp * st.personas : precioUnit;
 
       let nombreMostrado = item.nombre;
 
-      // APLICAR DESCUENTO DE LA RULETA (Con validación segura)
-      if (E.premioGanado !== null && E.premioGanado.id === item.id) {
-        m = 0; // Lo hace gratis
-        nombreMostrado += " (🎁 GRATIS por Ruleta)";
-      } else if (item.id === "dj") {
-        nombreMostrado += E.turno === "dia" ? " (De Día)" : " (De Noche)";
+      if (item.id === "dj") {
+        nombreMostrado += st.turno === "dia" ? " (De Día)" : " (De Noche)";
       } else if (item.id === "mozos") {
-        nombreMostrado += ` (${Math.ceil(E.personas / 20)} mozos)`;
+        nombreMostrado += ` (${Math.ceil(st.personas / 20)} mozos)`;
       }
 
       total += m;
       itemsDesglose.push({ nombre: nombreMostrado, precio: m });
     });
 
-  addItems(CATERING, E.catering);
-  addItems(BARRA, E.barra);
-  addItems(MUSICA_PERSONAL, E.musicaPersonal);
-  addItems(JUEGOS, E.juegos);
-  addItems(EXTRAS, E.extras);
+  addItems(CATERING, st.catering);
+  addItems(BARRA, st.barra);
+  addItems(MUSICA_PERSONAL, st.musicaPersonal);
+  addItems(juegosDe(espacio), st.juegos);
+  addItems(EXTRAS, st.extras);
 
   itemsDesglose.sort((a, b) => b.precio - a.precio);
 
@@ -696,10 +571,9 @@ function calcular() {
   });
 
   // --- LÓGICA DE PROMO DJ + FOTÓGRAFO ---
-  if (E.musicaPersonal.has("dj") && E.musicaPersonal.has("fotografia")) {
-    const precioDJ = E.turno === "dia" ? 550000 : 650000;
+  if (st.musicaPersonal.has("dj") && st.musicaPersonal.has("fotografia")) {
+    const precioDJ = st.turno === "dia" ? 550000 : 650000;
     const precioFoto = 450000;
-    // Vemos cuánta plata hay que descontarle para que el combo quede en $850.000 exactos
     const descuentoDjFoto = precioDJ + precioFoto - 850000;
 
     total -= descuentoDjFoto;
@@ -708,23 +582,11 @@ function calcular() {
     );
   }
 
-  // Paquete Promo Automático General (Seña Fija)
-  const esPromo =
-    E.espacio === "quinta" &&
-    E.dia === "finde" &&
-    E.personas === 60 &&
-    E.musicaPersonal.has("dj") &&
-    E.musicaPersonal.has("fotografia");
-  if (esPromo) {
-    total -= 5000;
-    lineas.push(`🎁 Bonificación paquete Todo Incluido: -$5.000`);
-  }
-
   let anticipo = baseAlquiler;
   let resto = total - anticipo;
   let cuotas = resto > 0 ? Math.round(resto / 3) : 0;
 
-  return { total, lineas, anticipo, cuotas, resto };
+  return { espacio, total, lineas, anticipo, cuotas, resto };
 }
 
 function toggleResumen() {
@@ -745,7 +607,8 @@ function toggleResumen() {
 }
 
 function actualizar() {
-  const { total, lineas, anticipo, cuotas, resto } = calcular();
+  const { espacio, total, lineas, anticipo, cuotas, resto } = calcular();
+  const st = E[espacio];
   const totalFmt = `$${total.toLocaleString("es-AR")}`;
 
   const barEl = document.getElementById("cot-total-bar");
@@ -753,18 +616,21 @@ function actualizar() {
   if (barEl) barEl.textContent = totalFmt;
   if (panelEl) panelEl.textContent = totalFmt;
 
-  const esp = E.espacio === "salon" ? "Salón" : "Quinta";
-  let diaMostrado = E.dia === "semana" ? "Día de Sem" : "Finde";
+  const esp = espacio === "salon" ? "Salón" : "Quinta";
+  const espacioLabel = document.getElementById("cot-resumen-espacio");
+  if (espacioLabel) espacioLabel.textContent = `Tu presupuesto — ${esp}`;
 
-  if (E.fechaExacta) {
-    const [year, month, day] = E.fechaExacta.split("-");
+  let diaMostrado = st.dia === "semana" ? "Día de Sem" : "Finde";
+
+  if (st.fechaExacta) {
+    const [year, month, day] = st.fechaExacta.split("-");
     diaMostrado += ` (${day}/${month})`;
   }
 
   const turnoTexto =
-    E.turno === "dia" ? "Día (10:30 a 18hs)" : "Noche (20:30 a 05hs)";
+    st.turno === "dia" ? "Día (10:30 a 18hs)" : "Noche (20:30 a 05hs)";
   document.getElementById("cot-detalle").textContent =
-    `${E.personas} pers · ${esp} · ${diaMostrado} · ${turnoTexto}`;
+    `${st.personas} pers · ${esp} · ${diaMostrado} · ${turnoTexto}`;
 
   const itemsEl = document.getElementById("cot-resumen-items");
 
@@ -802,25 +668,26 @@ function actualizar() {
 }
 
 function enviarWA() {
-  const { total, lineas, anticipo, cuotas, resto } = calcular();
-  const esp = E.espacio === "salon" ? "Salón" : "Quinta Completa";
-  const dia = E.dia === "semana" ? "Día de Semana" : "Fin de Semana";
+  const { espacio, total, lineas, anticipo, cuotas, resto } = calcular();
+  const st = E[espacio];
+  const esp = espacio === "salon" ? "Salón" : "Quinta Completa";
+  const dia = st.dia === "semana" ? "Día de Semana" : "Fin de Semana";
 
   let msg = `🌿 ¡Hola! Armé mi evento en la web de Quinta Las Palmeras.\n\n`;
   msg += `📍 *Espacio elegido:* ${esp}\n`;
   msg += `📅 *Tipo de día:* ${dia}\n`;
 
-  if (E.fechaExacta) {
-    const [year, month, day] = E.fechaExacta.split("-");
+  if (st.fechaExacta) {
+    const [year, month, day] = st.fechaExacta.split("-");
     msg += `🗓️ *Fecha exacta:* ${day}/${month}/${year}\n`;
   }
 
   const turnoMsg =
-    E.turno === "dia"
+    st.turno === "dia"
       ? "☀️ Día (10:30 a 18:00 hs)"
       : "🌙 Noche (20:30 a 05:00 hs)";
   msg += `⏰ *Horario:* ${turnoMsg}\n`;
-  msg += `👥 *Personas:* ${E.personas}\n\n`;
+  msg += `👥 *Personas:* ${st.personas}\n\n`;
   msg += `*Detalle del presupuesto:*\n${lineas.join("\n")}\n\n`;
   msg += `💰 *Total estimado: $${total.toLocaleString("es-AR")}*\n`;
 
@@ -839,44 +706,24 @@ function enviarWA() {
   );
 }
 
-function activarPromo() {
-  setEspacio("quinta");
-  setDia("finde");
-
-  const slider = document.getElementById("slider-personas");
-  if (slider) {
-    slider.value = 60;
-    slider.dispatchEvent(new Event("input"));
-  }
-
-  // Agregamos el combo de dj + fotografía
-  E.musicaPersonal = new Set(["combo_dj_foto", "parlante"]);
-  E.juegos = new Set();
-  E.extras = new Set(["parrilla", "heladera", "apoya_torta", "shimer"]);
-  E.catering = new Set();
-  E.barra = new Set();
-
-  renderOpciones(CATERING, "grid-catering", "catering");
-  renderOpciones(BARRA, "grid-barra", "barra");
-  renderOpciones(MUSICA_PERSONAL, "grid-musica-personal", "musicaPersonal");
-  renderOpciones(JUEGOS, "grid-juegos", "juegos");
-  renderOpciones(EXTRAS, "grid-extras", "extras");
-  actualizar();
-
-  document.getElementById("cotizador")?.scrollIntoView({ behavior: "smooth" });
+function renderTodo(espacio) {
+  renderOpciones(CATERING, `grid-catering-${espacio}`, "catering", espacio);
+  renderOpciones(BARRA, `grid-barra-${espacio}`, "barra", espacio);
+  renderOpciones(MUSICA_PERSONAL, `grid-musica-personal-${espacio}`, "musicaPersonal", espacio);
+  renderOpciones(juegosDe(espacio), `grid-juegos-${espacio}`, "juegos", espacio);
+  renderOpciones(EXTRAS, `grid-extras-${espacio}`, "extras", espacio);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   randomizarGaleria();
   initFiltros();
-  renderOpciones(CATERING, "grid-catering", "catering");
-  renderOpciones(BARRA, "grid-barra", "barra");
-  renderOpciones(MUSICA_PERSONAL, "grid-musica-personal", "musicaPersonal");
-  renderOpciones(JUEGOS, "grid-juegos", "juegos");
-  renderOpciones(EXTRAS, "grid-extras", "extras");
-  initSlider();
+
+  renderTodo("salon");
+  renderTodo("quinta");
+  initSlider("salon");
+  initSlider("quinta");
+  document.getElementById("bloque-quinta").classList.add("oculto");
   actualizar();
-  initRuletaGuardada()
 
   // Cerrar el resumen si se toca afuera de él
   document.addEventListener("click", (e) => {
@@ -889,11 +736,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const inputFecha = document.getElementById('fecha-exacta');
-  if (inputFecha) {
+  document.querySelectorAll('input[type="date"]').forEach((inputFecha) => {
     const hoy = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
     inputFecha.setAttribute('min', hoy);
-  }
+  });
 });
 
 async function pagarConMercadoPago() {

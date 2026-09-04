@@ -44,7 +44,7 @@
 
   <!-- HERO -->
   <header class="hero">
-    <div class="container">
+    <div class="container hero-content">
       <div class="hero-eyebrow">📍 Del Viso, Buenos Aires</div>
       <h1>Un lugar para celebrar<br><em>en familia</em></h1>
       <p class="hero-desc">Cumpleaños, casamientos, bautismos y reuniones en un espacio verde, tranquilo y bien cuidado.
@@ -295,272 +295,455 @@
     </div>
   </section>
 
-  <!-- PROMO RULETA -->
-  <section class="ruleta-section">
-    <div class="container">
-      <div class="ruleta-card">
-        <div class="promo-badge">¡Girá y Ganá!</div>
-        <h2>Ruleta de Beneficios</h2>
-        <p class="promo-subtitle">Probá tu suerte y llevate un premio exclusivo para tu evento. ¡Se aplica
-          automáticamente al presupuesto!</p>
-
-        <div class="ruleta-contenedor">
-          <div class="ruleta-flecha"></div>
-          <div class="ruleta-rueda" id="ruleta">
-            <!-- Los 6 segmentos -->
-            <div class="ruleta-texto" style="transform: rotate(30deg)"><span>Candy Bar<br>Gratis</span></div>
-            <div class="ruleta-texto" style="transform: rotate(90deg)"><span>¡Casi!</span></div>
-            <div class="ruleta-texto" style="transform: rotate(150deg)"><span>Shimer<br>Gratis</span></div>
-            <div class="ruleta-texto" style="transform: rotate(210deg)"><span>Metegol<br>Gratis</span></div>
-            <div class="ruleta-texto" style="transform: rotate(270deg)"><span>¡Ups!</span></div>
-            <div class="ruleta-texto" style="transform: rotate(330deg)"><span>Chispas<br>Gratis</span></div>
-          </div>
-        </div>
-
-        <button id="btn-girar" class="btn-primary" style="margin-top:20px;" onclick="girarRuleta()">Girar
-          Ruleta</button>
-        <div id="ruleta-resultado" class="ruleta-resultado oculto"></div>
-      </div>
-    </div>
+  <!-- BANNER IMAGEN -->
+  <section class="banner-img" id="cotizador">
+    <img src="img/banner.jpg" alt="Quinta Las Palmeras" loading="lazy">
+    <div class="banner-img-overlay"><span>Cada evento, a tu medida</span></div>
   </section>
 
-  <!-- COTIZADOR NUEVO -->
-  <section class="cotizador" id="cotizador">
+  <!-- SELECTOR DE ESPACIO -->
+  <section class="selector-espacio">
     <div class="container">
       <div class="section-head">
-        <h2 class="section-title">Armá tu evento</h2>
-        <p class="section-subtitle">Elegí todo lo que necesitás y te mostramos el presupuesto al instante.</p>
+        <h2 class="section-title">¿Dónde va a ser tu evento?</h2>
+        <p class="section-subtitle">Elegí un espacio para ver sus fotos y armar tu presupuesto</p>
+      </div>
+      <div class="opc-grid selector-espacio-grid">
+        <div class="opc-card activo" id="btn-elegir-salon" onclick="elegirEspacio('salon')">
+          <div class="opc-check">✓</div>
+          <span class="opc-icon">🏠</span>
+          <div class="opc-nombre">Solo Salón</div>
+          <div class="opc-desc">25 a 65 personas · Eventos de 5 horas</div>
+        </div>
+        <div class="opc-card" id="btn-elegir-quinta" onclick="elegirEspacio('quinta')">
+          <div class="opc-check">✓</div>
+          <span class="opc-icon">🌳</span>
+          <div class="opc-nombre">Quinta Completa</div>
+          <div class="opc-desc">40 a 150 personas · Parque, pileta y más</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOTOS DEL SALÓN -->
+  <div id="bloque-salon">
+  <section class="mini-galeria">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Así se vive el Salón</h2>
+      </div>
+      <div class="galeria-grid mini-galeria-grid">
+        <div class="galeria-item grande">
+          <img src="img/salon/salon_1.jpeg" alt="Salón Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/salon/salon_3.png" alt="Salón Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/salon/salon_5.jpeg" alt="Salón Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/salon/salon_7.jpeg" alt="Salón Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/salon/salon_9.jpeg" alt="Salón Las Palmeras" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN SALÓN -->
+  <section class="cotizador" id="seccion-salon">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">🏠 Armá tu evento en el Salón</h2>
+        <p class="section-subtitle">De 25 a 65 personas · Eventos de 5 horas</p>
       </div>
 
-      <div class="cot-layout">
-        <!-- PASOS -->
-        <div class="cot-pasos">
+      <div class="cot-pasos">
 
-          <!-- PASO 1: ESPACIO -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">1</span>
-              <h3>¿Qué espacio vas a alquilar?</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="opc-grid">
-                <div class="opc-card activo" id="opc-salon" onclick="setEspacio('salon')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">🏠</span>
-                  <div class="opc-nombre">Solo Salón</div>
-                  <div class="opc-desc">Eventos de 5 horas</div>
-                </div>
-                <div class="opc-card" id="opc-quinta" onclick="setEspacio('quinta')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">🌳</span>
-                  <div class="opc-nombre">Quinta Completa</div>
-                  <div class="opc-desc">Parque, pileta y más (5 hs)</div>
-                </div>
+        <!-- PASO 1: TIPO DE DÍA -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">1</span>
+            <h3>¿Tipo de día?</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid">
+              <div class="opc-card activo" id="opc-semana-salon" onclick="setDia('semana','salon')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">📅</span>
+                <div class="opc-nombre">Día de semana</div>
+                <div class="opc-desc">Lunes a Jueves</div>
+              </div>
+              <div class="opc-card" id="opc-finde-salon" onclick="setDia('finde','salon')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">🎉</span>
+                <div class="opc-nombre">Fin de semana</div>
+                <div class="opc-desc">Vie a Dom y Feriados</div>
               </div>
             </div>
-          </div>
-
-          <!-- PASO 2: TIPO DE DÍA -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">2</span>
-              <h3>¿Tipo de día?</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="opc-grid">
-                <div class="opc-card activo" id="opc-semana" onclick="setDia('semana')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">📅</span>
-                  <div class="opc-nombre">Día de semana</div>
-                  <div class="opc-desc">Lunes a Jueves</div>
-                </div>
-                <div class="opc-card" id="opc-finde" onclick="setDia('finde')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">🎉</span>
-                  <div class="opc-nombre">Fin de semana</div>
-                  <div class="opc-desc">Vie a Dom y Feriados</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PASO 3: FECHA Y TURNO -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">3</span>
-              <h3>Elegí la fecha y el horario</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="input-group" style="margin-bottom: 14px;">
-                <label for="fecha-exacta">Fecha del evento</label>
-                <input type="date" id="fecha-exacta" class="input-text" onchange="setFecha()">
-              </div>
-
-              <label
-                style="font-size: .85rem; font-weight: 600; color: var(--texto); display: block; margin-bottom: 6px;">Horario
-                del evento</label>
-              <div class="opc-grid">
-                <div class="opc-card activo" id="turno-dia" onclick="setTurno('dia')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">☀️</span>
-                  <div class="opc-nombre">De Día</div>
-                  <div class="opc-desc">10:30 a 18:00 hs</div>
-                </div>
-                <div class="opc-card" id="turno-noche" onclick="setTurno('noche')">
-                  <div class="opc-check">✓</div>
-                  <span class="opc-icon">🌙</span>
-                  <div class="opc-nombre">De Noche</div>
-                  <div class="opc-desc">20:30 a 05:00 hs</div>
-                </div>
-              </div>
-              <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* El turno incluye el horario
-                establecido para tu celebración.</p>
-            </div>
-          </div>
-
-          <!-- PASO 4: PERSONAS Y VAJILLA -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">4</span>
-              <h3>¿Cuántas personas van a ser?</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="personas-display">
-                <div class="personas-icon" id="personas-icon">👨‍👩‍👧‍👦</div>
-                <div class="personas-num" id="personas-num">40</div>
-                <div class="personas-label">personas</div>
-              </div>
-              <input type="range" id="slider-personas" min="10" max="150" value="40" step="1" class="slider">
-              <div class="slider-limits"><span>10</span><span>150</span></div>
-              <p
-                style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
-                <strong>Nota:</strong> El alquiler base cubre hasta 40 personas. Adicional: $25.000 por invitado extra.
-              </p>
-              <div class="cap-grid">
-                <div class="cap-item">
-                  <div class="cap-icon">🪑</div>
-                  <div class="cap-num" id="cap-sillas">40</div>
-                  <div class="cap-label">sillas (8 x mesa)</div>
-                </div>
-                <div class="cap-item">
-                  <div class="cap-icon">🍽️</div>
-                  <div class="cap-num" id="cap-mesas">5</div>
-                  <div class="cap-label">mesas</div>
-                </div>
-                <!-- OPCIÓN DE VASOS / COPAS -->
-                <div class="cap-item opc-card" id="card-copas" onclick="toggleCopas()"
-                  style="cursor:pointer; border:2px solid var(--arena-d); transition:all 0.2s;">
-                  <div class="cap-icon" id="copas-icon">🥛</div>
-                  <div class="cap-num" id="cap-vasos-copas" style="font-size:1rem;">Incluido</div>
-                  <div class="cap-label" id="copas-label">Vasos (Copas +$800/u)</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PASO 5: CATERING -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">5</span>
-              <h3>Catering y Comida</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="opc-grid" id="grid-catering"><!-- JS --></div>
-            </div>
-          </div>
-
-          <!-- PASO 6: BARRA DE BEBIDAS -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">6</span>
-              <h3>Barra de Bebidas</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="opc-grid" id="grid-barra"><!-- JS --></div>
-            </div>
-          </div>
-
-          <!-- PASO 7: MÚSICA, PERSONAL Y COMBOS -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">7</span>
-              <h3>Música, Personal y Combos</h3>
-            </div>
-            <div class="cot-paso-body">
-              <div class="opc-grid" id="grid-musica-personal"><!-- JS --></div>
-            </div>
-          </div>
-
-          <!-- PASO 8: JUEGOS Y EXTRAS -->
-          <div class="cot-paso">
-            <div class="cot-paso-head">
-              <span class="cot-paso-num">8</span>
-              <h3>Juegos y Extras</h3>
-            </div>
-            <div class="cot-paso-body">
-              <h4 style="font-size:0.85rem; color:var(--verde); margin-bottom:8px;">Juegos y Actividades</h4>
-              <div class="opc-grid" id="grid-juegos"><!-- JS --></div>
-
-              <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Extras del Salón</h4>
-              <div class="opc-grid" id="grid-extras"><!-- JS --></div>
-            </div>
-          </div>
-
-        </div><!-- /cot-pasos -->
-
-        <!-- RESUMEN -->
-        <div class="cot-resumen" id="cot-resumen">
-          <div class="cot-resumen-bar" onclick="toggleResumen()">
-            <div class="cot-resumen-bar-left">
-              <span class="cot-resumen-bar-label">Tu presupuesto estimado</span>
-              <span class="cot-total-num" id="cot-total-bar">$0</span>
-            </div>
-            <div class="cot-resumen-bar-toggle">
-              Ver detalle aqui <span class="toggle-arrow">▲</span>
-            </div>
-          </div>
-
-          <div class="cot-resumen-body">
-            <h3>Tu presupuesto</h3>
-            <div class="cot-resumen-items" id="cot-resumen-items">
-              <!-- JS -->
-            </div>
-            <div class="cot-resumen-total-row">
-              <span>Total estimado</span>
-              <span class="cot-total-num" id="cot-total">$0</span>
-            </div>
-            <div class="cot-resumen-detalle" id="cot-detalle">40 personas · Salón en día de semana</div>
-
-            <p style="text-align:center; font-size:0.8rem; color:var(--arena-d); margin-bottom:6px;">
-              👇 Tocá para enviarnos tu presupuesto ya armado
-            </p>
-
-            <button class="btn-wa" onclick="enviarWA()" style="margin-bottom: 8px;">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-                <path
-                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-              </svg>
-              Enviar mi presupuesto por WhatsApp
-            </button>
-
-            <p style="text-align:center; font-size:0.8rem; color:var(--arena-d); margin:10px 0 6px;">
-              💳 ¿Ya decidiste? Reservá tu fecha ahora
-            </p>
-            <!-- NUEVO BOTÓN MERCADO PAGO -->
-            <button id="btn-pagar" class="btn-mp" onclick="pagarConMercadoPago()" aria-label="Pagar con Mercado Pago">
-              <img src="img/MP_RGB_HANDSHAKE_pluma_horizontal.png" alt="Pagar mi evento con Mercado Pago"
-                class="mp-logo">
-            </button>
-
-            <p class="cot-nota">* Precios estimados. Confirmamos disponibilidad y valores actualizados.</p>
           </div>
         </div>
 
-      </div><!-- /cot-layout -->
+        <!-- PASO 2: FECHA Y TURNO -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">2</span>
+            <h3>Elegí la fecha y el horario</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="input-group" style="margin-bottom: 14px;">
+              <label for="fecha-exacta-salon">Fecha del evento</label>
+              <input type="date" id="fecha-exacta-salon" class="input-text" onchange="setFecha('salon')">
+            </div>
 
-    </div><!-- /cot-layout -->
+            <label
+              style="font-size: .85rem; font-weight: 600; color: var(--texto); display: block; margin-bottom: 6px;">Horario
+              del evento</label>
+            <div class="opc-grid">
+              <div class="opc-card activo" id="turno-dia-salon" onclick="setTurno('dia','salon')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">☀️</span>
+                <div class="opc-nombre">De Día</div>
+                <div class="opc-desc">10:30 a 18:00 hs · $10.000 pp</div>
+              </div>
+              <div class="opc-card" id="turno-noche-salon" onclick="setTurno('noche','salon')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">🌙</span>
+                <div class="opc-nombre">De Noche</div>
+                <div class="opc-desc">20:30 a 05:00 hs · $15.000 pp</div>
+              </div>
+            </div>
+            <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* El turno incluye el horario
+              establecido para tu celebración.</p>
+          </div>
+        </div>
+
+        <!-- PASO 3: PERSONAS Y VAJILLA -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">3</span>
+            <h3>¿Cuántas personas van a ser?</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="personas-display">
+              <div class="personas-icon" id="personas-icon-salon">👨‍👩‍👧</div>
+              <div class="personas-num" id="personas-num-salon">25</div>
+              <div class="personas-label">personas</div>
+            </div>
+            <input type="range" id="slider-personas-salon" min="25" max="65" value="25" step="1" class="slider">
+            <div class="slider-limits"><span>25</span><span>65</span></div>
+            <p style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
+              <strong>Nota:</strong> Salón: $10.000 pp de día / $15.000 pp de noche.
+            </p>
+            <div class="cap-grid">
+              <div class="cap-item">
+                <div class="cap-icon">🪑</div>
+                <div class="cap-num" id="cap-sillas-salon">25</div>
+                <div class="cap-label">sillas (8 x mesa)</div>
+              </div>
+              <div class="cap-item">
+                <div class="cap-icon">🍽️</div>
+                <div class="cap-num" id="cap-mesas-salon">4</div>
+                <div class="cap-label">mesas</div>
+              </div>
+              <div class="cap-item opc-card" id="card-copas-salon" onclick="toggleCopas('salon')"
+                style="cursor:pointer; border:2px solid var(--arena-d); transition:all 0.2s;">
+                <div class="cap-icon" id="copas-icon-salon">🥛</div>
+                <div class="cap-num" id="cap-vasos-copas-salon" style="font-size:1rem;">Incluido</div>
+                <div class="cap-label" id="copas-label-salon">Vasos (Copas +$800/u)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 4: CATERING -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">4</span>
+            <h3>Catering y Comida</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-catering-salon"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 5: BARRA DE BEBIDAS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">5</span>
+            <h3>Barra de Bebidas</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-barra-salon"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 6: MÚSICA, PERSONAL Y COMBOS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">6</span>
+            <h3>Música, Personal y Combos</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-musica-personal-salon"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 7: JUEGOS Y EXTRAS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">7</span>
+            <h3>Juegos y Extras</h3>
+          </div>
+          <div class="cot-paso-body">
+            <h4 style="font-size:0.85rem; color:var(--verde); margin-bottom:8px;">Juegos y Actividades</h4>
+            <div class="opc-grid" id="grid-juegos-salon"><!-- JS --></div>
+
+            <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Extras del Salón</h4>
+            <div class="opc-grid" id="grid-extras-salon"><!-- JS --></div>
+          </div>
+        </div>
+
+      </div><!-- /cot-pasos -->
     </div>
   </section>
+
+  </div><!-- /bloque-salon -->
+
+  <!-- FOTOS DE LA QUINTA -->
+  <div id="bloque-quinta">
+  <section class="mini-galeria">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">Así se vive la Quinta</h2>
+      </div>
+      <div class="galeria-grid mini-galeria-grid">
+        <div class="galeria-item grande">
+          <img src="img/quinta/parque.png" alt="Parque quinta Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/quinta/pileta.png" alt="Pileta quinta Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/quinta/quincho.png" alt="Quincho quinta Las Palmeras" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/quinta/parque_2.png" alt="Evento en el parque" loading="lazy">
+        </div>
+        <div class="galeria-item">
+          <img src="img/quinta/pileta_2.png" alt="Pileta de noche" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN QUINTA -->
+  <section class="cotizador" id="seccion-quinta">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-title">🌳 Armá tu evento en la Quinta</h2>
+        <p class="section-subtitle">De 40 a 150 personas · Parque, pileta y quincho (5 horas)</p>
+      </div>
+
+      <div class="cot-pasos">
+
+        <!-- PASO 1: TIPO DE DÍA -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">1</span>
+            <h3>¿Tipo de día?</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid">
+              <div class="opc-card activo" id="opc-semana-quinta" onclick="setDia('semana','quinta')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">📅</span>
+                <div class="opc-nombre">Día de semana</div>
+                <div class="opc-desc">Lunes a Jueves</div>
+              </div>
+              <div class="opc-card" id="opc-finde-quinta" onclick="setDia('finde','quinta')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">🎉</span>
+                <div class="opc-nombre">Fin de semana</div>
+                <div class="opc-desc">Vie a Dom y Feriados</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 2: FECHA Y TURNO -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">2</span>
+            <h3>Elegí la fecha y el horario</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="input-group" style="margin-bottom: 14px;">
+              <label for="fecha-exacta-quinta">Fecha del evento</label>
+              <input type="date" id="fecha-exacta-quinta" class="input-text" onchange="setFecha('quinta')">
+            </div>
+
+            <label
+              style="font-size: .85rem; font-weight: 600; color: var(--texto); display: block; margin-bottom: 6px;">Horario
+              del evento</label>
+            <div class="opc-grid">
+              <div class="opc-card activo" id="turno-dia-quinta" onclick="setTurno('dia','quinta')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">☀️</span>
+                <div class="opc-nombre">De Día</div>
+                <div class="opc-desc">10:30 a 18:00 hs · $20.000 pp</div>
+              </div>
+              <div class="opc-card" id="turno-noche-quinta" onclick="setTurno('noche','quinta')">
+                <div class="opc-check">✓</div>
+                <span class="opc-icon">🌙</span>
+                <div class="opc-nombre">De Noche</div>
+                <div class="opc-desc">20:30 a 05:00 hs · $25.000 pp</div>
+              </div>
+            </div>
+            <p style="font-size:0.75rem; color:var(--suave); margin-top:10px;">* El turno incluye el horario
+              establecido para tu celebración.</p>
+          </div>
+        </div>
+
+        <!-- PASO 3: PERSONAS Y VAJILLA -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">3</span>
+            <h3>¿Cuántas personas van a ser?</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="personas-display">
+              <div class="personas-icon" id="personas-icon-quinta">👨‍👩‍👧‍👦</div>
+              <div class="personas-num" id="personas-num-quinta">40</div>
+              <div class="personas-label">personas</div>
+            </div>
+            <input type="range" id="slider-personas-quinta" min="40" max="150" value="40" step="1" class="slider">
+            <div class="slider-limits"><span>40</span><span>150</span></div>
+            <p style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
+              <strong>Nota:</strong> Quinta: $20.000 pp de día / $25.000 pp de noche.
+            </p>
+            <div class="cap-grid">
+              <div class="cap-item">
+                <div class="cap-icon">🪑</div>
+                <div class="cap-num" id="cap-sillas-quinta">40</div>
+                <div class="cap-label">sillas (8 x mesa)</div>
+              </div>
+              <div class="cap-item">
+                <div class="cap-icon">🍽️</div>
+                <div class="cap-num" id="cap-mesas-quinta">5</div>
+                <div class="cap-label">mesas</div>
+              </div>
+              <div class="cap-item opc-card" id="card-copas-quinta" onclick="toggleCopas('quinta')"
+                style="cursor:pointer; border:2px solid var(--arena-d); transition:all 0.2s;">
+                <div class="cap-icon" id="copas-icon-quinta">🥛</div>
+                <div class="cap-num" id="cap-vasos-copas-quinta" style="font-size:1rem;">Incluido</div>
+                <div class="cap-label" id="copas-label-quinta">Vasos (Copas +$800/u)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 4: CATERING -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">4</span>
+            <h3>Catering y Comida</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-catering-quinta"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 5: BARRA DE BEBIDAS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">5</span>
+            <h3>Barra de Bebidas</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-barra-quinta"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 6: MÚSICA, PERSONAL Y COMBOS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">6</span>
+            <h3>Música, Personal y Combos</h3>
+          </div>
+          <div class="cot-paso-body">
+            <div class="opc-grid" id="grid-musica-personal-quinta"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- PASO 7: JUEGOS Y EXTRAS -->
+        <div class="cot-paso">
+          <div class="cot-paso-head">
+            <span class="cot-paso-num">7</span>
+            <h3>Juegos y Extras</h3>
+          </div>
+          <div class="cot-paso-body">
+            <h4 style="font-size:0.85rem; color:var(--verde); margin-bottom:8px;">Juegos y Actividades <span style="font-weight:400;">(pileta, pelotero y pool exclusivos de la Quinta)</span></h4>
+            <div class="opc-grid" id="grid-juegos-quinta"><!-- JS --></div>
+
+            <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Extras</h4>
+            <div class="opc-grid" id="grid-extras-quinta"><!-- JS --></div>
+          </div>
+        </div>
+
+      </div><!-- /cot-pasos -->
+    </div>
+  </section>
+  </div><!-- /bloque-quinta -->
+
+  <!-- RESUMEN FLOTANTE GLOBAL -->
+  <div class="cot-resumen" id="cot-resumen">
+    <div class="cot-resumen-bar" onclick="toggleResumen()">
+      <div class="cot-resumen-bar-left">
+        <span class="cot-resumen-bar-label" id="cot-resumen-espacio">Tu presupuesto — Salón</span>
+        <span class="cot-total-num" id="cot-total-bar">$0</span>
+      </div>
+      <div class="cot-resumen-bar-toggle">
+        Ver detalle aqui <span class="toggle-arrow">▲</span>
+      </div>
+    </div>
+
+    <div class="cot-resumen-body">
+      <h3>Tu presupuesto</h3>
+      <div class="cot-resumen-items" id="cot-resumen-items">
+        <!-- JS -->
+      </div>
+      <div class="cot-resumen-total-row">
+        <span>Total estimado</span>
+        <span class="cot-total-num" id="cot-total">$0</span>
+      </div>
+      <div class="cot-resumen-detalle" id="cot-detalle">25 personas · Salón en día de semana</div>
+
+      <p style="text-align:center; font-size:0.8rem; color:var(--arena-d); margin-bottom:6px;">
+        👇 Tocá para enviarnos tu presupuesto ya armado
+      </p>
+
+      <button class="btn-wa" onclick="enviarWA()" style="margin-bottom: 8px;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+        Enviar mi presupuesto por WhatsApp
+      </button>
+
+      <p style="text-align:center; font-size:0.8rem; color:var(--arena-d); margin:10px 0 6px;">
+        💳 ¿Ya decidiste? Reservá tu fecha ahora
+      </p>
+      <button id="btn-pagar" class="btn-mp" onclick="pagarConMercadoPago()" aria-label="Pagar con Mercado Pago">
+        <img src="img/MP_RGB_HANDSHAKE_pluma_horizontal.png" alt="Pagar mi evento con Mercado Pago"
+          class="mp-logo">
+      </button>
+
+      <p class="cot-nota">* Precios estimados. Confirmamos disponibilidad y valores actualizados.</p>
+    </div>
+  </div>
 
   <!-- UBICACIÓN -->
   <section class="ubicacion">

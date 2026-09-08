@@ -833,6 +833,39 @@ nav .container {
   color: var(--suave);
   margin-top: 2px;
 }
+.barra-contador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 10px;
+}
+.barra-contador button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--verde-m);
+  border-radius: 50%;
+  background: white;
+  color: var(--verde);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+.barra-contador button:hover {
+  background: var(--verde);
+  color: white;
+}
+.barra-contador span {
+  min-width: 48px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+.barra-subtotal {
+  margin-top: 5px;
+  color: var(--verde-m);
+  font-size: 0.7rem;
+}
 
 /* Resumen — MOBILE: barra fija en el fondo */
 .cot-resumen {

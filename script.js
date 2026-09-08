@@ -26,7 +26,7 @@ const CATERING = [
     id: "pizza_libre",
     icon: "🍕",
     nombre: "Pizza Libre",
-    precio_pp: 4500,
+    precio_pp: 28000,
     pp: true,
     desc: "Variedad de pizzas",
   },
@@ -34,17 +34,17 @@ const CATERING = [
     id: "pernil",
     icon: "🍖",
     nombre: "Pernil de Cerdo",
-    precio: 65000,
+    precio: 180000,
     pp: false,
-    desc: "Para 40 personas con panes",
+    desc: "Cada uno para 40 personas con panes",
   },
   {
     id: "mesa_dulce",
     icon: "🧁",
     nombre: "Mesa Dulce",
-    precio_pp: 2500,
+    precio_pp: 250000,
     pp: true,
-    desc: "Variedad de tartas",
+    desc: "Para 30 personas",
   },
 ];
 
@@ -55,7 +55,7 @@ const BARRA = [
     nombre: "Barra Premium",
     precio: 45000,
     pp: false,
-    desc: "Tragos con alcohol libre",
+    desc: "Tragos con alcohol",
   },
   {
     id: "barra_soft",
@@ -96,7 +96,7 @@ const MUSICA_PERSONAL = [
     id: "mozos",
     icon: "🤵",
     nombre: "Mozos",
-    precio: 0,
+    precio: 90000,
     pp: false,
     desc: "Cada 20 p. 1 mozo",
   },
@@ -104,7 +104,7 @@ const MUSICA_PERSONAL = [
     id: "parrillero",
     icon: "🍖",
     nombre: "Parrillero",
-    precio: 90000,
+    precio: 110000,
     pp: false,
     desc: "Asador profesional",
   },
@@ -209,6 +209,7 @@ function crearEstadoEspacio(personas) {
     usaCopas: false,
     catering: new Set(),
     barra: new Set(),
+    barraCantidad: {},
     musicaPersonal: new Set(),
     juegos: new Set(),
     extras: new Set(["parrilla", "heladera", "apoya_torta"]),
@@ -445,8 +446,12 @@ function renderOpciones(items, gridId, setKey, espacio) {
       .map((item) => {
         let p = "";
         const precioReal = getPrecioItem(item, espacio);
+        const esBarra = setKey === "barra";
+        const cantidadBarra = esBarra ? st.barraCantidad[item.id] || 0 : 0;
         if (precioReal === 0 && !item.pp) {
           p = "Incluido";
+        } else if (esBarra) {
+          p = `$${precioReal.toLocaleString("es-AR")} por persona`;
         } else {
           p = item.pp
             ? `$${(item.precio_pp * st.personas).toLocaleString("es-AR")} (×${st.personas})`
@@ -465,6 +470,16 @@ function renderOpciones(items, gridId, setKey, espacio) {
         <div class="opc-nombre">${item.nombre}</div>
         <div class="opc-precio">${p}</div>
         <div class="opc-desc">${item.desc}</div>
+        ${
+          esBarra
+            ? `<div class="barra-contador" onclick="event.stopPropagation()">
+                <button type="button" aria-label="Quitar una persona de ${item.nombre}" onclick="cambiarCantidadBarra('${item.id}', '${gridId}', '${espacio}', -1)">−</button>
+                <span>${cantidadBarra} pers.</span>
+                <button type="button" aria-label="Agregar una persona a ${item.nombre}" onclick="cambiarCantidadBarra('${item.id}', '${gridId}', '${espacio}', 1)">+</button>
+              </div>
+              <div class="barra-subtotal">Subtotal: $${(precioReal * cantidadBarra).toLocaleString("es-AR")}</div>`
+            : ""
+        }
       </div>
     `;
       })
@@ -480,6 +495,15 @@ function renderOpciones(items, gridId, setKey, espacio) {
 function toggleOpc(id, setKey, gridId, espacio) {
   const st = E[espacio];
   E.activo = espacio;
+  if (setKey === "barra") {
+    cambiarCantidadBarra(
+      id,
+      gridId,
+      espacio,
+      st.barraCantidad[id] ? -st.barraCantidad[id] : 1,
+    );
+    return;
+  }
   st[setKey].has(id) ? st[setKey].delete(id) : st[setKey].add(id);
 
   let dataset = CATERING;
@@ -492,6 +516,23 @@ function toggleOpc(id, setKey, gridId, espacio) {
   actualizar();
 }
 
+function cambiarCantidadBarra(id, gridId, espacio, cambio) {
+  const st = E[espacio];
+  const cantidadActual = st.barraCantidad[id] || 0;
+  const cantidadNueva = Math.max(
+    0,
+    Math.min(st.personas, cantidadActual + cambio),
+  );
+
+  E.activo = espacio;
+  st.barraCantidad[id] = cantidadNueva;
+  if (cantidadNueva > 0) st.barra.add(id);
+  else st.barra.delete(id);
+
+  renderOpciones(BARRA, gridId, "barra", espacio);
+  actualizar();
+}
+
 function initSlider(espacio) {
   const slider = document.getElementById(`slider-personas-${espacio}`);
   if (!slider) return;
@@ -499,6 +540,10 @@ function initSlider(espacio) {
   slider.addEventListener("input", () => {
     const st = E[espacio];
     st.personas = parseInt(slider.value);
+    Object.keys(st.barraCantidad).forEach((id) => {
+      st.barraCantidad[id] = Math.min(st.barraCantidad[id], st.personas);
+      if (st.barraCantidad[id] === 0) st.barra.delete(id);
+    });
     E.activo = espacio;
     document.getElementById(`personas-num-${espacio}`).textContent =
       st.personas;
@@ -565,6 +610,9 @@ function calcular() {
       if (!set.has(item.id)) return;
       const precioUnit = getPrecioItem(item, espacio);
       let m = item.pp ? item.precio_pp * st.personas : precioUnit;
+      if (item.id in st.barraCantidad) {
+        m = precioUnit * st.barraCantidad[item.id];
+      }
 
       let nombreMostrado = item.nombre;
 
@@ -572,6 +620,8 @@ function calcular() {
         nombreMostrado += st.turno === "dia" ? " (De Día)" : " (De Noche)";
       } else if (item.id === "mozos") {
         nombreMostrado += ` (${Math.ceil(st.personas / 20)} mozos)`;
+      } else if (item.id in st.barraCantidad) {
+        nombreMostrado += ` (${st.barraCantidad[item.id]} pers.)`;
       }
 
       total += m;

@@ -255,59 +255,163 @@ function toggleCopas(espacio) {
 }
 
 /* ══════════════════════════
-   GALERÍA — filtros por espacio
+   GALERÍA — filtros por espacio y paginación de 10 fotos
    ══════════════════════════ */
+const GALERIA_POR_PAGINA = 10;
 
-function aplicarFiltroGaleria(f) {
-  const items = document.querySelectorAll(".galeria-item[data-espacio]");
-  if (f !== "todo") {
-    items.forEach((item) =>
-      item.classList.toggle("oculto", item.dataset.espacio !== f),
-    );
-    return;
-  }
-  items.forEach((item) => item.classList.add("oculto"));
-  const grupos = {};
-  items.forEach((item) => {
-    const espacio = item.dataset.espacio;
-    (grupos[espacio] = grupos[espacio] || []).push(item);
-  });
-  const CANTIDAD_POR_ESPACIO_EN_TODO = 2;
-  Object.entries(grupos).forEach(([espacio, arr]) => {
-    const mezclado = [...arr].sort(() => Math.random() - 0.5);
-    mezclado
-      .slice(0, CANTIDAD_POR_ESPACIO_EN_TODO)
-      .forEach((item) => item.classList.remove("oculto"));
-  });
+function construirItemGaleria(item) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "galeria-item";
+  wrapper.dataset.espacio = item.espacio;
+  wrapper.dataset.src = item.src;
+  wrapper.dataset.alt = item.alt || item.espacio;
+
+  const img = document.createElement("img");
+  img.src = item.src;
+  img.alt = item.alt || item.espacio;
+  img.loading = "lazy";
+
+  const overlay = document.createElement("div");
+  overlay.className = "galeria-overlay";
+  wrapper.appendChild(img);
+  wrapper.appendChild(overlay);
+  return wrapper;
 }
 
-/* ══════════════════════════
-   GALERÍA — Mezclar fotos al azar
-   ══════════════════════════ */
-function randomizarGaleria() {
-  const grid = document.getElementById("galeria-grid");
-  if (!grid) return;
+function abrirModalGaleria(src, alt, espacio) {
+  const modal = document.getElementById("galeria-modal");
+  const modalImg = document.getElementById("galeria-modal-img");
+  const modalCaption = document.getElementById("galeria-modal-caption");
+  if (!modal || !modalImg || !modalCaption) return;
 
-  // 1. Obtenemos todos los elementos de la galería
-  const items = Array.from(grid.querySelectorAll(".galeria-item"));
+  modalImg.src = src;
+  modalImg.alt = alt || espacio || "Foto de Quinta Las Palmeras";
+  modalCaption.textContent = espacio
+    ? espacio === "comida"
+      ? "Comida"
+      : espacio === "salon"
+        ? "Salón"
+        : "Quinta"
+    : "Quinta Las Palmeras";
 
-  // 2. Mezclamos solo las imágenes de la galería
-  const imagenes = items;
+  modal.classList.add("abierto");
+  modal.setAttribute("aria-hidden", "false");
+}
 
-  // 4. Mezclamos las imágenes de forma aleatoria (Algoritmo de Fisher-Yates)
-  for (let i = imagenes.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [imagenes[i], imagenes[j]] = [imagenes[j], imagenes[i]];
+function cerrarModalGaleria() {
+  const modal = document.getElementById("galeria-modal");
+  const modalImg = document.getElementById("galeria-modal-img");
+  if (!modal || !modalImg) return;
+
+  modal.classList.remove("abierto");
+  modal.setAttribute("aria-hidden", "true");
+  modalImg.src = "";
+}
+
+function construirPaginacion(totalPaginas, paginaActual, filtroActual) {
+  const paginacion = document.getElementById("galeria-paginacion");
+  if (!paginacion) return;
+
+  paginacion.innerHTML = "";
+  if (totalPaginas <= 1) return;
+
+  const prev = document.createElement("button");
+  prev.type = "button";
+  prev.className = "galeria-pag-btn";
+  prev.textContent = "←";
+  prev.disabled = paginaActual === 1;
+  prev.addEventListener("click", () => {
+    if (paginaActual > 1) {
+      renderGaleria(filtroActual, paginaActual - 1);
+    }
+  });
+  paginacion.appendChild(prev);
+
+  for (let i = 1; i <= totalPaginas; i++) {
+    const page = document.createElement("button");
+    page.type = "button";
+    page.className = "galeria-pag-btn";
+    if (i === paginaActual) page.classList.add("activo");
+    page.textContent = String(i);
+    page.addEventListener("click", () => renderGaleria(filtroActual, i));
+    paginacion.appendChild(page);
   }
 
-  // 3. Vaciamos la grilla
+  const next = document.createElement("button");
+  next.type = "button";
+  next.className = "galeria-pag-btn";
+  next.textContent = "→";
+  next.disabled = paginaActual === totalPaginas;
+  next.addEventListener("click", () => {
+    if (paginaActual < totalPaginas) {
+      renderGaleria(filtroActual, paginaActual + 1);
+    }
+  });
+  paginacion.appendChild(next);
+}
+
+function renderGaleria(f = "todo", pagina = 1) {
+  const grid = document.getElementById("galeria-grid");
+  const paginacion = document.getElementById("galeria-paginacion");
+  if (!grid || !Array.isArray(GALERIA_IMAGENES)) return;
+
+  const imagenes = GALERIA_IMAGENES.filter(
+    (img) => f === "todo" || img.espacio === f,
+  );
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(imagenes.length / GALERIA_POR_PAGINA),
+  );
+  pagina = Math.min(Math.max(1, pagina), totalPaginas);
+
   grid.innerHTML = "";
 
-  // 4. Agregamos todos los elementos de nuevo al HTML
-  imagenes.forEach((item) => grid.appendChild(item));
+  const inicio = (pagina - 1) * GALERIA_POR_PAGINA;
+  const paginaItems = imagenes.slice(inicio, inicio + GALERIA_POR_PAGINA);
+  paginaItems.forEach((item) => grid.appendChild(construirItemGaleria(item)));
+
+  construirPaginacion(totalPaginas, pagina, f);
+
+  if (paginacion) {
+    paginacion.setAttribute("data-filtro", f);
+  }
+}
+
+function aplicarFiltroGaleria(f) {
+  renderGaleria(f, 1);
 }
 
 function initFiltros() {
+  const grid = document.getElementById("galeria-grid");
+  if (grid) {
+    grid.addEventListener("click", (event) => {
+      const item = event.target.closest(".galeria-item");
+      if (!item) return;
+      abrirModalGaleria(
+        item.dataset.src,
+        item.dataset.alt,
+        item.dataset.espacio,
+      );
+    });
+  }
+
+  const modal = document.getElementById("galeria-modal");
+  const modalClose = document.getElementById("galeria-modal-close");
+  const modalBackdrop = document.getElementById("galeria-modal-backdrop");
+  if (modalClose) {
+    modalClose.addEventListener("click", cerrarModalGaleria);
+  }
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener("click", cerrarModalGaleria);
+  }
+  if (modal) {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("abierto")) {
+        cerrarModalGaleria();
+      }
+    });
+  }
+
   document.querySelectorAll(".filtro").forEach((btn) => {
     btn.addEventListener("click", () => {
       document
@@ -317,7 +421,22 @@ function initFiltros() {
       aplicarFiltroGaleria(btn.dataset.filtro);
     });
   });
-  aplicarFiltroGaleria("todo");
+  renderGaleria("todo", 1);
+}
+
+/* ══════════════════════════
+   GALERÍA — Mezclar fotos al azar
+   ══════════════════════════ */
+function randomizarGaleria() {
+  if (Array.isArray(GALERIA_IMAGENES)) {
+    for (let i = GALERIA_IMAGENES.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [GALERIA_IMAGENES[i], GALERIA_IMAGENES[j]] = [
+        GALERIA_IMAGENES[j],
+        GALERIA_IMAGENES[i],
+      ];
+    }
+  }
 }
 
 /* ══════════════════════════
@@ -595,7 +714,8 @@ function calcular() {
   const st = E[espacio];
   const lim = LIMITES[espacio];
   const precioBase = st.turno === "dia" ? lim.dia : lim.noche;
-  const precioPp = st.dia === "finde" ? Math.round(precioBase * 1.25) : precioBase;
+  const precioPp =
+    st.dia === "finde" ? Math.round(precioBase * 1.1) : precioBase;
   const nombreEspacio = espacio === "salon" ? "Salón" : "Quinta Completa";
   const turnoNombre = st.turno === "dia" ? "De Día" : "De Noche";
   const baseAlquiler = precioPp * st.personas;

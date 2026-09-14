@@ -10,7 +10,7 @@ const CONFIG = {
 
 const LIMITES = {
   salon: { min: 25, max: 65, dia: 10000, noche: 15000 },
-  quinta: { min: 40, max: 150, dia: 20000, noche: 25000 },
+  quinta: { min: 40, max: 150, dia: 15000, noche: 20000 },
 };
 
 const CATERING = [
@@ -93,14 +93,6 @@ const MUSICA_PERSONAL = [
     desc: "Cobertura del evento",
   },
   {
-    id: "mozos",
-    icon: "🤵",
-    nombre: "Mozos",
-    precio: 90000,
-    pp: false,
-    desc: "Cada 20 p. 1 mozo",
-  },
-  {
     id: "parrillero",
     icon: "🍖",
     nombre: "Parrillero",
@@ -115,11 +107,13 @@ const JUEGOS_COMUNES = [
     id: "metegol",
     icon: "⚽",
     nombre: "Metegol",
-    precio: 15000,
+    precio: 0,
     pp: false,
-    desc: "Alquiler por evento",
+    desc: "Incluido siempre",
   },
 ];
+
+const PRECIO_MOZO = 70000;
 
 const JUEGOS_QUINTA = [
   {
@@ -211,8 +205,9 @@ function crearEstadoEspacio(personas) {
     barra: new Set(),
     barraCantidad: {},
     musicaPersonal: new Set(),
-    juegos: new Set(),
+    juegos: new Set(["metegol"]),
     extras: new Set(["parrilla", "heladera", "apoya_torta"]),
+    mozosCantidad: 0,
   };
 }
 
@@ -232,10 +227,6 @@ function getPrecioItem(item, espacio) {
   const st = E[espacio];
   if (item.id === "dj") {
     return st.turno === "dia" ? 550000 : 650000;
-  }
-  if (item.id === "mozos") {
-    const cantidadMozos = Math.ceil(st.personas / 20); // Redondea para arriba: 50/20 = 2.5 -> 3 mozos
-    return cantidadMozos * 70000;
   }
   return item.precio;
 }
@@ -495,6 +486,7 @@ function renderOpciones(items, gridId, setKey, espacio) {
 function toggleOpc(id, setKey, gridId, espacio) {
   const st = E[espacio];
   E.activo = espacio;
+  if (id === "metegol") return;
   if (setKey === "barra") {
     cambiarCantidadBarra(
       id,
@@ -531,6 +523,26 @@ function cambiarCantidadBarra(id, gridId, espacio, cambio) {
 
   renderOpciones(BARRA, gridId, "barra", espacio);
   actualizar();
+}
+
+function cambiarCantidadMozos(espacio, cambio) {
+  const st = E[espacio];
+  E.activo = espacio;
+  st.mozosCantidad = Math.max(0, Math.min(20, st.mozosCantidad + cambio));
+  renderMozos(espacio);
+  actualizar();
+}
+
+function renderMozos(espacio) {
+  const st = E[espacio];
+  const cont = document.getElementById(`mozos-cantidad-${espacio}`);
+  if (cont) cont.textContent = st.mozosCantidad;
+  const sub = document.getElementById(`mozos-subtotal-${espacio}`);
+  if (sub)
+    sub.textContent =
+      st.mozosCantidad > 0
+        ? `Subtotal: $${(st.mozosCantidad * PRECIO_MOZO).toLocaleString("es-AR")}`
+        : "Incluido si no necesitás mozos";
 }
 
 function initSlider(espacio) {
@@ -582,7 +594,8 @@ function calcular() {
   const espacio = E.activo;
   const st = E[espacio];
   const lim = LIMITES[espacio];
-  const precioPp = st.turno === "dia" ? lim.dia : lim.noche;
+  const precioBase = st.turno === "dia" ? lim.dia : lim.noche;
+  const precioPp = st.dia === "finde" ? Math.round(precioBase * 1.25) : precioBase;
   const nombreEspacio = espacio === "salon" ? "Salón" : "Quinta Completa";
   const turnoNombre = st.turno === "dia" ? "De Día" : "De Noche";
   const baseAlquiler = precioPp * st.personas;
@@ -605,6 +618,15 @@ function calcular() {
     });
   }
 
+  if (st.mozosCantidad > 0) {
+    const costoMozos = st.mozosCantidad * PRECIO_MOZO;
+    total += costoMozos;
+    itemsDesglose.push({
+      nombre: `Mozos (${st.mozosCantidad})`,
+      precio: costoMozos,
+    });
+  }
+
   const addItems = (items, set) =>
     items.forEach((item) => {
       if (!set.has(item.id)) return;
@@ -618,8 +640,6 @@ function calcular() {
 
       if (item.id === "dj") {
         nombreMostrado += st.turno === "dia" ? " (De Día)" : " (De Noche)";
-      } else if (item.id === "mozos") {
-        nombreMostrado += ` (${Math.ceil(st.personas / 20)} mozos)`;
       } else if (item.id in st.barraCantidad) {
         nombreMostrado += ` (${st.barraCantidad[item.id]} pers.)`;
       }
@@ -656,7 +676,7 @@ function calcular() {
     );
   }
 
-  let anticipo = baseAlquiler;
+  let anticipo = Math.round(total * 0.15);
   let resto = total - anticipo;
   let cuotas = resto > 0 ? Math.round(resto / 3) : 0;
 
@@ -796,6 +816,7 @@ function renderTodo(espacio) {
     espacio,
   );
   renderOpciones(EXTRAS, `grid-extras-${espacio}`, "extras", espacio);
+  renderMozos(espacio);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

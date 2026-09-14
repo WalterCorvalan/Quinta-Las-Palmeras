@@ -29,15 +29,14 @@
       </div>
       <div class="nav-right">
         <a href="https://www.instagram.com/quinta_eventos_?igsh=MWEybnp2eHhjOTVodw==" target="_blank" class="nav-ig">
+          <span>Instagram</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5" />
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
           </svg>
-          <span class="hide-mobile">Instagram</span>
         </a>
-        <a href="#cotizador" class="nav-cta"><span class="hide-mobile">Armá tu </span>Evento</a>
       </div>
     </div>
   </nav>
@@ -319,7 +318,10 @@
   <!-- BANNER IMAGEN -->
   <section class="banner-img" id="cotizador">
     <img src="img/imagen_principal.png" alt="Quinta Las Palmeras" loading="lazy">
-    <div class="banner-img-overlay"><span>Cada evento, a tu medida</span></div>
+    <div class="banner-img-overlay">
+      <span class="banner-eyebrow">✦</span>
+      <span>Cada evento, a tu medida</span>
+    </div>
   </section>
 
   <!-- SELECTOR DE ESPACIO -->
@@ -509,6 +511,19 @@
           </div>
           <div class="cot-paso-body">
             <div class="opc-grid" id="grid-musica-personal-salon"><!-- JS --></div>
+
+            <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Mozos</h4>
+            <div class="opc-card" style="cursor:default;">
+              <span class="opc-icon">🤵</span>
+              <div class="opc-nombre">Mozos</div>
+              <div class="opc-desc">Sugerido: 1 cada 20 personas</div>
+              <div class="barra-contador" onclick="event.stopPropagation()">
+                <button type="button" aria-label="Quitar un mozo" onclick="cambiarCantidadMozos('salon', -1)">−</button>
+                <span id="mozos-cantidad-salon">0</span>
+                <button type="button" aria-label="Agregar un mozo" onclick="cambiarCantidadMozos('salon', 1)">+</button>
+              </div>
+              <div class="barra-subtotal" id="mozos-subtotal-salon">Incluido si no necesitás mozos</div>
+            </div>
           </div>
         </div>
 
@@ -643,7 +658,7 @@
             <input type="range" id="slider-personas-quinta" min="40" max="150" value="40" step="1" class="slider">
             <div class="slider-limits"><span>40</span><span>150</span></div>
             <p style="text-align:center; font-size:0.8rem; color:var(--suave); margin-top:14px; background:#f4f4f4; padding:8px; border-radius:6px;">
-              <strong>Nota:</strong> Quinta: $20.000 pp de día / $25.000 pp de noche.
+              <strong>Nota:</strong> Quinta: $15.000 pp de día / $20.000 pp de noche.
             </p>
             <div class="cap-grid">
               <div class="cap-item">
@@ -696,6 +711,19 @@
           </div>
           <div class="cot-paso-body">
             <div class="opc-grid" id="grid-musica-personal-quinta"><!-- JS --></div>
+
+            <h4 style="font-size:0.85rem; color:var(--verde); margin:16px 0 8px;">Mozos</h4>
+            <div class="opc-card" style="cursor:default;">
+              <span class="opc-icon">🤵</span>
+              <div class="opc-nombre">Mozos</div>
+              <div class="opc-desc">Sugerido: 1 cada 20 personas</div>
+              <div class="barra-contador" onclick="event.stopPropagation()">
+                <button type="button" aria-label="Quitar un mozo" onclick="cambiarCantidadMozos('quinta', -1)">−</button>
+                <span id="mozos-cantidad-quinta">0</span>
+                <button type="button" aria-label="Agregar un mozo" onclick="cambiarCantidadMozos('quinta', 1)">+</button>
+              </div>
+              <div class="barra-subtotal" id="mozos-subtotal-quinta">Incluido si no necesitás mozos</div>
+            </div>
           </div>
         </div>
 
@@ -754,11 +782,15 @@
         Enviar mi presupuesto por WhatsApp
       </button>
 
-      <p style="text-align:center; font-size:0.8rem; color:var(--arena-d); margin:10px 0 6px;">
-        💳 ¿Ya decidiste? Reservá tu fecha ahora
+      <p style="text-align:center; font-size:0.85rem; color:var(--verde); margin:10px 0 6px; font-weight:700;">
+        👉 Señá tu evento tocando acá abajo 👇
       </p>
-      <button id="btn-pagar" class="btn-mp" onclick="pagarConMercadoPago()" aria-label="Pagar con Mercado Pago">
-        <img src="img/MP_RGB_HANDSHAKE_pluma_horizontal.png" alt="Pagar mi evento con Mercado Pago"
+      <p style="text-align:center; font-size:0.75rem; color:var(--arena-d); margin-bottom:8px;">
+        Asegurá tu fecha ahora con el 15% del total. El resto lo pagás después, sin vueltas.
+      </p>
+      <button id="btn-pagar" class="btn-mp" onclick="pagarConMercadoPago()" aria-label="Señar mi evento con Mercado Pago">
+        <span>Señar mi evento con</span>
+        <img src="img/MP_RGB_HANDSHAKE_pluma_horizontal.png" alt="Mercado Pago"
           class="mp-logo">
       </button>
 

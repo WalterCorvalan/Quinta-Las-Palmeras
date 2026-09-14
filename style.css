@@ -501,21 +501,31 @@ nav .container {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 24px 20px 36px;
+  text-align: center;
   background: linear-gradient(
     180deg,
-    transparent 40%,
-    rgba(26, 42, 30, 0.65) 100%
+    rgba(15, 26, 18, 0) 0%,
+    rgba(15, 26, 18, 0.15) 45%,
+    rgba(15, 26, 18, 0.85) 100%
   );
 }
-.banner-img-overlay span {
+.banner-eyebrow {
+  color: var(--acento);
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+}
+.banner-img-overlay span:last-child {
   color: var(--blanco);
   font-family: "Playfair Display", serif;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-style: italic;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
 }
 
 /* ── MINI GALERÍA (fotos salón / quinta) ── */

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>CRM · Quinta Las Palmeras</title>
+<style>
+  :root {
+    --verde: #386641;
+    --verde-m: #6a994e;
+    --verde-v: #a7c957;
+    --arena: #f2e8cf;
+    --arena-d: #e4d8ba;
+    --blanco: #ffffff;
+    --texto: #1a2a1e;
+    --suave: #4a5a4e;
+    --acento: #c8a96e;
+    --radio: 12px;
+    --sombra: 0 2px 14px rgba(56, 102, 65, 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    color: var(--texto);
+    background: var(--arena);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  header {
+    background: var(--verde);
+    color: var(--blanco);
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 { font-size: 1.2rem; font-weight: 600; }
+  header button {
+    background: transparent;
+    color: var(--arena);
+    border: 1px solid var(--arena-d);
+    border-radius: var(--radio);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  #login {
+    max-width: 320px;
+    margin: 15vh auto;
+    background: var(--blanco);
+    padding: 2rem;
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    text-align: center;
+  }
+  #login h2 { margin-bottom: 1rem; color: var(--verde); }
+  #login input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid var(--arena-d);
+    border-radius: var(--radio);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+  #login button {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--verde-m);
+    color: var(--blanco);
+    border: none;
+    border-radius: var(--radio);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  #login p.error { color: #b3261e; margin-top: 0.6rem; font-size: 0.85rem; }
+
+  main {
+    display: none;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.25rem;
+  }
+  main.activo { display: block; }
+
+  .lista-chats {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .chat-card {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+  }
+  .chat-card .info { flex: 1; min-width: 0; }
+  .chat-card .telefono { font-weight: 600; color: var(--verde); }
+  .chat-card .nombre { font-size: 0.85rem; color: var(--suave); }
+  .chat-card .ultimo {
+    font-size: 0.9rem;
+    color: var(--texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .chat-card .fecha { font-size: 0.75rem; color: var(--suave); }
+  .estado {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .estado.nuevo { background: var(--verde-v); color: var(--texto); }
+  .estado.atendido { background: var(--arena-d); color: var(--suave); }
+
+  #vacio { text-align: center; color: var(--suave); padding: 3rem 1rem; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .overlay.activo { display: flex; }
+  .panel-chat {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-chat header {
+    background: var(--verde);
+  }
+  .mensajes {
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .mensaje {
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radio);
+    max-width: 80%;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+  }
+  .mensaje.entrante { background: var(--arena); align-self: flex-start; }
+  .mensaje.saliente { background: var(--verde-v); align-self: flex-end; }
+  .mensaje small { display: block; color: var(--suave); font-size: 0.7rem; margin-top: 0.2rem; }
+  .acciones {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--arena-d);
+    display: flex;
+    gap: 0.5rem;
+  }
+  .acciones button {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: var(--radio);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-atendido { background: var(--verde-m); color: var(--blanco); }
+  .btn-cerrar { background: var(--arena-d); color: var(--texto); }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h2>🌿 CRM Quinta Las Palmeras</h2>
+  <input type="password" id="clave" placeholder="Contraseña" autocomplete="current-password" />
+  <button id="btnEntrar">Entrar</button>
+  <p class="error" id="loginError" style="display:none;">Contraseña incorrecta</p>
+</div>
+
+<main id="main">
+  <header>
+    <h1>💬 Chats de WhatsApp</h1>
+    <button id="btnSalir">Salir</button>
+  </header>
+  <div style="padding: 1.25rem 0 0;">
+    <div class="lista-chats" id="listaChats"></div>
+    <div id="vacio" style="display:none;">Todavía no llegaron chats.</div>
+  </div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="panel-chat">
+    <header>
+      <h1 id="tituloChat">Chat</h1>
+      <button id="btnCerrarPanel">✕</button>
+    </header>
+    <div class="mensajes" id="mensajes"></div>
+    <div class="acciones">
+      <button class="btn-atendido" id="btnAtendido">Marcar como atendido</button>
+      <button class="btn-cerrar" id="btnReabrir">Reabrir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '/.netlify/functions/crm-chats';
+  let clave = sessionStorage.getItem('crm_clave') || '';
+  let chats = [];
+  let chatActivo = null;
+
+  const $ = (sel) => document.querySelector(sel);
+
+  async function cargarChats() {
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}`);
+    if (res.status === 401) {
+      salir();
+      return;
+    }
+    chats = await res.json();
+    renderLista();
+  }
+
+  function renderLista() {
+    const lista = $('#listaChats');
+    lista.innerHTML = '';
+    $('#vacio').style.display = chats.length ? 'none' : 'block';
+
+    chats.forEach((chat) => {
+      const card = document.createElement('div');
+      card.className = 'chat-card';
+      card.innerHTML = `
+        <div class="info">
+          <div class="telefono">${chat.telefono}</div>
+          <div class="nombre">${chat.nombre || ''}</div>
+          <div class="ultimo">${(chat.ultimoMensaje || '').slice(0, 60)}</div>
+        </div>
+        <div style="text-align:right; display:flex; flex-direction:column; gap:0.4rem; align-items:flex-end;">
+          <span class="estado ${chat.estado}">${chat.estado === 'atendido' ? 'Atendido' : 'Nuevo'}</span>
+          <span class="fecha">${formatearFecha(chat.ultimaFecha)}</span>
+        </div>
+      `;
+      card.addEventListener('click', () => abrirChat(chat.telefono));
+      lista.appendChild(card);
+    });
+  }
+
+  function formatearFecha(iso) {
+    if (!iso) return '';
+    const fecha = new Date(iso);
+    return fecha.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function abrirChat(telefono) {
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}&telefono=${encodeURIComponent(telefono)}`);
+    if (res.status === 401) { salir(); return; }
+    chatActivo = await res.json();
+
+    $('#tituloChat').textContent = chatActivo.nombre ? `${chatActivo.nombre} · ${telefono}` : telefono;
+    const cont = $('#mensajes');
+    cont.innerHTML = '';
+    chatActivo.mensajes.forEach((m) => {
+      const div = document.createElement('div');
+      div.className = `mensaje ${m.direccion}`;
+      div.innerHTML = `${escapeHtml(m.texto)}<small>${formatearFecha(m.fecha)}</small>`;
+      cont.appendChild(div);
+    });
+    cont.scrollTop = cont.scrollHeight;
+
+    $('#overlay').classList.add('activo');
+  }
+
+  function escapeHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto || '';
+    return div.innerHTML;
+  }
+
+  async function cambiarEstado(estado) {
+    if (!chatActivo) return;
+    await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-crm-password': clave },
+      body: JSON.stringify({ telefono: chatActivo.telefono, estado })
+    });
+    $('#overlay').classList.remove('activo');
+    cargarChats();
+  }
+
+  function salir() {
+    sessionStorage.removeItem('crm_clave');
+    clave = '';
+    $('main').classList.remove('activo');
+    $('#login').style.display = 'block';
+  }
+
+  async function intentarEntrar() {
+    clave = $('#clave').value;
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}`);
+    if (res.status === 401) {
+      $('#loginError').style.display = 'block';
+      return;
+    }
+    sessionStorage.setItem('crm_clave', clave);
+    $('#login').style.display = 'none';
+    $('main').classList.add('activo');
+    chats = await res.json();
+    renderLista();
+  }
+
+  $('#btnEntrar').addEventListener('click', intentarEntrar);
+  $('#clave').addEventListener('keydown', (e) => { if (e.key === 'Enter') intentarEntrar(); });
+  $('#btnSalir').addEventListener('click', salir);
+  $('#btnCerrarPanel').addEventListener('click', () => $('#overlay').classList.remove('activo'));
+  $('#btnAtendido').addEventListener('click', () => cambiarEstado('atendido'));
+  $('#btnReabrir').addEventListener('click', () => cambiarEstado('nuevo'));
+
+  if (clave) {
+    $('#login').style.display = 'none';
+    $('main').classList.add('activo');
+    cargarChats();
+  }
+</script>
+</body>
+</html>

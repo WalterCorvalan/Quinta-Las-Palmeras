@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/WalterCorvalan/Quinta-Las-Palmeras#readme",
   "dependencies": {
+    "@netlify/blobs": "^8.1.0",
     "mercadopago": "^3.2.1"
   }
 }

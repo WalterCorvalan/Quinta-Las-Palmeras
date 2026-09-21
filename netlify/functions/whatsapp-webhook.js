@@ -1,4 +1,5 @@
 const respuestasData = require('./bot-respuestas.json');
+const { registrarMensaje } = require('./lib/chats-store');
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
@@ -96,6 +97,7 @@ exports.handler = async (event) => {
     }
 
     const from = mensaje.from;
+    const nombreContacto = cambio?.contacts?.[0]?.profile?.name;
     const textoUsuario =
       mensaje.type === 'button'
         ? mensaje.button?.text
@@ -103,12 +105,25 @@ exports.handler = async (event) => {
         ? mensaje.interactive?.button_reply?.id || mensaje.interactive?.button_reply?.title
         : mensaje.text?.body;
 
+    await registrarMensaje({
+      telefono: from,
+      texto: textoUsuario,
+      direccion: 'entrante',
+      nombre: nombreContacto
+    });
+
     const respuesta = buscarRespuesta(textoUsuario);
 
     if (respuesta === null) {
       await enviarMenuPrincipal(from);
+      await registrarMensaje({
+        telefono: from,
+        texto: respuestasData.menuPrincipal.texto,
+        direccion: 'saliente'
+      });
     } else {
       await enviarMensajeTexto(from, respuesta);
+      await registrarMensaje({ telefono: from, texto: respuesta, direccion: 'saliente' });
     }
 
     return { statusCode: 200, body: 'OK' };

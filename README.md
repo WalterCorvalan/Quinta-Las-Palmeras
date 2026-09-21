@@ -34,4 +34,21 @@ Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes
 
 Para editar el menú o agregar nuevas palabras clave, modificá `netlify/functions/bot-respuestas.json` y hacé deploy.
 
+## 📇 Mini CRM de chats
+
+Cada mensaje entrante y cada respuesta del bot se guarda automáticamente (Netlify Blobs) y se puede ver en un panel web simple.
+
+- **Panel:** `https://<tu-sitio>.netlify.app/crm.html`
+- **API:** `netlify/functions/crm-chats.js`
+- **Storage:** `netlify/functions/lib/chats-store.js` (Netlify Blobs, sin servicios externos)
+
+Funcionalidades: lista de conversaciones ordenada por más reciente, detalle con historial completo de mensajes, y marcar cada chat como "atendido" o reabrirlo.
+
+### Configuración
+
+1. En Netlify, agregá la variable de entorno `CRM_PASSWORD` con la contraseña que vas a usar para entrar al panel.
+2. Entrá a `/crm.html`, ingresá esa contraseña y listo.
+
+La contraseña es compartida (no hay usuarios individuales); si necesitás varios accesos con permisos distintos en el futuro, se puede migrar a Supabase Auth u otro proveedor.
+
 ## 📂 Estructura del Proyecto

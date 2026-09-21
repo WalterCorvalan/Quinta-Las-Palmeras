@@ -14,4 +14,24 @@ Sitio web oficial y cotizador interactivo de eventos para **Quinta Las Palmeras*
 - **Backend / Serverless:** Netlify Functions (`Node.js`).
 - **Pagos:** SDK Oficial de Mercado Pago (`mercadopago`).
 
+## 🤖 Bot de WhatsApp (respuestas automáticas)
+
+Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes de WhatsApp con un menú de opciones (Ver planes / Hablar con vendedor / Cotizar).
+
+- **Código:** `netlify/functions/whatsapp-webhook.js`
+- **Respuestas editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá palabras clave y textos sin tocar código)
+
+### Configuración (WhatsApp Cloud API de Meta)
+
+1. Creá una app en [developers.facebook.com](https://developers.facebook.com/) y agregá el producto **WhatsApp**.
+2. Obtené el `Phone Number ID` y un token de acceso temporal (o permanente con una System User).
+3. En Netlify, configurá estas variables de entorno (Site settings → Environment variables):
+   - `WHATSAPP_TOKEN`: token de acceso de la API de WhatsApp Cloud.
+   - `WHATSAPP_PHONE_ID`: ID del número de WhatsApp emisor.
+   - `WHATSAPP_VERIFY_TOKEN`: string inventado por vos, para validar el webhook.
+4. En el panel de Meta, configurá el webhook con la URL `https://<tu-sitio>.netlify.app/.netlify/functions/whatsapp-webhook` y el mismo `WHATSAPP_VERIFY_TOKEN`.
+5. Suscribite al campo `messages` del webhook.
+
+Para editar el menú o agregar nuevas palabras clave, modificá `netlify/functions/bot-respuestas.json` y hacé deploy.
+
 ## 📂 Estructura del Proyecto

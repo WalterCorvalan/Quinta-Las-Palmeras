@@ -16,36 +16,20 @@
     --texto: #1a2a1e;
     --suave: #4a5a4e;
     --acento: #c8a96e;
-    --radio: 12px;
-    --sombra: 0 2px 14px rgba(56, 102, 65, 0.1);
+    --radio: 10px;
+    --borde: #e4e7e2;
+    --sombra: 0 2px 14px rgba(56, 102, 65, 0.08);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
   body {
     font-family: "Inter", system-ui, sans-serif;
     color: var(--texto);
-    background: var(--arena);
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-  header {
-    background: var(--verde);
-    color: var(--blanco);
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header h1 { font-size: 1.2rem; font-weight: 600; }
-  header button {
-    background: transparent;
-    color: var(--arena);
-    border: 1px solid var(--arena-d);
-    border-radius: var(--radio);
-    padding: 0.4rem 0.8rem;
-    cursor: pointer;
-    font-size: 0.85rem;
+    background: var(--blanco);
+    line-height: 1.4;
   }
 
+  /* ── LOGIN ───────────────────── */
   #login {
     max-width: 320px;
     margin: 15vh auto;
@@ -54,12 +38,13 @@
     border-radius: var(--radio);
     box-shadow: var(--sombra);
     text-align: center;
+    border: 1px solid var(--borde);
   }
   #login h2 { margin-bottom: 1rem; color: var(--verde); }
   #login input {
     width: 100%;
     padding: 0.7rem;
-    border: 1px solid var(--arena-d);
+    border: 1px solid var(--borde);
     border-radius: var(--radio);
     margin-bottom: 0.8rem;
     font-size: 1rem;
@@ -67,7 +52,7 @@
   #login button {
     width: 100%;
     padding: 0.7rem;
-    background: var(--verde-m);
+    background: var(--verde);
     color: var(--blanco);
     border: none;
     border-radius: var(--radio);
@@ -76,109 +61,194 @@
   }
   #login p.error { color: #b3261e; margin-top: 0.6rem; font-size: 0.85rem; }
 
-  main {
+  /* ── SHELL ───────────────────── */
+  #app {
     display: none;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 1.25rem;
+    height: 100vh;
   }
-  main.activo { display: block; }
+  #app.activo { display: flex; }
 
-  .lista-chats {
-    display: grid;
-    gap: 0.75rem;
-  }
-  .chat-card {
-    background: var(--blanco);
-    border-radius: var(--radio);
-    box-shadow: var(--sombra);
-    padding: 1rem;
+  /* ── SIDEBAR (lista de conversaciones) ───────────────────── */
+  .sidebar {
+    width: 320px;
+    min-width: 320px;
+    border-right: 1px solid var(--borde);
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+  }
+  .sidebar-top {
+    display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--borde);
+  }
+  .sidebar-top .tab {
+    background: var(--verde);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .sidebar-top button.salir {
+    background: transparent;
+    border: none;
+    color: var(--suave);
+    font-size: 0.78rem;
     cursor: pointer;
   }
+  .buscador {
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--borde);
+  }
+  .buscador input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+  .lista-chats {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .grupo-titulo {
+    padding: 0.6rem 0.9rem 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--suave);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .chat-card {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .chat-card:hover { background: #f7f8f6; }
+  .chat-card.seleccionado { background: var(--arena); border-left-color: var(--verde); }
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--verde);
+    color: var(--blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
   .chat-card .info { flex: 1; min-width: 0; }
-  .chat-card .telefono { font-weight: 600; color: var(--verde); }
-  .chat-card .nombre { font-size: 0.85rem; color: var(--suave); }
-  .chat-card .ultimo {
-    font-size: 0.9rem;
-    color: var(--texto);
+  .chat-card .fila-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+  .chat-card .nombre {
+    font-weight: 600;
+    font-size: 0.88rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
   }
-  .chat-card .fecha { font-size: 0.75rem; color: var(--suave); }
-  .estado {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
+  .chat-card .fecha { font-size: 0.7rem; color: var(--suave); flex-shrink: 0; }
+  .chat-card .ultimo {
+    font-size: 0.8rem;
+    color: var(--suave);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
   }
-  .estado.nuevo { background: var(--verde-v); color: var(--texto); }
-  .estado.atendido { background: var(--arena-d); color: var(--suave); }
-
-  #vacio { text-align: center; color: var(--suave); padding: 3rem 1rem; }
-
-  .overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+  .badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
   }
-  .overlay.activo { display: flex; }
-  .panel-chat {
-    background: var(--blanco);
-    border-radius: var(--radio);
-    max-width: 480px;
-    width: 100%;
-    max-height: 80vh;
+  .badge.nuevo { background: #fde9c8; color: #8a5a00; }
+  .badge.atendido { background: var(--arena-d); color: var(--suave); }
+
+  #vacioLista { text-align: center; color: var(--suave); padding: 2.5rem 1rem; font-size: 0.85rem; }
+
+  /* ── PANEL DE CHAT ───────────────────── */
+  .panel {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    min-width: 0;
   }
-  .panel-chat header {
+  .panel-header {
     background: var(--verde);
+    color: var(--blanco);
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
   }
+  .panel-header .avatar { background: rgba(255,255,255,.2); }
+  .panel-header .datos { flex: 1; min-width: 0; }
+  .panel-header .datos .nombre { font-weight: 700; font-size: 0.95rem; }
+  .panel-header .datos .telefono { font-size: 0.78rem; color: rgba(255,255,255,.75); }
+  .panel-header button {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: var(--blanco);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
   .mensajes {
-    padding: 1rem;
+    flex: 1;
     overflow-y: auto;
+    padding: 1.2rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    background:
+      radial-gradient(circle, var(--arena) 1px, transparent 1px) 0 0/22px 22px,
+      #efe9db;
   }
   .mensaje {
     padding: 0.5rem 0.8rem;
     border-radius: var(--radio);
-    max-width: 80%;
-    font-size: 0.9rem;
+    max-width: 65%;
+    font-size: 0.88rem;
     white-space: pre-wrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
   }
-  .mensaje.entrante { background: var(--arena); align-self: flex-start; }
-  .mensaje.saliente { background: var(--verde-v); align-self: flex-end; }
-  .mensaje small { display: block; color: var(--suave); font-size: 0.7rem; margin-top: 0.2rem; }
-  .acciones {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--arena-d);
-    display: flex;
-    gap: 0.5rem;
-  }
-  .acciones button {
+  .mensaje.entrante { background: var(--blanco); align-self: flex-start; border-bottom-left-radius: 2px; }
+  .mensaje.saliente { background: var(--verde-v); align-self: flex-end; border-bottom-right-radius: 2px; }
+  .mensaje small { display: block; color: var(--suave); font-size: 0.68rem; margin-top: 0.25rem; text-align: right; }
+
+  .estado-vacio, .estado-cargando {
     flex: 1;
-    padding: 0.6rem;
-    border-radius: var(--radio);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--suave);
+    font-size: 0.9rem;
   }
-  .btn-atendido { background: var(--verde-m); color: var(--blanco); }
-  .btn-cerrar { background: var(--arena-d); color: var(--texto); }
+
+  @media (max-width: 720px) {
+    .sidebar { width: 100%; min-width: 0; }
+    .sidebar.oculto { display: none; }
+    .panel.oculto { display: none; }
+    #app.activo { display: flex; }
+  }
 </style>
 </head>
 <body>
@@ -190,71 +260,91 @@
   <p class="error" id="loginError" style="display:none;">Contraseña incorrecta</p>
 </div>
 
-<main id="main">
-  <header>
-    <h1>💬 Chats de WhatsApp</h1>
-    <button id="btnSalir">Salir</button>
-  </header>
-  <div style="padding: 1.25rem 0 0;">
-    <div class="lista-chats" id="listaChats"></div>
-    <div id="vacio" style="display:none;">Todavía no llegaron chats.</div>
-  </div>
-</main>
-
-<div class="overlay" id="overlay">
-  <div class="panel-chat">
-    <header>
-      <h1 id="tituloChat">Chat</h1>
-      <button id="btnCerrarPanel">✕</button>
-    </header>
-    <div class="mensajes" id="mensajes"></div>
-    <div class="acciones">
-      <button class="btn-atendido" id="btnAtendido">Marcar como atendido</button>
-      <button class="btn-cerrar" id="btnReabrir">Reabrir</button>
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <span class="tab">💬 Chats de WhatsApp</span>
+      <button class="salir" id="btnSalir">Salir</button>
     </div>
-  </div>
+    <div class="buscador">
+      <input type="text" id="buscador" placeholder="Buscar por nombre o número..." />
+    </div>
+    <div class="lista-chats" id="listaChats"></div>
+    <div id="vacioLista" style="display:none;">Todavía no llegaron chats.</div>
+  </aside>
+
+  <section class="panel" id="panel">
+    <div class="estado-vacio" id="panelVacio">Seleccioná una conversación</div>
+  </section>
 </div>
 
 <script>
   const API = '/.netlify/functions/crm-chats';
   let clave = sessionStorage.getItem('crm_clave') || '';
   let chats = [];
-  let chatActivo = null;
+  let telefonoActivo = null;
 
   const $ = (sel) => document.querySelector(sel);
 
   async function cargarChats() {
     const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}`);
-    if (res.status === 401) {
-      salir();
-      return;
-    }
+    if (res.status === 401) { salir(); return; }
     chats = await res.json();
     renderLista();
   }
 
+  function iniciales(chat) {
+    const base = chat.nombre || chat.telefono || '?';
+    return base.slice(0, 2).toUpperCase();
+  }
+
   function renderLista() {
+    const filtro = ($('#buscador').value || '').toLowerCase();
     const lista = $('#listaChats');
     lista.innerHTML = '';
-    $('#vacio').style.display = chats.length ? 'none' : 'block';
 
-    chats.forEach((chat) => {
-      const card = document.createElement('div');
-      card.className = 'chat-card';
-      card.innerHTML = `
-        <div class="info">
-          <div class="telefono">${chat.telefono}</div>
-          <div class="nombre">${chat.nombre || ''}</div>
-          <div class="ultimo">${(chat.ultimoMensaje || '').slice(0, 60)}</div>
-        </div>
-        <div style="text-align:right; display:flex; flex-direction:column; gap:0.4rem; align-items:flex-end;">
-          <span class="estado ${chat.estado}">${chat.estado === 'atendido' ? 'Atendido' : 'Nuevo'}</span>
+    const visibles = chats.filter((c) =>
+      (c.nombre || '').toLowerCase().includes(filtro) || c.telefono.includes(filtro)
+    );
+
+    $('#vacioLista').style.display = visibles.length ? 'none' : 'block';
+
+    const nuevos = visibles.filter((c) => c.estado !== 'atendido');
+    const atendidos = visibles.filter((c) => c.estado === 'atendido');
+
+    if (nuevos.length) {
+      lista.appendChild(crearGrupoTitulo(`NUEVOS · ${nuevos.length}`));
+      nuevos.forEach((c) => lista.appendChild(crearCard(c)));
+    }
+    if (atendidos.length) {
+      lista.appendChild(crearGrupoTitulo(`ATENDIDOS · ${atendidos.length}`));
+      atendidos.forEach((c) => lista.appendChild(crearCard(c)));
+    }
+  }
+
+  function crearGrupoTitulo(texto) {
+    const div = document.createElement('div');
+    div.className = 'grupo-titulo';
+    div.textContent = texto;
+    return div;
+  }
+
+  function crearCard(chat) {
+    const card = document.createElement('div');
+    card.className = 'chat-card' + (chat.telefono === telefonoActivo ? ' seleccionado' : '');
+    card.innerHTML = `
+      <div class="avatar">${iniciales(chat)}</div>
+      <div class="info">
+        <div class="fila-top">
+          <span class="nombre">${escapeHtml(chat.nombre || chat.telefono)}</span>
           <span class="fecha">${formatearFecha(chat.ultimaFecha)}</span>
         </div>
-      `;
-      card.addEventListener('click', () => abrirChat(chat.telefono));
-      lista.appendChild(card);
-    });
+        <div class="ultimo">${escapeHtml((chat.ultimoMensaje || '').slice(0, 50))}</div>
+        <span class="badge ${chat.estado}">${chat.estado === 'atendido' ? 'Atendido' : 'Nuevo'}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => abrirChat(chat.telefono));
+    return card;
   }
 
   function formatearFecha(iso) {
@@ -263,15 +353,37 @@
     return fecha.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
+  function escapeHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto || '';
+    return div.innerHTML;
+  }
+
   async function abrirChat(telefono) {
+    telefonoActivo = telefono;
+    renderLista();
+
+    const panel = $('#panel');
+    panel.innerHTML = '<div class="estado-cargando">Cargando...</div>';
+
     const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}&telefono=${encodeURIComponent(telefono)}`);
     if (res.status === 401) { salir(); return; }
-    chatActivo = await res.json();
+    const chat = await res.json();
 
-    $('#tituloChat').textContent = chatActivo.nombre ? `${chatActivo.nombre} · ${telefono}` : telefono;
+    panel.innerHTML = `
+      <div class="panel-header">
+        <div class="avatar">${iniciales(chat)}</div>
+        <div class="datos">
+          <div class="nombre">${escapeHtml(chat.nombre || chat.telefono)}</div>
+          <div class="telefono">${chat.telefono}</div>
+        </div>
+        <button id="btnEstado">${chat.estado === 'atendido' ? 'Reabrir' : 'Marcar atendido'}</button>
+      </div>
+      <div class="mensajes" id="mensajes"></div>
+    `;
+
     const cont = $('#mensajes');
-    cont.innerHTML = '';
-    chatActivo.mensajes.forEach((m) => {
+    chat.mensajes.forEach((m) => {
       const div = document.createElement('div');
       div.className = `mensaje ${m.direccion}`;
       div.innerHTML = `${escapeHtml(m.texto)}<small>${formatearFecha(m.fecha)}</small>`;
@@ -279,30 +391,26 @@
     });
     cont.scrollTop = cont.scrollHeight;
 
-    $('#overlay').classList.add('activo');
+    $('#btnEstado').addEventListener('click', () =>
+      cambiarEstado(telefono, chat.estado === 'atendido' ? 'nuevo' : 'atendido')
+    );
   }
 
-  function escapeHtml(texto) {
-    const div = document.createElement('div');
-    div.textContent = texto || '';
-    return div.innerHTML;
-  }
-
-  async function cambiarEstado(estado) {
-    if (!chatActivo) return;
+  async function cambiarEstado(telefono, estado) {
     await fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-crm-password': clave },
-      body: JSON.stringify({ telefono: chatActivo.telefono, estado })
+      body: JSON.stringify({ telefono, estado })
     });
-    $('#overlay').classList.remove('activo');
-    cargarChats();
+    await cargarChats();
+    abrirChat(telefono);
   }
 
   function salir() {
     sessionStorage.removeItem('crm_clave');
     clave = '';
-    $('main').classList.remove('activo');
+    telefonoActivo = null;
+    $('#app').classList.remove('activo');
     $('#login').style.display = 'block';
   }
 
@@ -315,7 +423,7 @@
     }
     sessionStorage.setItem('crm_clave', clave);
     $('#login').style.display = 'none';
-    $('main').classList.add('activo');
+    $('#app').classList.add('activo');
     chats = await res.json();
     renderLista();
   }
@@ -323,13 +431,11 @@
   $('#btnEntrar').addEventListener('click', intentarEntrar);
   $('#clave').addEventListener('keydown', (e) => { if (e.key === 'Enter') intentarEntrar(); });
   $('#btnSalir').addEventListener('click', salir);
-  $('#btnCerrarPanel').addEventListener('click', () => $('#overlay').classList.remove('activo'));
-  $('#btnAtendido').addEventListener('click', () => cambiarEstado('atendido'));
-  $('#btnReabrir').addEventListener('click', () => cambiarEstado('nuevo'));
+  $('#buscador').addEventListener('input', renderLista);
 
   if (clave) {
     $('#login').style.display = 'none';
-    $('main').classList.add('activo');
+    $('#app').classList.add('activo');
     cargarChats();
   }
 </script>

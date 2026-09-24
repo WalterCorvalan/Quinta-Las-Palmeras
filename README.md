@@ -16,10 +16,15 @@ Sitio web oficial y cotizador interactivo de eventos para **Quinta Las Palmeras*
 
 ## 🤖 Bot de WhatsApp (respuestas automáticas)
 
-Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes de WhatsApp con un menú de opciones (Ver planes / Hablar con vendedor / Cotizar).
+Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes de WhatsApp.
+
+**Flujo:**
+1. Primer mensaje del cliente → el bot manda la bienvenida con las 5 preguntas clave (tipo de evento, fecha, invitados, horario, servicios) y 2 botones: *Paquetes y precios* / *Hablar con asesor*.
+2. Si toca **Paquetes y precios** → recibe automáticamente el detalle de los 3 paquetes (Básico/Intermedio/Premium) con precios por persona y un ejemplo para 100 invitados.
+3. Si toca **Hablar con asesor** (o responde en texto libre con los datos de su evento) → el bot confirma que un asesor va a responder, y esa conversación queda visible en el mini CRM (`/crm.html`) para que el vendedor siga el guion de cierre (confirmar disponibilidad, presentar paquete, pedir seña) — esa parte queda manual porque depende de disponibilidad real, no automatizable sin un calendario conectado.
 
 - **Código:** `netlify/functions/whatsapp-webhook.js`
-- **Respuestas editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá palabras clave y textos sin tocar código)
+- **Respuestas, precios y paquetes editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá palabras clave y textos sin tocar código)
 
 ### Configuración (WhatsApp Cloud API de Meta)
 

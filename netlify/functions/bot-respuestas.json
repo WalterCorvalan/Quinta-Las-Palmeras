@@ -1,27 +1,26 @@
 {
   "menuPrincipal": {
-    "texto": "¡Hola! 👋 Bienvenido/a a *Quinta Las Palmeras*. Elegí una opción:\n\n1️⃣ Ver planes\n2️⃣ Hablar con un vendedor\n3️⃣ Cotizar mi evento\n\nEscribí el número o la palabra clave.",
+    "texto": "¡Hola! 🎉 Gracias por escribirnos a *Quinta Las Palmeras*, queremos ayudarte a organizar el evento perfecto.\n\nPara armarte una propuesta a medida, contame:\n1️⃣ Tipo de evento\n2️⃣ Fecha deseada (y una alternativa, por las dudas)\n3️⃣ Cantidad de invitados\n4️⃣ Horario preferido (día o noche)\n5️⃣ ¿Necesitás catering, decoración o sonido, o solo el espacio?\n\nEn cuanto me cuentes esto, te paso disponibilidad y precio al toque ✨\n\nO si preferís, elegí una opción:",
     "botones": [
-      { "id": "planes", "titulo": "Ver planes" },
-      { "id": "vendedor", "titulo": "Hablar con vendedor" },
-      { "id": "cotizar", "titulo": "Cotizar" }
+      { "id": "paquetes", "titulo": "Paquetes y precios" },
+      { "id": "vendedor", "titulo": "Hablar con asesor" }
     ]
   },
   "respuestas": [
     {
-      "id": "planes",
-      "palabrasClave": ["1", "planes", "plan", "ver planes", "precios"],
-      "respuesta": "📋 *Nuestros planes*\n\n- Salón + Parque\n- Parque + Pileta\n- Salón + Parque + Pileta\n\nPara un presupuesto detallado según invitados y servicios, usá nuestro cotizador en la web: https://quintalaspalmeras.netlify.app\n\nEscribí *menu* para volver al inicio."
+      "id": "paquetes",
+      "palabrasClave": ["1", "paquetes", "planes", "plan", "ver planes", "precios", "paquetes y precios"],
+      "respuesta": "📋 *Paquetes y precios* (valor por persona)\n\n🥉 *Básico — Solo el Espacio*\nAlquiler del espacio + mobiliario básico + baños y limpieza\n💲 Día: $10.000 · Noche: $20.000\n\n🥈 *Intermedio — Evento Completo*\nTodo lo del Básico + decoración estándar + sonido (parlantes y micrófono)\n💲 Día: $15.000 · Noche: $25.000\n\n🥇 *Premium — Todo Incluido*\nTodo lo del Intermedio + catering + DJ/animación + decoración personalizada + coordinador de evento\n💲 Día: $25.000 · Noche: $38.000\n\n*Ejemplo para 100 invitados:*\n🥉 Básico: $1.000.000 (día) / $2.000.000 (noche)\n🥈 Intermedio: $1.500.000 (día) / $2.500.000 (noche)\n🥇 Premium: $2.500.000 (día) / $3.800.000 (noche)\n\n¿Querés el presupuesto exacto para tu cantidad de invitados? Escribí *vendedor* o usá nuestro cotizador: https://quintalaspalmeras.netlify.app\n\nEscribí *menu* para volver al inicio."
     },
     {
       "id": "vendedor",
-      "palabrasClave": ["2", "vendedor", "hablar con vendedor", "asesor", "humano"],
-      "respuesta": "🙋 En breve un asesor de Quinta Las Palmeras te va a responder por este mismo chat. También podés llamarnos o escribirnos por este WhatsApp en horario comercial.\n\nEscribí *menu* para volver al inicio."
+      "palabrasClave": ["2", "vendedor", "hablar con vendedor", "hablar con asesor", "asesor", "humano"],
+      "respuesta": "🙋 ¡Genial! Ya tenemos tu consulta y en breve un asesor de Quinta Las Palmeras te responde por este mismo chat con disponibilidad y precio a medida.\n\nSi todavía no nos contaste tipo de evento, fecha, invitados y horario, aprovechá y mandámelo así avanzamos más rápido.\n\nEscribí *menu* para volver al inicio."
     },
     {
       "id": "cotizar",
       "palabrasClave": ["3", "cotizar", "cotización", "presupuesto", "cotizar mi evento"],
-      "respuesta": "🧮 Para cotizar tu evento con precio exacto, entrá al cotizador de nuestra web:\nhttps://quintalaspalmeras.netlify.app\n\nAhí elegís espacio, fecha, invitados y servicios, y te llega el detalle. Si preferís, escribí *2* para hablar con un vendedor.\n\nEscribí *menu* para volver al inicio."
+      "respuesta": "🧮 Para cotizar tu evento con precio exacto, entrá al cotizador de nuestra web:\nhttps://quintalaspalmeras.netlify.app\n\nAhí elegís espacio, fecha, invitados y servicios, y te llega el detalle. Si preferís, escribí *vendedor* para hablar con un asesor.\n\nEscribí *menu* para volver al inicio."
     },
     {
       "id": "ubicacion",
@@ -29,5 +28,5 @@
       "respuesta": "📍 Estamos en Antonio Machado 660, Del Viso, Buenos Aires.\n\nEscribí *menu* para volver al inicio."
     }
   ],
-  "noEntendido": "No entendí ese mensaje 🤔. Escribí *menu* para ver las opciones disponibles."
+  "noEntendido": "¡Recibido! 📝 Un asesor va a revisar tu mensaje y te responde a la brevedad con disponibilidad y precio.\n\nSi querés, también podés escribir *paquetes* para ver precios o *menu* para ver las opciones."
 }

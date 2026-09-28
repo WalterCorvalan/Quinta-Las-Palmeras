@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CRM · Quinta Las Palmeras</title>
+<style>
+  body{font-family:system-ui,sans-serif;margin:0;background:#f4f4f2;color:#222}
+  #login{max-width:320px;margin:20vh auto;text-align:center}
+  input,button{font:inherit;padding:.6rem;border:1px solid #ccc;border-radius:6px}
+  button{background:#2e7d32;color:#fff;border:0;cursor:pointer}
+  #app{display:none;grid-template-columns:300px 1fr;height:100vh}
+  #list{overflow:auto;background:#fff;border-right:1px solid #ddd}
+  .conv{padding:.8rem;border-bottom:1px solid #eee;cursor:pointer}
+  .conv:hover,.conv.on{background:#e8f5e9}
+  .conv small{display:block;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .badge{font-size:.7rem;background:#f9a825;color:#000;border-radius:4px;padding:0 .3rem;margin-left:.3rem}
+  #chat{display:flex;flex-direction:column;min-width:0}
+  #head{padding:.8rem;background:#fff;border-bottom:1px solid #ddd;display:flex;gap:.5rem;align-items:center;justify-content:space-between}
+  #msgs{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.4rem}
+  .m{max-width:70%;padding:.5rem .7rem;border-radius:8px;white-space:pre-wrap;background:#fff}
+  .m.out{align-self:flex-end;background:#dcf8c6}
+  #form{display:flex;gap:.5rem;padding:.8rem;background:#fff;border-top:1px solid #ddd}
+  #form input{flex:1}
+  @media(max-width:700px){#app{grid-template-columns:1fr;grid-template-rows:40vh 1fr}}
+</style>
+</head>
+<body>
+<div id="login">
+  <h2>CRM Quinta Las Palmeras</h2>
+  <input id="pass" type="password" placeholder="Contraseña"> <button id="go">Entrar</button>
+  <p id="err" style="color:#c62828"></p>
+</div>
+<div id="app">
+  <div id="list"></div>
+  <div id="chat">
+    <div id="head"><b id="title">Elegí una conversación</b>
+      <span><button id="toBot" style="background:#555">Devolver al bot</button>
+      <button id="close" style="background:#888">Cerrar</button></span></div>
+    <div id="msgs"></div>
+    <form id="form"><input id="txt" placeholder="Escribí una respuesta…" autocomplete="off"><button>Enviar</button></form>
+  </div>
+</div>
+<script>
+let pass = sessionStorage.getItem('crm') || '', current = null;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function api(qs = '', opts = {}) {
+  const r = await fetch('/.netlify/functions/crm-api' + qs, {
+    ...opts, headers: { 'x-crm-password': pass, 'Content-Type': 'application/json' }
+  });
+  if (!r.ok) throw new Error(r.status === 401 ? 'Contraseña incorrecta' : 'Error ' + r.status);
+  return r.json();
+}
+
+async function loadList() {
+  const convs = await api();
+  $('list').innerHTML = convs.map((c) =>
+    `<div class="conv ${c.phone === current ? 'on' : ''}" data-p="${esc(c.phone)}">
+      <b>${esc(c.name || c.phone)}</b>${c.status === 'asesor' ? '<span class="badge">asesor</span>' : ''}
+      <small>${esc(c.last)}</small></div>`).join('') || '<p style="padding:1rem">Sin conversaciones</p>';
+}
+
+async function open(phone) {
+  current = phone;
+  const c = await api('?phone=' + encodeURIComponent(phone));
+  $('title').textContent = (c.name || '') + ' +' + c.phone;
+  $('msgs').innerHTML = c.messages.map((m) =>
+    `<div class="m ${m.dir}">${esc(m.text)}</div>`).join('');
+  $('msgs').scrollTop = 1e9;
+  loadList();
+}
+
+async function start() {
+  try { await loadList(); } catch (e) { $('err').textContent = e.message; sessionStorage.removeItem('crm'); return; }
+  sessionStorage.setItem('crm', pass);
+  $('login').style.display = 'none'; $('app').style.display = 'grid';
+  setInterval(() => { loadList().catch(()=>{}); if (current) open(current).catch(()=>{}); }, 10000);
+}
+
+$('go').onclick = () => { pass = $('pass').value; start(); };
+$('pass').onkeydown = (e) => e.key === 'Enter' && $('go').click();
+$('list').onclick = (e) => { const d = e.target.closest('.conv'); if (d) open(d.dataset.p); };
+$('form').onsubmit = async (e) => {
+  e.preventDefault();
+  if (!current || !$('txt').value.trim()) return;
+  try {
+    await api('', { method: 'POST', body: JSON.stringify({ phone: current, message: $('txt').value }) });
+    $('txt').value = ''; open(current);
+  } catch (err) { alert(err.message); }
+};
+const setStatus = (s) => async () => {
+  if (!current) return;
+  await api('', { method: 'POST', body: JSON.stringify({ phone: current, status: s }) });
+  open(current);
+};
+$('toBot').onclick = setStatus('bot');
+$('close').onclick = setStatus('cerrado');
+if (pass) start();
+</script>
+</body>
+</html>

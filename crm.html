@@ -1,104 +1,443 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
 <title>CRM · Quinta Las Palmeras</title>
 <style>
-  body{font-family:system-ui,sans-serif;margin:0;background:#f4f4f2;color:#222}
-  #login{max-width:320px;margin:20vh auto;text-align:center}
-  input,button{font:inherit;padding:.6rem;border:1px solid #ccc;border-radius:6px}
-  button{background:#2e7d32;color:#fff;border:0;cursor:pointer}
-  #app{display:none;grid-template-columns:300px 1fr;height:100vh}
-  #list{overflow:auto;background:#fff;border-right:1px solid #ddd}
-  .conv{padding:.8rem;border-bottom:1px solid #eee;cursor:pointer}
-  .conv:hover,.conv.on{background:#e8f5e9}
-  .conv small{display:block;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .badge{font-size:.7rem;background:#f9a825;color:#000;border-radius:4px;padding:0 .3rem;margin-left:.3rem}
-  #chat{display:flex;flex-direction:column;min-width:0}
-  #head{padding:.8rem;background:#fff;border-bottom:1px solid #ddd;display:flex;gap:.5rem;align-items:center;justify-content:space-between}
-  #msgs{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.4rem}
-  .m{max-width:70%;padding:.5rem .7rem;border-radius:8px;white-space:pre-wrap;background:#fff}
-  .m.out{align-self:flex-end;background:#dcf8c6}
-  #form{display:flex;gap:.5rem;padding:.8rem;background:#fff;border-top:1px solid #ddd}
-  #form input{flex:1}
-  @media(max-width:700px){#app{grid-template-columns:1fr;grid-template-rows:40vh 1fr}}
+  :root {
+    --verde: #386641;
+    --verde-m: #6a994e;
+    --verde-v: #a7c957;
+    --arena: #f2e8cf;
+    --arena-d: #e4d8ba;
+    --blanco: #ffffff;
+    --texto: #1a2a1e;
+    --suave: #4a5a4e;
+    --acento: #c8a96e;
+    --radio: 10px;
+    --borde: #e4e7e2;
+    --sombra: 0 2px 14px rgba(56, 102, 65, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    color: var(--texto);
+    background: var(--blanco);
+    line-height: 1.4;
+  }
+
+  /* ── LOGIN ───────────────────── */
+  #login {
+    max-width: 320px;
+    margin: 15vh auto;
+    background: var(--blanco);
+    padding: 2rem;
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    text-align: center;
+    border: 1px solid var(--borde);
+  }
+  #login h2 { margin-bottom: 1rem; color: var(--verde); }
+  #login input {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+  #login button {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--verde);
+    color: var(--blanco);
+    border: none;
+    border-radius: var(--radio);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  #login p.error { color: #b3261e; margin-top: 0.6rem; font-size: 0.85rem; }
+
+  /* ── SHELL ───────────────────── */
+  #app {
+    display: none;
+    height: 100vh;
+  }
+  #app.activo { display: flex; }
+
+  /* ── SIDEBAR (lista de conversaciones) ───────────────────── */
+  .sidebar {
+    width: 320px;
+    min-width: 320px;
+    border-right: 1px solid var(--borde);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--borde);
+  }
+  .sidebar-top .tab {
+    background: var(--verde);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .sidebar-top button.salir {
+    background: transparent;
+    border: none;
+    color: var(--suave);
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  .buscador {
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--borde);
+  }
+  .buscador input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+  .lista-chats {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .grupo-titulo {
+    padding: 0.6rem 0.9rem 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--suave);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .chat-card {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .chat-card:hover { background: #f7f8f6; }
+  .chat-card.seleccionado { background: var(--arena); border-left-color: var(--verde); }
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--verde);
+    color: var(--blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .chat-card .info { flex: 1; min-width: 0; }
+  .chat-card .fila-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+  .chat-card .nombre {
+    font-weight: 600;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chat-card .fecha { font-size: 0.7rem; color: var(--suave); flex-shrink: 0; }
+  .chat-card .ultimo {
+    font-size: 0.8rem;
+    color: var(--suave);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+  .badge.nuevo { background: #fde9c8; color: #8a5a00; }
+  .badge.atendido { background: var(--arena-d); color: var(--suave); }
+
+  #vacioLista { text-align: center; color: var(--suave); padding: 2.5rem 1rem; font-size: 0.85rem; }
+
+  /* ── PANEL DE CHAT ───────────────────── */
+  .panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .panel-header {
+    background: var(--verde);
+    color: var(--blanco);
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .panel-header .avatar { background: rgba(255,255,255,.2); }
+  .panel-header .datos { flex: 1; min-width: 0; }
+  .panel-header .datos .nombre { font-weight: 700; font-size: 0.95rem; }
+  .panel-header .datos .telefono { font-size: 0.78rem; color: rgba(255,255,255,.75); }
+  .panel-header button {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: var(--blanco);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .mensajes {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background:
+      radial-gradient(circle, var(--arena) 1px, transparent 1px) 0 0/22px 22px,
+      #efe9db;
+  }
+  .mensaje {
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radio);
+    max-width: 65%;
+    font-size: 0.88rem;
+    white-space: pre-wrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  }
+  .mensaje.entrante { background: var(--blanco); align-self: flex-start; border-bottom-left-radius: 2px; }
+  .mensaje.saliente { background: var(--verde-v); align-self: flex-end; border-bottom-right-radius: 2px; }
+  .mensaje small { display: block; color: var(--suave); font-size: 0.68rem; margin-top: 0.25rem; text-align: right; }
+
+  .estado-vacio, .estado-cargando {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--suave);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 720px) {
+    .sidebar { width: 100%; min-width: 0; }
+    .sidebar.oculto { display: none; }
+    .panel.oculto { display: none; }
+    #app.activo { display: flex; }
+  }
 </style>
 </head>
 <body>
+
 <div id="login">
-  <h2>CRM Quinta Las Palmeras</h2>
-  <input id="pass" type="password" placeholder="Contraseña"> <button id="go">Entrar</button>
-  <p id="err" style="color:#c62828"></p>
+  <h2>🌿 CRM Quinta Las Palmeras</h2>
+  <input type="password" id="clave" placeholder="Contraseña" autocomplete="current-password" />
+  <button id="btnEntrar">Entrar</button>
+  <p class="error" id="loginError" style="display:none;">Contraseña incorrecta</p>
 </div>
+
 <div id="app">
-  <div id="list"></div>
-  <div id="chat">
-    <div id="head"><b id="title">Elegí una conversación</b>
-      <span><button id="toBot" style="background:#555">Devolver al bot</button>
-      <button id="close" style="background:#888">Cerrar</button></span></div>
-    <div id="msgs"></div>
-    <form id="form"><input id="txt" placeholder="Escribí una respuesta…" autocomplete="off"><button>Enviar</button></form>
-  </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <span class="tab">💬 Chats de WhatsApp</span>
+      <button class="salir" id="btnSalir">Salir</button>
+    </div>
+    <div class="buscador">
+      <input type="text" id="buscador" placeholder="Buscar por nombre o número..." />
+    </div>
+    <div class="lista-chats" id="listaChats"></div>
+    <div id="vacioLista" style="display:none;">Todavía no llegaron chats.</div>
+  </aside>
+
+  <section class="panel" id="panel">
+    <div class="estado-vacio" id="panelVacio">Seleccioná una conversación</div>
+  </section>
 </div>
+
 <script>
-let pass = sessionStorage.getItem('crm') || '', current = null;
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const API = '/.netlify/functions/crm-chats';
+  let clave = sessionStorage.getItem('crm_clave') || '';
+  let chats = [];
+  let telefonoActivo = null;
 
-async function api(qs = '', opts = {}) {
-  const r = await fetch('/.netlify/functions/crm-api' + qs, {
-    ...opts, headers: { 'x-crm-password': pass, 'Content-Type': 'application/json' }
-  });
-  if (!r.ok) throw new Error(r.status === 401 ? 'Contraseña incorrecta' : 'Error ' + r.status);
-  return r.json();
-}
+  const $ = (sel) => document.querySelector(sel);
 
-async function loadList() {
-  const convs = await api();
-  $('list').innerHTML = convs.map((c) =>
-    `<div class="conv ${c.phone === current ? 'on' : ''}" data-p="${esc(c.phone)}">
-      <b>${esc(c.name || c.phone)}</b>${c.status === 'asesor' ? '<span class="badge">asesor</span>' : ''}
-      <small>${esc(c.last)}</small></div>`).join('') || '<p style="padding:1rem">Sin conversaciones</p>';
-}
+  async function cargarChats() {
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}`);
+    if (res.status === 401) { salir(); return; }
+    chats = await res.json();
+    renderLista();
+  }
 
-async function open(phone) {
-  current = phone;
-  const c = await api('?phone=' + encodeURIComponent(phone));
-  $('title').textContent = (c.name || '') + ' +' + c.phone;
-  $('msgs').innerHTML = c.messages.map((m) =>
-    `<div class="m ${m.dir}">${esc(m.text)}</div>`).join('');
-  $('msgs').scrollTop = 1e9;
-  loadList();
-}
+  function iniciales(chat) {
+    const base = chat.nombre || chat.telefono || '?';
+    return base.slice(0, 2).toUpperCase();
+  }
 
-async function start() {
-  try { await loadList(); } catch (e) { $('err').textContent = e.message; sessionStorage.removeItem('crm'); return; }
-  sessionStorage.setItem('crm', pass);
-  $('login').style.display = 'none'; $('app').style.display = 'grid';
-  setInterval(() => { loadList().catch(()=>{}); if (current) open(current).catch(()=>{}); }, 10000);
-}
+  function renderLista() {
+    const filtro = ($('#buscador').value || '').toLowerCase();
+    const lista = $('#listaChats');
+    lista.innerHTML = '';
 
-$('go').onclick = () => { pass = $('pass').value; start(); };
-$('pass').onkeydown = (e) => e.key === 'Enter' && $('go').click();
-$('list').onclick = (e) => { const d = e.target.closest('.conv'); if (d) open(d.dataset.p); };
-$('form').onsubmit = async (e) => {
-  e.preventDefault();
-  if (!current || !$('txt').value.trim()) return;
-  try {
-    await api('', { method: 'POST', body: JSON.stringify({ phone: current, message: $('txt').value }) });
-    $('txt').value = ''; open(current);
-  } catch (err) { alert(err.message); }
-};
-const setStatus = (s) => async () => {
-  if (!current) return;
-  await api('', { method: 'POST', body: JSON.stringify({ phone: current, status: s }) });
-  open(current);
-};
-$('toBot').onclick = setStatus('bot');
-$('close').onclick = setStatus('cerrado');
-if (pass) start();
+    const visibles = chats.filter((c) =>
+      (c.nombre || '').toLowerCase().includes(filtro) || c.telefono.includes(filtro)
+    );
+
+    $('#vacioLista').style.display = visibles.length ? 'none' : 'block';
+
+    const nuevos = visibles.filter((c) => c.estado !== 'atendido');
+    const atendidos = visibles.filter((c) => c.estado === 'atendido');
+
+    if (nuevos.length) {
+      lista.appendChild(crearGrupoTitulo(`NUEVOS · ${nuevos.length}`));
+      nuevos.forEach((c) => lista.appendChild(crearCard(c)));
+    }
+    if (atendidos.length) {
+      lista.appendChild(crearGrupoTitulo(`ATENDIDOS · ${atendidos.length}`));
+      atendidos.forEach((c) => lista.appendChild(crearCard(c)));
+    }
+  }
+
+  function crearGrupoTitulo(texto) {
+    const div = document.createElement('div');
+    div.className = 'grupo-titulo';
+    div.textContent = texto;
+    return div;
+  }
+
+  function crearCard(chat) {
+    const card = document.createElement('div');
+    card.className = 'chat-card' + (chat.telefono === telefonoActivo ? ' seleccionado' : '');
+    card.innerHTML = `
+      <div class="avatar">${iniciales(chat)}</div>
+      <div class="info">
+        <div class="fila-top">
+          <span class="nombre">${escapeHtml(chat.nombre || chat.telefono)}</span>
+          <span class="fecha">${formatearFecha(chat.ultimaFecha)}</span>
+        </div>
+        <div class="ultimo">${escapeHtml((chat.ultimoMensaje || '').slice(0, 50))}</div>
+        <span class="badge ${chat.estado}">${chat.estado === 'atendido' ? 'Atendido' : 'Nuevo'}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => abrirChat(chat.telefono));
+    return card;
+  }
+
+  function formatearFecha(iso) {
+    if (!iso) return '';
+    const fecha = new Date(iso);
+    return fecha.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function escapeHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto || '';
+    return div.innerHTML;
+  }
+
+  async function abrirChat(telefono) {
+    telefonoActivo = telefono;
+    renderLista();
+
+    const panel = $('#panel');
+    panel.innerHTML = '<div class="estado-cargando">Cargando...</div>';
+
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}&telefono=${encodeURIComponent(telefono)}`);
+    if (res.status === 401) { salir(); return; }
+    const chat = await res.json();
+
+    panel.innerHTML = `
+      <div class="panel-header">
+        <div class="avatar">${iniciales(chat)}</div>
+        <div class="datos">
+          <div class="nombre">${escapeHtml(chat.nombre || chat.telefono)}</div>
+          <div class="telefono">${chat.telefono}</div>
+        </div>
+        <button id="btnEstado">${chat.estado === 'atendido' ? 'Reabrir' : 'Marcar atendido'}</button>
+      </div>
+      <div class="mensajes" id="mensajes"></div>
+    `;
+
+    const cont = $('#mensajes');
+    chat.mensajes.forEach((m) => {
+      const div = document.createElement('div');
+      div.className = `mensaje ${m.direccion}`;
+      div.innerHTML = `${escapeHtml(m.texto)}<small>${formatearFecha(m.fecha)}</small>`;
+      cont.appendChild(div);
+    });
+    cont.scrollTop = cont.scrollHeight;
+
+    $('#btnEstado').addEventListener('click', () =>
+      cambiarEstado(telefono, chat.estado === 'atendido' ? 'nuevo' : 'atendido')
+    );
+  }
+
+  async function cambiarEstado(telefono, estado) {
+    await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-crm-password': clave },
+      body: JSON.stringify({ telefono, estado })
+    });
+    await cargarChats();
+    abrirChat(telefono);
+  }
+
+  function salir() {
+    sessionStorage.removeItem('crm_clave');
+    clave = '';
+    telefonoActivo = null;
+    $('#app').classList.remove('activo');
+    $('#login').style.display = 'block';
+  }
+
+  async function intentarEntrar() {
+    clave = $('#clave').value;
+    const res = await fetch(`${API}?clave=${encodeURIComponent(clave)}`);
+    if (res.status === 401) {
+      $('#loginError').style.display = 'block';
+      return;
+    }
+    sessionStorage.setItem('crm_clave', clave);
+    $('#login').style.display = 'none';
+    $('#app').classList.add('activo');
+    chats = await res.json();
+    renderLista();
+  }
+
+  $('#btnEntrar').addEventListener('click', intentarEntrar);
+  $('#clave').addEventListener('keydown', (e) => { if (e.key === 'Enter') intentarEntrar(); });
+  $('#btnSalir').addEventListener('click', salir);
+  $('#buscador').addEventListener('input', renderLista);
+
+  if (clave) {
+    $('#login').style.display = 'none';
+    $('#app').classList.add('activo');
+    cargarChats();
+  }
 </script>
 </body>
 </html>

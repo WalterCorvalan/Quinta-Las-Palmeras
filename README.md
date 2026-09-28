@@ -14,4 +14,46 @@ Sitio web oficial y cotizador interactivo de eventos para **Quinta Las Palmeras*
 - **Backend / Serverless:** Netlify Functions (`Node.js`).
 - **Pagos:** SDK Oficial de Mercado Pago (`mercadopago`).
 
+## 🤖 Bot de WhatsApp (respuestas automáticas)
+
+Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes de WhatsApp.
+
+**Flujo:**
+1. Primer mensaje del cliente → el bot manda la bienvenida con las 5 preguntas clave (tipo de evento, fecha, invitados, horario, servicios) y 2 botones: *Paquetes y precios* / *Hablar con asesor*.
+2. Si toca **Paquetes y precios** → recibe automáticamente el detalle de los 3 paquetes (Básico/Intermedio/Premium) con precios por persona y un ejemplo para 100 invitados.
+3. Si toca **Hablar con asesor** (o responde en texto libre con los datos de su evento) → el bot confirma que un asesor va a responder, y esa conversación queda visible en el mini CRM (`/crm.html`) para que el vendedor siga el guion de cierre (confirmar disponibilidad, presentar paquete, pedir seña) — esa parte queda manual porque depende de disponibilidad real, no automatizable sin un calendario conectado.
+
+- **Código:** `netlify/functions/whatsapp-webhook.js`
+- **Respuestas, precios y paquetes editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá palabras clave y textos sin tocar código)
+
+### Configuración (WhatsApp Cloud API de Meta)
+
+1. Creá una app en [developers.facebook.com](https://developers.facebook.com/) y agregá el producto **WhatsApp**.
+2. Obtené el `Phone Number ID` y un token de acceso temporal (o permanente con una System User).
+3. En Netlify, configurá estas variables de entorno (Site settings → Environment variables):
+   - `WHATSAPP_TOKEN`: token de acceso de la API de WhatsApp Cloud.
+   - `WHATSAPP_PHONE_ID`: ID del número de WhatsApp emisor.
+   - `WHATSAPP_VERIFY_TOKEN`: string inventado por vos, para validar el webhook.
+4. En el panel de Meta, configurá el webhook con la URL `https://<tu-sitio>.netlify.app/.netlify/functions/whatsapp-webhook` y el mismo `WHATSAPP_VERIFY_TOKEN`.
+5. Suscribite al campo `messages` del webhook.
+
+Para editar el menú o agregar nuevas palabras clave, modificá `netlify/functions/bot-respuestas.json` y hacé deploy.
+
+## 📇 Mini CRM de chats
+
+Cada mensaje entrante y cada respuesta del bot se guarda automáticamente (Netlify Blobs) y se puede ver en un panel web simple.
+
+- **Panel:** `https://<tu-sitio>.netlify.app/crm.html`
+- **API:** `netlify/functions/crm-chats.js`
+- **Storage:** `netlify/functions/lib/chats-store.js` (Netlify Blobs, sin servicios externos)
+
+Funcionalidades: lista de conversaciones ordenada por más reciente, detalle con historial completo de mensajes, y marcar cada chat como "atendido" o reabrirlo.
+
+### Configuración
+
+1. En Netlify, agregá la variable de entorno `CRM_PASSWORD` con la contraseña que vas a usar para entrar al panel.
+2. Entrá a `/crm.html`, ingresá esa contraseña y listo.
+
+La contraseña es compartida (no hay usuarios individuales); si necesitás varios accesos con permisos distintos en el futuro, se puede migrar a Supabase Auth u otro proveedor.
+
 ## 📂 Estructura del Proyecto

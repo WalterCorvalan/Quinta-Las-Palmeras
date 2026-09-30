@@ -1,32 +1,69 @@
 {
-  "menuPrincipal": {
-    "texto": "¡Hola! 🎉 Gracias por escribirnos a *Quinta Las Palmeras*, queremos ayudarte a organizar el evento perfecto.\n\nPara armarte una propuesta a medida, contame:\n1️⃣ Tipo de evento\n2️⃣ Fecha deseada (y una alternativa, por las dudas)\n3️⃣ Cantidad de invitados\n4️⃣ Horario preferido (día o noche)\n5️⃣ ¿Necesitás catering, decoración o sonido, o solo el espacio?\n\nEn cuanto me cuentes esto, te paso disponibilidad y precio al toque ✨\n\nO si preferís, elegí una opción:",
-    "botones": [
-      { "id": "paquetes", "titulo": "Paquetes y precios" },
-      { "id": "vendedor", "titulo": "Hablar con asesor" }
-    ]
+  "limiteRespuestasPorHora": 20,
+  "saludoInicial": "¡Hola! 🎉 Gracias por escribirnos a *Quinta Las Palmeras*, queremos ayudarte a organizar el evento perfecto. Te voy a hacer 5 preguntas rápidas para armarte una propuesta a medida.",
+  "flujo": {
+    "tipo_evento": {
+      "texto": "1️⃣ ¿Qué tipo de evento estás organizando?",
+      "tipo": "lista",
+      "botonLista": "Elegir tipo",
+      "opciones": [
+        { "id": "cumpleanos", "titulo": "Cumpleaños" },
+        { "id": "boda", "titulo": "Boda" },
+        { "id": "xv", "titulo": "XV años" },
+        { "id": "corporativo", "titulo": "Corporativo" },
+        { "id": "otro", "titulo": "Otro" }
+      ]
+    },
+    "fecha": {
+      "texto": "2️⃣ ¿Qué fecha tenés en mente? (si tenés una alternativa por si no está disponible, contámela también)",
+      "tipo": "texto"
+    },
+    "invitados": {
+      "texto": "3️⃣ ¿Aproximadamente cuántos invitados van a ser?",
+      "tipo": "numero",
+      "reintento": "No pude entender la cantidad 🤔 ¿Me pasás solo el número aproximado de invitados? (ej: 80)"
+    },
+    "horario": {
+      "texto": "4️⃣ ¿El evento sería de día o de noche?",
+      "tipo": "botones",
+      "opciones": [
+        { "id": "dia", "titulo": "De día" },
+        { "id": "noche", "titulo": "De noche" }
+      ]
+    },
+    "servicios": {
+      "texto": "5️⃣ Último dato: ¿qué necesitás además del espacio?",
+      "tipo": "lista",
+      "botonLista": "Elegir opción",
+      "opciones": [
+        { "id": "solo", "titulo": "Solo el espacio" },
+        { "id": "decoracion_sonido", "titulo": "+ Decoración y sonido" },
+        { "id": "todo", "titulo": "Catering, DJ y todo" }
+      ]
+    }
+  },
+  "paquetes": {
+    "solo": { "nombre": "Básico", "descripcion": "Alquiler del espacio + mobiliario básico + baños y limpieza", "dia": 10000, "noche": 20000 },
+    "decoracion_sonido": { "nombre": "Intermedio", "descripcion": "Básico + decoración estándar + sonido (parlantes y micrófono)", "dia": 15000, "noche": 25000 },
+    "todo": { "nombre": "Premium", "descripcion": "Intermedio + catering + DJ/animación + decoración personalizada + coordinador de evento", "dia": 25000, "noche": 38000 }
   },
   "respuestas": [
     {
       "id": "paquetes",
-      "palabrasClave": ["1", "paquetes", "planes", "plan", "ver planes", "precios", "paquetes y precios"],
-      "respuesta": "📋 *Paquetes y precios* (valor por persona)\n\n🥉 *Básico — Solo el Espacio*\nAlquiler del espacio + mobiliario básico + baños y limpieza\n💲 Día: $10.000 · Noche: $20.000\n\n🥈 *Intermedio — Evento Completo*\nTodo lo del Básico + decoración estándar + sonido (parlantes y micrófono)\n💲 Día: $15.000 · Noche: $25.000\n\n🥇 *Premium — Todo Incluido*\nTodo lo del Intermedio + catering + DJ/animación + decoración personalizada + coordinador de evento\n💲 Día: $25.000 · Noche: $38.000\n\n*Ejemplo para 100 invitados:*\n🥉 Básico: $1.000.000 (día) / $2.000.000 (noche)\n🥈 Intermedio: $1.500.000 (día) / $2.500.000 (noche)\n🥇 Premium: $2.500.000 (día) / $3.800.000 (noche)\n\n¿Querés el presupuesto exacto para tu cantidad de invitados? Escribí *vendedor* o usá nuestro cotizador: https://quintalaspalmeras.netlify.app\n\nEscribí *menu* para volver al inicio."
+      "palabrasClave": ["paquetes", "planes", "plan", "ver planes", "precios", "paquetes y precios"],
+      "respuesta": "📋 *Paquetes y precios* (valor por persona)\n\n🥉 *Básico — Solo el Espacio*\nAlquiler del espacio + mobiliario básico + baños y limpieza\n💲 Día: $10.000 · Noche: $20.000\n\n🥈 *Intermedio — Evento Completo*\nTodo lo del Básico + decoración estándar + sonido (parlantes y micrófono)\n💲 Día: $15.000 · Noche: $25.000\n\n🥇 *Premium — Todo Incluido*\nTodo lo del Intermedio + catering + DJ/animación + decoración personalizada + coordinador de evento\n💲 Día: $25.000 · Noche: $38.000\n\n*Ejemplo para 100 invitados:*\n🥉 Básico: $1.000.000 (día) / $2.000.000 (noche)\n🥈 Intermedio: $1.500.000 (día) / $2.500.000 (noche)\n🥇 Premium: $2.500.000 (día) / $3.800.000 (noche)\n\n¿Querés el presupuesto exacto para tu cantidad de invitados? Escribí *vendedor* o usá nuestro cotizador: https://quintalaspalmeras.netlify.app\n\nEscribí *menu* para volver a empezar."
     },
     {
       "id": "vendedor",
-      "palabrasClave": ["2", "vendedor", "hablar con vendedor", "hablar con asesor", "asesor", "humano"],
-      "respuesta": "🙋 ¡Genial! Ya tenemos tu consulta y en breve un asesor de Quinta Las Palmeras te responde por este mismo chat con disponibilidad y precio a medida.\n\nSi todavía no nos contaste tipo de evento, fecha, invitados y horario, aprovechá y mandámelo así avanzamos más rápido.\n\nEscribí *menu* para volver al inicio."
-    },
-    {
-      "id": "cotizar",
-      "palabrasClave": ["3", "cotizar", "cotización", "presupuesto", "cotizar mi evento"],
-      "respuesta": "🧮 Para cotizar tu evento con precio exacto, entrá al cotizador de nuestra web:\nhttps://quintalaspalmeras.netlify.app\n\nAhí elegís espacio, fecha, invitados y servicios, y te llega el detalle. Si preferís, escribí *vendedor* para hablar con un asesor.\n\nEscribí *menu* para volver al inicio."
+      "palabrasClave": ["vendedor", "hablar con vendedor", "hablar con asesor", "asesor", "humano"],
+      "respuesta": "🙋 ¡Genial! Ya tenemos tu consulta y en breve un asesor de Quinta Las Palmeras te responde por este mismo chat con disponibilidad y precio a medida.\n\nEscribí *menu* para volver a empezar."
     },
     {
       "id": "ubicacion",
       "palabrasClave": ["ubicacion", "ubicación", "dirección", "direccion", "donde queda", "dónde queda"],
-      "respuesta": "📍 Estamos en Antonio Machado 660, Del Viso, Buenos Aires.\n\nEscribí *menu* para volver al inicio."
+      "respuesta": "📍 Estamos en Antonio Machado 660, Del Viso, Buenos Aires.\n\nEscribí *menu* para volver a empezar."
     }
   ],
-  "noEntendido": "¡Recibido! 📝 Un asesor va a revisar tu mensaje y te responde a la brevedad con disponibilidad y precio.\n\nSi querés, también podés escribir *paquetes* para ver precios o *menu* para ver las opciones."
+  "noEntendido": "¡Recibido! 📝 Un asesor va a revisar tu mensaje y te responde a la brevedad.\n\nSi querés, también podés escribir *paquetes* para ver precios o *menu* para volver a empezar.",
+  "limiteAlcanzado": "Ya te respondimos varias veces por acá 🙏 Un asesor humano va a seguir la conversación en breve."
 }

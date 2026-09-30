@@ -79,9 +79,27 @@ async function actualizarEstado(telefono, estado) {
   return chat;
 }
 
+async function actualizarFlujo(telefono, flujo) {
+  const db = store();
+  const chat = await obtenerChat(telefono);
+  if (!chat) return null;
+  chat.flujo = flujo;
+  await db.setJSON(telefono, chat);
+  return chat;
+}
+
+function contarEnviosUltimaHora(chat) {
+  const haceUnaHora = Date.now() - 60 * 60 * 1000;
+  return (chat.mensajes || []).filter(
+    (m) => m.direccion === 'saliente' && new Date(m.fecha).getTime() > haceUnaHora
+  ).length;
+}
+
 module.exports = {
   registrarMensaje,
   listarChats,
   obtenerChat,
-  actualizarEstado
+  actualizarEstado,
+  actualizarFlujo,
+  contarEnviosUltimaHora
 };

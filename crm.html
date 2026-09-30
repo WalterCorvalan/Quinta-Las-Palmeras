@@ -211,6 +211,18 @@
     white-space: nowrap;
   }
 
+  .resumen-evento {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--arena);
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.78rem;
+    color: var(--texto);
+  }
+  .resumen-evento b { color: var(--verde); font-weight: 700; }
+
   .mensajes {
     flex: 1;
     overflow-y: auto;
@@ -291,6 +303,28 @@
     if (res.status === 401) { salir(); return; }
     chats = await res.json();
     renderLista();
+  }
+
+  const ETIQUETAS = {
+    tipo_evento: { cumpleanos: 'Cumpleaños', boda: 'Boda', xv: 'XV años', corporativo: 'Corporativo', otro: 'Otro' },
+    horario: { dia: 'Día', noche: 'Noche' },
+    servicios: { solo: 'Solo el espacio', decoracion_sonido: 'Decoración y sonido', todo: 'Catering, DJ y todo' }
+  };
+
+  function renderResumenEvento(chat) {
+    const datos = chat.flujo?.datos;
+    if (!datos || !Object.keys(datos).length) return '';
+    const campos = [
+      ['Evento', ETIQUETAS.tipo_evento[datos.tipo_evento] || datos.tipo_evento],
+      ['Fecha', datos.fecha],
+      ['Invitados', datos.invitados],
+      ['Horario', ETIQUETAS.horario[datos.horario] || datos.horario],
+      ['Servicios', ETIQUETAS.servicios[datos.servicios] || datos.servicios]
+    ].filter(([, valor]) => valor);
+    if (!campos.length) return '';
+    return `<div class="resumen-evento">${campos
+      .map(([label, valor]) => `<span><b>${label}:</b> ${escapeHtml(String(valor))}</span>`)
+      .join('')}</div>`;
   }
 
   function iniciales(chat) {
@@ -379,6 +413,7 @@
         </div>
         <button id="btnEstado">${chat.estado === 'atendido' ? 'Reabrir' : 'Marcar atendido'}</button>
       </div>
+      ${renderResumenEvento(chat)}
       <div class="mensajes" id="mensajes"></div>
     `;
 

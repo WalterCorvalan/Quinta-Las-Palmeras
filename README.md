@@ -18,13 +18,14 @@ Sitio web oficial y cotizador interactivo de eventos para **Quinta Las Palmeras*
 
 Bot basado en reglas (sin IA, costo $0) que responde automáticamente a mensajes de WhatsApp.
 
-**Flujo:**
-1. Primer mensaje del cliente → el bot manda la bienvenida con las 5 preguntas clave (tipo de evento, fecha, invitados, horario, servicios) y 2 botones: *Paquetes y precios* / *Hablar con asesor*.
-2. Si toca **Paquetes y precios** → recibe automáticamente el detalle de los 3 paquetes (Básico/Intermedio/Premium) con precios por persona y un ejemplo para 100 invitados.
-3. Si toca **Hablar con asesor** (o responde en texto libre con los datos de su evento) → el bot confirma que un asesor va a responder, y esa conversación queda visible en el mini CRM (`/crm.html`) para que el vendedor siga el guion de cierre (confirmar disponibilidad, presentar paquete, pedir seña) — esa parte queda manual porque depende de disponibilidad real, no automatizable sin un calendario conectado.
+**Flujo guiado (paso a paso, con botones/listas nativas de WhatsApp):**
+1. Primer mensaje del cliente ("hola" o cualquier texto) → el bot saluda y pregunta, una por una: tipo de evento (lista), fecha (texto libre), cantidad de invitados (número, reintenta si no lo puede leer), horario día/noche (botones) y servicios deseados (lista).
+2. Con esas 5 respuestas, calcula automáticamente el **paquete recomendado y el presupuesto estimado** (precio por persona × invitados, según sea día o noche) y lo manda con 2 botones: *Hablar con asesor* / *Ver otros paquetes*.
+3. De ahí en más, responde por palabra clave (*paquetes*, *vendedor*, *ubicación*) o deriva a un asesor — esa conversación ya queda estructurada y visible en el mini CRM (`/crm.html`), con los datos del evento a la vista arriba del chat. El cierre real (confirmar disponibilidad, pedir la seña) lo hace el vendedor a mano, porque depende de disponibilidad real — no es automatizable sin un calendario conectado.
+4. **Protección anti-spam:** si un mismo número recibe más de `limiteRespuestasPorHora` respuestas automáticas en una hora (20 por defecto), el bot deja de responder y avisa una sola vez que un asesor va a seguir la conversación — así no se gasta la cuota gratuita de mensajes de WhatsApp con un número que hace loop o spamea.
 
 - **Código:** `netlify/functions/whatsapp-webhook.js`
-- **Respuestas, precios y paquetes editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá palabras clave y textos sin tocar código)
+- **Preguntas, precios, paquetes y límite de respuestas editables:** `netlify/functions/bot-respuestas.json` (agregá o modificá textos, opciones y precios sin tocar código)
 
 ### Configuración (WhatsApp Cloud API de Meta)
 

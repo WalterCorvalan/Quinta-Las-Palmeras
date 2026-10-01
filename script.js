@@ -4,7 +4,7 @@
 
 /* ── CONFIGURACIÓN DE PRECIOS Y OPCIONES ── */
 const CONFIG = {
-  wa: "54911595267",
+  wa: "5491159895267",
   precioCopaPp: 800, // Costo adicional por persona si elige copas
 };
 

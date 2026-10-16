@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/WalterCorvalan/Quinta-Las-Palmeras#readme",
   "dependencies": {
+    "@upstash/redis": "^1.39.0",
     "mercadopago": "^3.2.1"
   }
 }

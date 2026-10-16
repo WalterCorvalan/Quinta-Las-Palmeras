@@ -979,7 +979,7 @@ async function pagarConMercadoPago() {
   btnPagar.style.cursor = "not-allowed";
 
   try {
-    const respuesta = await fetch("/.netlify/functions/crear-pago", {
+    const respuesta = await fetch("/api/crear-pago", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

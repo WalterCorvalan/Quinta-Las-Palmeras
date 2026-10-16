@@ -1,4 +1,4 @@
-const cfg = require('./bot-respuestas.json');
+const cfg = require('./lib/bot-respuestas.json');
 const { registrarMensaje, actualizarFlujo, contarEnviosUltimaHora } = require('./lib/chats-store');
 
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
@@ -153,26 +153,30 @@ async function procesarPaso(to, chat, entrada) {
   }
 }
 
-exports.handler = async (event) => {
-  if (event.httpMethod === 'GET') {
-    const params = event.queryStringParameters || {};
+module.exports = async (req, res) => {
+  if (req.method === 'GET') {
+    const params = req.query || {};
     if (params['hub.mode'] === 'subscribe' && params['hub.verify_token'] === VERIFY_TOKEN) {
-      return { statusCode: 200, body: params['hub.challenge'] };
+      res.status(200).send(params['hub.challenge']);
+      return;
     }
-    return { statusCode: 403, body: 'Verificación fallida' };
+    res.status(403).send('Verificación fallida');
+    return;
   }
 
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
   }
 
   try {
-    const body = JSON.parse(event.body);
+    const body = req.body;
     const cambio = body.entry?.[0]?.changes?.[0]?.value;
     const mensaje = cambio?.messages?.[0];
 
     if (!mensaje) {
-      return { statusCode: 200, body: 'OK' };
+      res.status(200).send('OK');
+      return;
     }
 
     const from = mensaje.from;
@@ -193,7 +197,8 @@ exports.handler = async (event) => {
       if (enviosPrevios === limite) {
         await enviarTexto(from, cfg.limiteAlcanzado);
       }
-      return { statusCode: 200, body: 'OK' };
+      res.status(200).send('OK');
+      return;
     }
 
     const textoNormalizado = normalizar(entrada.texto);
@@ -204,12 +209,14 @@ exports.handler = async (event) => {
       await actualizarFlujo(from, { paso: primerPaso, datos: {} });
       await enviarTexto(from, cfg.saludoInicial);
       await enviarPasoDelFlujo(from, primerPaso);
-      return { statusCode: 200, body: 'OK' };
+      res.status(200).send('OK');
+      return;
     }
 
     if (chat.flujo.paso !== 'fin') {
       await procesarPaso(from, chat, entrada);
-      return { statusCode: 200, body: 'OK' };
+      res.status(200).send('OK');
+      return;
     }
 
     // Flujo ya completo: responde por palabra clave (paquetes, vendedor, ubicación) o deriva a un asesor
@@ -217,8 +224,8 @@ exports.handler = async (event) => {
     const respuesta = idBoton ? idBoton.respuesta : buscarRespuestaLibre(entrada.texto) || cfg.noEntendido;
     await enviarTexto(from, respuesta);
 
-    return { statusCode: 200, body: 'OK' };
+    res.status(200).send('OK');
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    res.status(500).json({ error: error.message });
   }
 };

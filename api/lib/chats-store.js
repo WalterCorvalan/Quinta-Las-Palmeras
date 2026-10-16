@@ -1,31 +1,25 @@
-const { getStore } = require('@netlify/blobs');
+const { Redis } = require('@upstash/redis');
 
-const STORE_NAME = 'crm-chats';
-const INDICE_KEY = '_indice';
+const redis = Redis.fromEnv();
 
-function store() {
-  return getStore(STORE_NAME);
-}
+const PREFIX = 'crm-chats:';
+const INDICE_KEY = `${PREFIX}_indice`;
 
 async function obtenerIndice() {
-  const db = store();
-  const indice = await db.get(INDICE_KEY, { type: 'json' });
+  const indice = await redis.get(INDICE_KEY);
   return indice || [];
 }
 
 async function guardarIndice(telefonos) {
-  const db = store();
-  await db.setJSON(INDICE_KEY, telefonos);
+  await redis.set(INDICE_KEY, telefonos);
 }
 
 async function obtenerChat(telefono) {
-  const db = store();
-  const chat = await db.get(telefono, { type: 'json' });
+  const chat = await redis.get(`${PREFIX}${telefono}`);
   return chat || null;
 }
 
 async function registrarMensaje({ telefono, texto, direccion, nombre }) {
-  const db = store();
   const chat = (await obtenerChat(telefono)) || {
     telefono,
     nombre: nombre || null,
@@ -51,7 +45,7 @@ async function registrarMensaje({ telefono, texto, direccion, nombre }) {
   chat.ultimoMensaje = texto || '';
   chat.ultimaFecha = new Date().toISOString();
 
-  await db.setJSON(telefono, chat);
+  await redis.set(`${PREFIX}${telefono}`, chat);
 
   const indice = await obtenerIndice();
   if (!indice.includes(telefono)) {
@@ -74,17 +68,15 @@ async function actualizarEstado(telefono, estado) {
   const chat = await obtenerChat(telefono);
   if (!chat) return null;
   chat.estado = estado;
-  const db = store();
-  await db.setJSON(telefono, chat);
+  await redis.set(`${PREFIX}${telefono}`, chat);
   return chat;
 }
 
 async function actualizarFlujo(telefono, flujo) {
-  const db = store();
   const chat = await obtenerChat(telefono);
   if (!chat) return null;
   chat.flujo = flujo;
-  await db.setJSON(telefono, chat);
+  await redis.set(`${PREFIX}${telefono}`, chat);
   return chat;
 }
 

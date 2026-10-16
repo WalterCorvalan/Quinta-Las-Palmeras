@@ -1,18 +1,19 @@
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 
-exports.handler = async (event) => {
+module.exports = async (req, res) => {
   // Solo permitimos peticiones POST
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
   }
 
   try {
-    const data = JSON.parse(event.body);
-    
-    // Detectar dinámicamente la URL base del sitio en Netlify
-    const baseUrl = event.headers.origin || process.env.URL || 'https://tu-sitio.netlify.app';
+    const data = req.body;
 
-    // Conecta con Mercado Pago usando la variable de entorno de Netlify
+    // Detectar dinámicamente la URL base del sitio en Vercel
+    const baseUrl = req.headers.origin || `https://${req.headers.host}`;
+
+    // Conecta con Mercado Pago usando la variable de entorno de Vercel
     const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
     const preference = new Preference(client);
 
@@ -35,15 +36,8 @@ exports.handler = async (event) => {
     });
 
     // Le devuelve el link a tu script.js
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ init_point: response.init_point })
-    };
-
+    res.status(200).json({ init_point: response.init_point });
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+    res.status(500).json({ error: error.message });
   }
 };

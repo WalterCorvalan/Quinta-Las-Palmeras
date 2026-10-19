@@ -21,6 +21,7 @@ const CATERING = [
     precio_pp: 8000,
     pp: true,
     desc: "Entrada, plato y postre",
+    consultar: true,
   },
   {
     id: "pizza_libre",
@@ -29,6 +30,7 @@ const CATERING = [
     precio_pp: 28000,
     pp: true,
     desc: "Variedad de pizzas",
+    consultar: true,
   },
   {
     id: "pernil",
@@ -37,6 +39,7 @@ const CATERING = [
     precio: 180000,
     pp: false,
     desc: "Cada uno para 40 personas con panes",
+    consultar: true,
   },
   {
     id: "mesa_dulce",
@@ -45,6 +48,7 @@ const CATERING = [
     precio_pp: 250000,
     pp: true,
     desc: "Para 30 personas",
+    consultar: true,
   },
 ];
 
@@ -56,6 +60,7 @@ const BARRA = [
     precio: 45000,
     pp: false,
     desc: "Tragos con alcohol",
+    consultar: true,
   },
   {
     id: "barra_soft",
@@ -64,6 +69,7 @@ const BARRA = [
     precio: 25000,
     pp: false,
     desc: "Gaseosas, agua y jugos",
+    consultar: true,
   },
   {
     id: "cerveza",
@@ -72,6 +78,7 @@ const BARRA = [
     precio: 35000,
     pp: false,
     desc: "Barril de 30 litros",
+    consultar: true,
   },
 ];
 
@@ -174,6 +181,7 @@ const EXTRAS = [
     precio: 35000,
     pp: false,
     desc: "Mesitas para mesa dulce",
+    consultar: true,
   },
   {
     id: "chispas",
@@ -190,6 +198,7 @@ const EXTRAS = [
     precio: 80000,
     pp: false,
     desc: "Personalizada",
+    consultar: true,
   },
 ];
 
@@ -558,7 +567,9 @@ function renderOpciones(items, gridId, setKey, espacio) {
         const precioReal = getPrecioItem(item, espacio);
         const esBarra = setKey === "barra";
         const cantidadBarra = esBarra ? st.barraCantidad[item.id] || 0 : 0;
-        if (precioReal === 0 && !item.pp) {
+        if (item.consultar) {
+          p = "A consultar";
+        } else if (precioReal === 0 && !item.pp) {
           p = "Incluido";
         } else if (esBarra) {
           p = `$${precioReal.toLocaleString("es-AR")} por persona`;
@@ -587,7 +598,11 @@ function renderOpciones(items, gridId, setKey, espacio) {
                 <span>${cantidadBarra} pers.</span>
                 <button type="button" aria-label="Agregar una persona a ${item.nombre}" onclick="cambiarCantidadBarra('${item.id}', '${gridId}', '${espacio}', 1)">+</button>
               </div>
-              <div class="barra-subtotal">Subtotal: $${(precioReal * cantidadBarra).toLocaleString("es-AR")}</div>`
+              <div class="barra-subtotal">${
+                item.consultar
+                  ? `${cantidadBarra} pers. — a consultar`
+                  : `Subtotal: $${(precioReal * cantidadBarra).toLocaleString("es-AR")}`
+              }</div>`
             : ""
         }
       </div>
@@ -764,6 +779,11 @@ function calcular() {
         nombreMostrado += ` (${st.barraCantidad[item.id]} pers.)`;
       }
 
+      if (item.consultar) {
+        itemsDesglose.push({ nombre: nombreMostrado, precio: 0, consultar: true });
+        return;
+      }
+
       total += m;
       itemsDesglose.push({ nombre: nombreMostrado, precio: m });
     });
@@ -777,8 +797,9 @@ function calcular() {
   itemsDesglose.sort((a, b) => b.precio - a.precio);
 
   const lineas = itemsDesglose.map((item) => {
-    const labelPrecio =
-      item.precio === 0
+    const labelPrecio = item.consultar
+      ? "A consultar"
+      : item.precio === 0
         ? "Incluido"
         : `$${item.precio.toLocaleString("es-AR")}`;
     return `✅ ${item.nombre}: ${labelPrecio}`;

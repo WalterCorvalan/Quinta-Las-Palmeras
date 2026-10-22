@@ -143,7 +143,9 @@ nav .container {
 /* ── HERO ── */
 .hero {
   position: relative;
-  background: var(--verde);
+  background:
+    linear-gradient(180deg, rgba(26, 42, 30, 0.72) 0%, rgba(56, 102, 65, 0.88) 55%, var(--verde) 100%),
+    url("img/hero-bg.jpg") center 30% / cover no-repeat;
   text-align: center;
   padding: 64px 0 56px;
   overflow: hidden;
@@ -175,6 +177,23 @@ nav .container {
   max-width: 520px;
   margin-left: auto;
   margin-right: auto;
+}
+.btn-wa-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25d366;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-wa-hero:hover {
+  background: #1ebe5a;
 }
 .hero-btns {
   display: flex;
